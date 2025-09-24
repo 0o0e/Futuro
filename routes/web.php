@@ -7,4 +7,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/booking', [BookingController::class, 'index'])->name('booking');
+Route::match(['get', 'post'], '/booking', [BookingController::class, 'index'])->name('booking');
+
+Route::view('/home', 'home')->name('home');
