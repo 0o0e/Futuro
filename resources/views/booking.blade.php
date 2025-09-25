@@ -24,7 +24,21 @@
         .card .mb-3 {
             width: 100%;
         }
+        .booking-button {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 15px 30px;
+            background-color: #4C807F;
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
 
+        .booking-button:hover {
+            background-color: #3a5f5e;
+        }
 
     </style>
 </head>
@@ -48,7 +62,7 @@
                     <input type="checkbox" id="watertaxi" name="service" value="Watertaxi">
                 </div>
 
-                <button type="submit" class="btn btn-primary w-50">Ga verder</button>
+                <button type="submit" class="booking-button">Ga verder</button>
             </form>
         </div>
     </div>
@@ -72,7 +86,7 @@
                     <input type="time" id="time" name="time" class="form-control" required>
                 </div>
 
-                <button type="submit" class="btn btn-primary w-50">Ga verder</button>
+                <button type="submit" class="booking-button">Ga verder</button>
             </form>
         </div>
     </div>
@@ -102,7 +116,7 @@
                     <textarea class="form-control" id="opmerking" name="opmerking" rows="3" placeholder="Eventuele opmerkingen..."></textarea>
                 </div>
 
-                <button type="submit" class="btn btn-primary w-50">Verstuur Booking</button>
+                <button type="submit" class="booking-button">Verstuur Booking</button>
             </form>
         </div>
     </div>
