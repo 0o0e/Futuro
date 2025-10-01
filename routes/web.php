@@ -15,5 +15,5 @@ Route::view('/home', 'home')->name('home');
 
 
 Route::get('/admin/dashboard', function () {
-    return 'welcome, admin';
+    return view('admin.adminDashboard');
 })->middleware(AdminMiddleware::class);
