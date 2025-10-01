@@ -112,19 +112,48 @@
         </div>
     </div>
 
-        <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            selectable: true,
-            select: function(info) {
-                document.getElementById('date').value = info.startStr;
-            }
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                selectable: true,
+
+                selectAllow: function(selectInfo) {
+                    let today = new Date();
+                    today.setHours(0,0,0,0);
+
+                    let minDate = new Date(today);
+                    minDate.setDate(minDate.getDate() + 7);
+
+                    return selectInfo.start >= minDate;
+                },
+
+                dayCellDidMount: function(info) {
+                    let today = new Date();
+                    today.setHours(0,0,0,0);
+
+                    let blockDate = new Date(today);
+                    blockDate.setDate(blockDate.getDate() + 7);
+
+                    let cellDate = info.date;
+                    cellDate.setHours(0,0,0,0);
+
+                    if (cellDate >= today && cellDate <= blockDate) {
+                        info.el.style.backgroundColor = '#ffcccc';
+                        info.el.style.opacity = '0.7';
+                        info.el.style.cursor = 'not-allowed'; 
+                    }
+                },
+
+                select: function(info) {
+                    document.getElementById('date').value = info.startStr;
+                }
+            });
+            calendar.render();
         });
-        calendar.render();
-    });
     </script>
+
     @endif
 
 
