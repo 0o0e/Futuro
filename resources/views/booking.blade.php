@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reserveren</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/main.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js"></script>
 
     <style>
         body {
@@ -40,6 +42,17 @@
             background-color: #3a5f5e;
         }
 
+
+        #calendar {
+            max-width: 900px;
+            margin: 20px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+        }
+
+
     </style>
 </head>
 <body class="bg-light">
@@ -68,6 +81,7 @@
     </div>
     @endif
 
+
     @if($step==2)
     <div class="container py-5">
         <h2 class="mb-4 text-center">Kies een datum</h2>
@@ -75,21 +89,42 @@
             <form method="POST" action="{{ route('booking') }}">
                 @csrf
                 <input type="hidden" name="step" value="2">
+                <input type="hidden" id="date" name="date" required>
 
-                <div class="mb-3">
-                    <label for="date" class="form-label">Datum</label>
-                    <input type="date" class="form-control" id="date" name="date" required>
-                </div>
+                <div id="calendar"></div>
 
-                <div class="mb-3">
+                <div class="mb-3 mt-4">
                     <label for="time" class="form-label">Tijd</label>
-                    <input type="time" id="time" name="time" class="form-control" required>
+                    <select id="time" name="time" class="form-control" required>
+                        <option value="">-- Kies een tijd --</option>
+                        @for ($hour = 10; $hour < 22; $hour++)
+                            @for ($minute = 0; $minute < 60; $minute += 30)
+                                <option value="{{ sprintf('%02d:%02d', $hour, $minute) }}">
+                                    {{ sprintf('%02d:%02d', $hour, $minute) }}
+                                </option>
+                            @endfor
+                        @endfor
+                    </select>
                 </div>
 
                 <button type="submit" class="booking-button">Ga verder</button>
             </form>
         </div>
     </div>
+
+        <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            selectable: true,
+            select: function(info) {
+                document.getElementById('date').value = info.startStr;
+            }
+        });
+        calendar.render();
+    });
+    </script>
     @endif
 
 
@@ -133,6 +168,7 @@
         <p><strong>Tijd:</strong> {{ $data['time'] }}</p>
         <p><strong>Naam:</strong> {{ $data['name'] }}</p>
         <p><strong>Email:</strong> {{ $data['email'] }}</p>
+        <p><strong>Opmerking:</strong>{{ $data['opmerking']  }}</p>
         <p class="success"></p>
     </div>
     </div>

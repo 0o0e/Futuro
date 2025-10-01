@@ -19,12 +19,12 @@ class BookingController extends Controller
                 $step = 3;
             }
             elseif ($step == 3){
-                session(['name'=>$request->name, 'email'=>$request->email]);
+                session(['name'=>$request->name, 'email'=>$request->email,'opmerking'=>$request->opmerking ]);
                 $step = 4;
             }
         }
 
-        $data = session()->only(['service', 'date', 'name', 'email','time']);
+        $data = session()->only(['service', 'date', 'name', 'email','time','opmerking']);
 
         return view('booking', ['data' => $data,'step' => $step]);
     }
