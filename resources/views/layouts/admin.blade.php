@@ -84,7 +84,7 @@
 
 
     <div class="sidebar">
-    <a href="{{ route('admin.dashboard') }}">Dashboard</a>
+        <a href="{{ route('admin.dashboard') }}">Dashboard</a>
         <a href="{{ route('admin.logout') }}" onclick="return confirm('Are you sure you want to log out?');">Uitloggen</a>
     </div>
 
