@@ -23,8 +23,12 @@ class AdminController extends Controller
             return back()->withErrors(['email' => 'Ongeldige gegevens']);
         }
 
+    }
 
+    public function logout(){
+        Auth::logout();
 
+        return view('/admin/login');
     }
 
     public function calendar()
@@ -36,6 +40,10 @@ class AdminController extends Controller
                 'end'   => $b->date . 'T' . $b->time_end,
             ];
         });
-        return view('admin.adminDashboard', compact('bookings'));
+        return view('admin.calendar', compact('bookings'));
+    }
+
+    public function dashboard(){
+        return view('admin.adminDashboard');
     }
 }

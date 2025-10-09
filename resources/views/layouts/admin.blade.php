@@ -80,15 +80,14 @@
     </style>
 </head>
 <body>
-
-
-
     <div class="sidebar">
         <a href="{{ route('admin.dashboard') }}">Dashboard</a>
-        <a href="{{ route('admin.logout') }}" onclick="return confirm('Are you sure you want to log out?');">Uitloggen</a>
+        <a href="{{ route('admin.calendar') }}">Kalender</a>
+
+        <a href="{{ route('admin.logout') }}" onclick="return confirm('uitloggen?');">Uitloggen</a>
     </div>
 
-    <div class="container">
+    <div class="content">
         @yield('content')
     </div>
 
