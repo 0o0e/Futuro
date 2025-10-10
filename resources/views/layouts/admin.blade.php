@@ -83,6 +83,7 @@
     <div class="sidebar">
         <a href="{{ route('admin.dashboard') }}">Dashboard</a>
         <a href="{{ route('admin.calendar') }}">Kalender</a>
+        <a href="{{ route('admin.user.create') }}">Nieuwe Gebruiker</a>
 
         <a href="{{ route('admin.logout') }}" onclick="return confirm('uitloggen?');">Uitloggen</a>
     </div>

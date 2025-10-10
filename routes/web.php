@@ -26,12 +26,13 @@ Route::middleware(AdminMiddleware::class)->prefix('admin')->group(function () {
 
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
+    Route::get('/user/create', [AdminController::class, 'createUser'])->name('admin.user.create');
+    Route::post('/user/create', [AdminController::class, 'storeUser'])->name('admin.user.store');
+
+
     Route::get('/boekingen', function() {
         return 'boekingen';
     });
 
-    Route::get('/adduser',function(){
-        return 'add a new user';
-    });
 
 });
