@@ -462,5 +462,15 @@ alleen varen.
 
 <a href="{{ route('booking') }}" class="floating-button">Reserveer nu</a>
 
+
+<script>
+  window.addEventListener('load', () => {
+    const container = document.querySelector('.scroll-container');
+    if (container) {
+      container.scrollLeft = (container.scrollWidth - container.clientWidth) / 2;
+    }
+});
+
+</script>
 </body>
 </html>
