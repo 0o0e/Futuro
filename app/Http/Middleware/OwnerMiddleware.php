@@ -6,26 +6,24 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Auth\check;
-use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
-use Illuminate\Foundation\Auth\User as AuthUser;
-
-class AdminMiddleware
+class OwnerMiddleware
 {
+
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     */
     public function handle(Request $request, Closure $next)
     {
-
         if (!Auth::check()) {
             return redirect()->route('admin.login');
         }
 
-        if (in_array(Auth::user()->role, ['admin', 'owner'])) {
+        if (Auth::user()->role === 'owner') {
             return $next($request);
         }
 
-        Auth::logout();
-        return redirect()->route('admin.login')->withErrors('Toegang geweigerd.');
-
+        return redirect()->route('admin.dashboard')->withErrors('Alleen de eigenaar mag dit bekijken.');
     }
 }
