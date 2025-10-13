@@ -89,6 +89,9 @@
         @if (auth()->user()->role === 'owner')
             <a href="{{ route('admin.user.create') }}">Nieuwe Gebruiker</a>
         @endif
+
+        <a href="{{ route('admin.reservation.create') }}">Nieuwe reservering</a>
+
         <a href="{{ route('admin.reservations') }}">Reserveringen</a>
 
         <a href="{{ route('admin.logout') }}" onclick="return confirm('uitloggen?');">Uitloggen</a>

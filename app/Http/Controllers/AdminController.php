@@ -86,4 +86,34 @@ class AdminController extends Controller
 
         return view('admin.reservations', compact('bookings', 'today'));
     }
+
+    public function createReservation(){
+        return view('admin.createReservation');
+    }
+
+    public function storeReservation(Request $request){
+        $validated = $request->validate(
+            [
+                'service'=> 'required|string|max:255',
+                'date'=> 'required|date',
+                'time_start'=> 'required',
+                'time_end'=> 'required',
+                'people'=> 'required|integer|min:1',
+                'name'=> 'required|string|max:255',
+                'email'=> 'required|email',
+                'comment'=> 'nullable|string|max:1000',
+            ]);
+
+            Booking::create([
+            'service' => $validated['service'],
+            'date' => $validated['date'],
+            'time_start' => $validated['time_start'],
+            'time_end' => $validated['time_end'],
+            'people' => $validated['people'],
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'comment' => $validated['comment'] ?? null,
+        ]);
+        return redirect()->route('admin.reservations')->with('success','Boeking succesvol aangemaakt');
+    }
 }

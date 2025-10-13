@@ -18,9 +18,9 @@ Route::view('/home', 'home')->name('home');
 
 // Route::get('/admin/dashboard', [AdminController::class, 'calendar'])->middleware(AdminMiddleware::class);
 
-    Route::get('/login', [AdminController::class, 'showLoginPage'])->name('admin.login');
-    Route::post('/login', [AdminController::class, 'login']);
-    Route::get('/logout', [AdminController::class, 'logout'])->name('admin.logout');
+Route::get('/login', [AdminController::class, 'showLoginPage'])->name('admin.login');
+Route::post('/login', [AdminController::class, 'login']);
+Route::get('/logout', [AdminController::class, 'logout'])->name('admin.logout');
 
 
 Route::middleware(AdminMiddleware::class)->prefix('admin')->group(function () {
@@ -31,10 +31,8 @@ Route::middleware(AdminMiddleware::class)->prefix('admin')->group(function () {
 
     Route::get('/reserveringen', [AdminController::class, 'reservations'])->name('admin.reservations');
 
-
-    Route::get('/boekingen', function() {
-        return 'boekingen';
-    });
+    Route::get('/boeking/aanmaken', [Admincontroller::class, 'createReservation'])->name('admin.reservation.create');
+    Route::post('/boeking/aanmaken', [Admincontroller::class, 'storeReservation'])->name('admin.reservation.store');
 
 
 });
