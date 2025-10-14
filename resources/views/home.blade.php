@@ -7,7 +7,7 @@
   <style>
 
     :root {
-    --primary: #2E605B;
+    --primary: #4C807F;
     --primary2: #4C807F;
     /* 4C807F */
     --primary-light: #d7e4dc;
@@ -15,6 +15,7 @@
     --card-bg: #E4EEEC;
     --text-dark: #2E3D39;
     --white: #FFFFFF;
+    --button: #00BFA6;
     }
     * {
         margin: 0;
@@ -100,20 +101,24 @@
         font-size: 20px;
         border-radius: 30px;
         display: inline-block;
-        background-color: var(--primary);
+        background-color: var(--button);
         color: var(--white);
+        background: linear-gradient(135deg, var(--primary), var(--button));
+
         text-decoration: none;
         font-size: 20px;
         font-weight: bold;
         border: 2px solid var(--primary);
         transition: background-color 0.3s ease, color 0.3s ease;
 
+
     }
 
     .booking-button:hover {
-          background-color: transparent;
-  color: var(--white);
-  border-color: var(--white);
+        background-color: transparent;
+        background: transparent;
+        color: var(--white);
+        border-color: var(--white);
 
 
     }
@@ -163,7 +168,8 @@
 
 
     .scroll-container::-webkit-scrollbar {
-    display: none;
+        display: none;
+
     }
 
     .card {
@@ -175,6 +181,10 @@
         flex-direction: column;
         box-shadow: 0 3px 10px rgba(0,0,0,0.15);
         transition: transform 0.3s ease;
+
+        border-radius: 30px;
+        overflow: hidden;
+
     }
     .card:hover {
         transform: translateY(-5px);
@@ -186,6 +196,7 @@
     }
     .card-content {
         width: 100%; padding: 1.5rem; flex: 1;
+
     }
     .card-content h3 { font-size: 1rem; color: #437462; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
     /* .card-content p { font-size: 0.9rem; line-height: 1.5; color: #2c3e50; } */
@@ -242,6 +253,7 @@
         transform: translateZ(0);
         will-change: transform;
 
+
     }
 
     .card p{
@@ -269,14 +281,16 @@
     .floating-button {
         position: fixed;
         bottom: 30px;
-        left: 30px;
-        background-color: var(--primary2);
+        right: 30px;
+        background-color: var(--button);
         color: var(--white);
         font-weight: 600;
         text-decoration: none;
         padding: 14px 36px;
         border-radius: 4px;
         font-size: 1rem;
+                background: linear-gradient(135deg, var(--primary), var(--button));
+
         letter-spacing: 0.5px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
         z-index: 1000;
