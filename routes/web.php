@@ -18,9 +18,9 @@ Route::view('/home', 'home')->name('home');
 
 // Route::get('/admin/dashboard', [AdminController::class, 'calendar'])->middleware(AdminMiddleware::class);
 
-Route::get('/login', [AdminController::class, 'showLoginPage'])->name('admin.login');
-Route::post('/login', [AdminController::class, 'login']);
-Route::get('/logout', [AdminController::class, 'logout'])->name('admin.logout');
+Route::get('/admin/login', [AdminController::class, 'showLoginPage'])->name('admin.login');
+Route::post('/admin/login', [AdminController::class, 'login']);
+Route::get('/admin/logout', [AdminController::class, 'logout'])->name('admin.logout');
 
 
 Route::middleware(AdminMiddleware::class)->prefix('admin')->group(function () {

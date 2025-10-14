@@ -91,20 +91,24 @@ class AdminController extends Controller
         return view('admin.createReservation');
     }
 
-    public function storeReservation(Request $request){
-        $validated = $request->validate(
-            [
-                'service'=> 'required|string|max:255',
-                'date'=> 'required|date',
-                'time_start'=> 'required',
-                'time_end'=> 'required',
-                'people'=> 'required|integer|min:1',
-                'name'=> 'required|string|max:255',
-                'email'=> 'required|email',
-                'comment'=> 'nullable|string|max:1000',
-            ]);
+        public function storeReservation(Request $request){
+        $validated = $request->validate([
+            'service'=> 'required|string|max:255',
+            'date'=> 'required|date',
+            'time_start'=> 'required',
+            'time_end'=> 'required',
+            'people'=> 'required|integer|min:1',
+            'name'=> 'required|string|max:255',
+            'email'=> 'required|email',
+            'comment'=> 'nullable|string|max:1000',
+            'prosecco' => 'nullable|integer|min:0',
+            'picnic' => 'nullable|integer|min:0',
+            'olala' => 'nullable|integer|min:0',
+            'bistro' => 'nullable|integer|min:0',
+            'barca' => 'nullable|integer|min:0',
+        ]);
 
-            Booking::create([
+        $booking = Booking::create([
             'service' => $validated['service'],
             'date' => $validated['date'],
             'time_start' => $validated['time_start'],
@@ -114,6 +118,17 @@ class AdminController extends Controller
             'email' => $validated['email'],
             'comment' => $validated['comment'] ?? null,
         ]);
+
+    $booking->arrangement()->create([
+        'prosecco' => $validated['prosecco'] ?? 0,
+        'picnic' => $validated['picnic'] ?? 0,
+        'olala' => $validated['olala'] ?? 0,
+        'bistro' => $validated['bistro'] ?? 0,
+        'barca' => $validated['barca'] ?? 0,
+    ]);
+
+
+
         return redirect()->route('admin.reservations')->with('success','Boeking succesvol aangemaakt');
     }
 }
