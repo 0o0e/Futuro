@@ -15,7 +15,7 @@
     --card-bg: #E4EEEC;
     --text-dark: #2E3D39;
     --white: #FFFFFF;
-    --button: #00BFA6;
+    --button: #7bc5bb;
     }
     * {
         margin: 0;
@@ -105,6 +105,8 @@
         color: var(--white);
         background: linear-gradient(135deg, var(--primary), var(--button));
 
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.30);
+
         text-decoration: none;
         font-size: 20px;
         font-weight: bold;
@@ -182,7 +184,7 @@
         box-shadow: 0 3px 10px rgba(0,0,0,0.15);
         transition: transform 0.3s ease;
 
-        border-radius: 30px;
+        border-radius: 20px;
         overflow: hidden;
 
     }
@@ -204,15 +206,17 @@
         padding: 1rem;
         background: var(--primary);
         text-align: center;
-        color: var(--white);
+        color: var(--primary-light);
         font-weight: bold;
         cursor: pointer;
         transition: background 0.3s;
+
     }
 
 
     .card-footer:hover {
         background-color: var(--primary-light);
+        color: var(--primary)
     }
 
     .intro {
@@ -272,7 +276,6 @@
         padding-left: 20px;
         margin-bottom: 20px;
         font-size: 1.2rem;
-
         color: var(--primary);
         font-weight: 500;
 
@@ -289,8 +292,7 @@
         padding: 14px 36px;
         border-radius: 4px;
         font-size: 1rem;
-                background: linear-gradient(135deg, var(--primary), var(--button));
-
+        background: linear-gradient(135deg, var(--primary), var(--button));
         letter-spacing: 0.5px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
         z-index: 1000;
@@ -303,7 +305,75 @@
     }
 
 
+    .image-section {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        margin-top: 0;
+        margin-bottom: 50px;
+    }
 
+.bottom-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  margin-top: 60px; /* closes tiny visual gap */
+}
+
+.wave-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  transform: rotate(180deg);
+  z-index: 2;
+}
+
+.wave-top svg {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 200px;
+  transform: translateY(2px); /* overlaps the image slightly */
+}
+
+.wave-top path {
+  fill: #eff3f1; /* match the background color above the image */
+}
+
+
+
+.text-box {
+    position: relative;
+    width: 100%%;
+    max-width: 1200px;
+    height: 700px;
+    margin: -130px auto 80px auto; /* moves it upward to overlap image */
+    background: var(--white);
+    border-radius: 2px;
+    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.15);
+    padding: 40px 50px;
+    text-align: center;
+    z-index: 3;
+}
+
+.text-box h2 {
+  color: var(--text-dark);
+  font-size: 3rem;
+  margin-bottom: 15px;
+  text-align: left;
+  font-weight: 500;
+  margin: 30px;
+}
+
+.text-box p {
+  color: var(--text-dark);
+  font-size: 1rem;
+  line-height: 1.6;
+}
 
   </style>
 </head>
@@ -434,6 +504,23 @@ alleen varen.
 
 <a href="{{ route('booking') }}" class="floating-button">Reserveer nu</a>
 
+<section class="image-section">
+  <div class="wave-top">
+    <svg viewBox="0 0 1440 320" preserveAspectRatio="none">
+      <path d="M0,160 C240,20 480,300 720,160 C960,20 1200,300 1440,160 L1440,320 L0,320 Z"></path>
+    </svg>
+  </div>
+
+  <img src="image1.png" alt="Decorative section image" class="bottom-image">
+</section>
+
+
+<div class="text-box">
+  <h2>FUTURO'S <br>REIS</h2>
+  <p>
+
+  </p>
+</div>
 
 @include('includes.footer')
 
