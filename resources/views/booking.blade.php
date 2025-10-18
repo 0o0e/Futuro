@@ -208,9 +208,11 @@
                 <div id="calendar"></div>
 
                 <div class="mb-3 mt-4">
-                    <label for="time" class="form-label">Tijd</label>
-                    <select id="time" name="time" class="form-control" required>
+                    <label for="time" class="form-label">Begin Tijd</label>
+
+                    <select id="time_start" name="time_start" class="form-control" required>
                         <option value="">-- Kies een tijd --</option>
+
                         @for ($hour = 10; $hour < 22; $hour++)
                             @for ($minute = 0; $minute < 60; $minute += 30)
                                 <option value="{{ sprintf('%02d:%02d', $hour, $minute) }}">
@@ -219,6 +221,25 @@
                             @endfor
                         @endfor
                     </select>
+
+
+
+                    <label for="time" class="form-label">Eind Tijd</label>
+
+                    <select id="time_end" name="time_end" class="form-control" required>
+                        <option value="">-- Kies een tijd --</option>
+
+                        @for ($hour = 10; $hour < 22; $hour++)
+                            @for ($minute = 0; $minute < 60; $minute += 30)
+                                <option value="{{ sprintf('%02d:%02d', $hour, $minute) }}">
+                                    {{ sprintf('%02d:%02d', $hour, $minute) }}
+                                </option>
+                            @endfor
+                        @endfor
+                    </select>
+
+
+
                 </div>
 
                 <button type="submit" class="booking-button">Ga verder</button>
@@ -278,14 +299,33 @@
                 @csrf
                 <input type="hidden" name="step" value="3">
 
-                <div class="mb-3">
-                    <label for="destination">Arrangement</label>
-                    <select id="arrangement" name="arrangement" class="form-select">
-                        <option value="">-- Kies een Arrangement --</option>
-                        <option value="Bonbons">Bonbons</option>
-                        <option value="Wijnisfijn">Wijnisfijn</option>
-                    </select>
+            <div class="mb-3">
+                <div>
+                    <input type="radio" id="prosecco" name="arrangement" value="prosecco" required>
+                    <label for="prosecco">Prosecco o Vino a Bordo</label>
                 </div>
+
+                <div>
+                    <input type="radio" id="picnic" name="arrangement" value="picnic">
+                    <label for="picnic">Picknick of Lunch a bordo</label>
+                </div>
+
+                <div>
+                    <input type="radio" id="olala" name="arrangement" value="olala">
+                    <label for="olala">Olala Chocola e Barca</label>
+                </div>
+
+                <div>
+                    <input type="radio" id="bistro" name="arrangement" value="bistro">
+                    <label for="bistro">Bistro twee 33 e Barca</label>
+                </div>
+
+                <div>
+                    <input type="radio" id="barca" name="arrangement" value="barca">
+                    <label for="barca">Barca e Vino</label>
+                </div>
+            </div>
+
 
                 <button type="submit" class="booking-button">Ga verder</button>
             </form>
@@ -313,8 +353,8 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="comment" class="form-label">comment</label>
-                    <textarea class="form-control" id="comment" name="comment" rows="3" placeholder="Eventuele commenten..."></textarea>
+                    <label for="opmerking" class="form-label">Opmerking</label>
+                    <textarea class="form-control" id="opmerking" name="opmerking" rows="3" placeholder="Eventuele opmerkingen..."></textarea>
                 </div>
 
                 <button type="submit" class="booking-button">Verstuur Booking</button>
@@ -335,7 +375,6 @@
             <p><strong>Bestemming:</strong> {{ $data['destination'] }}</p>
         @endif
         <p><strong>Datum:</strong> {{ $data['date'] }}</p>
-        <p><strong>Tijd:</strong> {{ $data['time'] }}</p>
         <p><strong>Arrangement:</strong> {{ $data['arrangement'] }}</p>
         <p><strong>Naam:</strong> {{ $data['name'] }}</p>
         <p><strong>Email:</strong> {{ $data['email'] }}</p>
