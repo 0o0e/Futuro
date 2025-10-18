@@ -11,6 +11,19 @@ class BookingController extends Controller
         if($request->ismethod('post')){
             if($step == 1){
                 session(['service'=>$request->service]);
+                if ($request->service == 'Watertaxi') {
+                    $request->validate([
+                        'departure' => 'required',
+                        'destination' => 'required',
+                    ]);
+                    session([
+                        'departure' => $request->departure,
+                        'destination' => $request->destination
+
+                    ]);
+                } else {
+                    session()->forget(['departure', 'destination']);
+                }
                 $step = 2;
             }
             elseif($step == 2){
@@ -19,12 +32,16 @@ class BookingController extends Controller
                 $step = 3;
             }
             elseif ($step == 3){
-                session(['name'=>$request->name, 'email'=>$request->email,'opmerking'=>$request->opmerking ]);
+                session(['arrangement'=>$request->arrangement ]);
                 $step = 4;
+            }
+            elseif ($step == 4){
+                session(['name'=>$request->name, 'email'=>$request->email,'opmerking'=>$request->opmerking ]);
+                $step = 5;
             }
         }
 
-        $data = session()->only(['service', 'date', 'name', 'email','time','opmerking']);
+        $data = session()->only(['service','departure', 'destination', 'date', 'time', 'arrangement', 'name', 'email', 'opmerking']);
 
         return view('booking', ['data' => $data,'step' => $step]);
     }
