@@ -313,8 +313,8 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="opmerking" class="form-label">Opmerking</label>
-                    <textarea class="form-control" id="opmerking" name="opmerking" rows="3" placeholder="Eventuele opmerkingen..."></textarea>
+                    <label for="comment" class="form-label">comment</label>
+                    <textarea class="form-control" id="comment" name="comment" rows="3" placeholder="Eventuele commenten..."></textarea>
                 </div>
 
                 <button type="submit" class="booking-button">Verstuur Booking</button>
