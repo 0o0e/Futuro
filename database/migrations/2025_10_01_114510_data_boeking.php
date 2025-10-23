@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('service');
             $table->date('date');
             $table->time('time_start');
-            $table->time('time_end');
+            $table->time('time_end')->nullable();
             $table->integer('people')->default(1);
             $table->string('name');
             $table->string('email');
