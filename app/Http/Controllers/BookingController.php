@@ -19,12 +19,12 @@ class BookingController extends Controller
             if ($step == 1) {
                 session(['service' => $request->service]);
 
-if ($request->service == 'Watertaxi') {
-    $request->validate([
-        'watertaxi_route_id' => 'required|exists:watertaxi_routes,id',
-    ]);
-    session(['watertaxi_route_id' => $request->watertaxi_route_id]);
-}
+                if ($request->service == 'Watertaxi') {
+                    $request->validate([
+                        'watertaxi_route_id' => 'required|exists:watertaxi_routes,id',
+                    ]);
+                    session(['watertaxi_route_id' => $request->watertaxi_route_id]);
+                }
 
 
                 $step = 2;
@@ -62,16 +62,23 @@ if ($request->service == 'Watertaxi') {
             }
 
             elseif ($step == 3) {
-                session(['arrangement' => $request->arrangement]);
+                session([
+    'has_table' => $request->arrangement === 'has_table' ? 1 : 0,
+    'arrangement' => $request->arrangement === 'has_table' ? null : $request->arrangement,
+]);
+
+
                 $step = 4;
             }
 
             elseif ($step == 4) {
-                session([
-                    'name' => $request->name,
-                    'email' => $request->email,
-                    'opmerking' => $request->opmerking,
-                ]);
+session()->put([
+    'name' => $request->name,
+    'email' => $request->email,
+    'opmerking' => $request->opmerking,
+    'people' => $request->people,
+]);
+
 
                 $data = session()->only([
                     'service',
@@ -83,7 +90,11 @@ if ($request->service == 'Watertaxi') {
                     'email',
                     'opmerking',
                     'watertaxi_route_id',
+                    'people',
+                    'has_table'
                 ]);
+
+
 
                 $booking = Booking::create([
                     'service' => $data['service'],
@@ -94,9 +105,11 @@ if ($request->service == 'Watertaxi') {
                     'email' => $data['email'],
                     'comment' => $data['opmerking'],
                     'watertaxi_route_id' => session('watertaxi_route_id') ?? null,
+                    'people' => $data['people'],
+                    'has_table' => $data['has_table'] ?? 0,
                 ]);
 
-                if ($data['service'] !== 'Watertaxi') {
+                if ($data['service'] !== 'Watertaxi' && !$data['has_table']) {
                     $arrangement = [
                         'booking_id' => $booking->id,
                         'prosecco' => 0,

@@ -272,6 +272,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     <input type="radio" id="barca" name="arrangement" value="barca">
                     <label for="barca">Barca e Vino</label>
                 </div>
+
+                <div>
+                    <input type="radio" id="has_table" name="arrangement" value="has_table">
+                    <label for="has_table">Tafel aan boord (zelf eten meenemen)</label>
+                </div>
+
+
             </div>
 
 
@@ -306,10 +313,15 @@ document.addEventListener('DOMContentLoaded', function () {
                     <textarea class="form-control" id="opmerking" name="opmerking" rows="3" placeholder="Eventuele opmerkingen..."></textarea>
                 </div>
 
+
+                <div>
+                    <label for="people">Aantal personen</label>
+                    <input type="number" class="form-control" id="people" name="people" placeholder="Aantal personen..." >
+                </div>
+
                 @if(session('service') == 'Watertaxi')
                     <input type="hidden" name="watertaxi_route_id" value="{{ session('watertaxi_route_id') }}">
                 @endif
-
 
                 <button type="submit" class="booking-button">Verstuur Booking</button>
             </form>
