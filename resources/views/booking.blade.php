@@ -53,6 +53,165 @@
         }
 
 
+
+        .service-options {
+            display: flex;
+            gap: 1px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+
+        .option-card {
+            flex: 1;
+            max-width: 400px;
+            display: block;
+            cursor: pointer;
+            border: 4px solid transparent;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+
+    .option-card:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .option-card:has(input:checked) {
+        border-color: #4C807F;
+        box-shadow: 0 0 0 0.5px #4C807F, 0 8px 16px rgba(0, 0, 0, 0.15);
+        transform: scale(1.02);
+    }
+
+    .option-card input[type="radio"] {
+        display: none;
+    }
+
+    .option-card img {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .option-card:hover img {
+        transform: scale(1.03);
+    }
+
+        .option-title {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 15px;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+        color: white;
+        font-size: 1.4rem;
+        font-weight: 300;
+        z-index: 10;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    }
+
+
+
+
+
+
+
+
+
+
+.arrangement-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* exactly 3 per row */
+    gap: 8px;
+    margin-bottom: 20px;
+    align-items: stretch;
+}
+
+/* Card (label) */
+.arrangement-options .option-card {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    cursor: pointer;
+    border: 1px solid transparent; /* keep layout stable */
+    transition: box-shadow .22s ease, border-color .22s ease;
+    display: flex;
+    align-items: stretch;
+}
+
+/* hide the native radio */
+.arrangement-options .option-card input[type="radio"] {
+    display: none;
+    pointer-events: none;
+}
+
+/* Image fills the card; only the image will scale on hover */
+.arrangement-options .option-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transform: translateZ(0);
+    transition: transform .35s cubic-bezier(.22,.9,.35,1), opacity .25s ease;
+}
+
+.arrangement-options .option-card:hover img {
+    transform: scale(1.06);
+}
+
+.arrangement-options .option-card .option-title {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 14px;
+    text-align: center;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.15rem;
+    background: linear-gradient(to top, rgba(0,0,0,.68), rgba(0,0,0,0));
+    pointer-events: none;
+}
+
+.arrangement-options .option-card:has(input:checked) {
+    border-color: transparent;
+    box-shadow: 0 6px 22px rgba(76,128,127,0.12);
+}
+
+.arrangement-options .option-card:has(input:checked) img {
+    opacity: 50%;
+}
+
+.arrangement-options .option-card:has(input:checked)::after {
+    content: "✓";
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(76,128,127,0.95);
+    color: #fff;
+    font-weight: 700;
+    font-size: 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.18);
+}
+
+.arrangement-options .option-card:focus {
+    outline: none;
+}
+
+
     </style>
 </head>
 <body class="bg-light">
@@ -64,13 +223,19 @@
             @csrf
             <input type="hidden" name="step" value="1">
 
-            <div class="mb-3">
-                <label for="service">Kies een service</label>
-                <select id="service" name="service" class="form-select" required>
-                    <option value="">-- Kies een service --</option>
-                    <option value="Rondvaart" {{ session('service') == 'Rondvaart' ? 'selected' : '' }}>Rondvaart</option>
-                    <option value="Watertaxi" {{ session('service') == 'Watertaxi' ? 'selected' : '' }}>Watertaxi</option>
-                </select>
+
+            <div class="service-options">
+                <label class="option-card">
+                    <input type="radio" name="service" value="Rondvaart" required>
+                    <img src="/rondvaart.png" alt="Rondvaart">
+                    <span class="option-title">Rondvaart</span>
+                </label>
+
+                <label class="option-card">
+                    <input type="radio" name="service" value="Watertaxi" required>
+                    <img src="/watertaxi.png" alt="Watertaxi">
+                    <span class="option-title">Watertaxi</span>
+                </label>
             </div>
 
             <div id="watertaxi-section" class="mt-4" style="display:none;">
@@ -91,7 +256,7 @@
             </select>
 
 
-                <div id="watertaxi-summary" class="mt-3" style="display:none;">
+            <div id="watertaxi-summary" class="mt-3" style="display:none;">
                     <div class="card border-0 shadow-sm bg-light p-3">
                         <h5 class="mb-3 text-center">Reisoverzicht</h5>
                         <p><strong>Vertrekpunt:</strong> Dordrecht Merwekade</p>
@@ -106,10 +271,8 @@
         </form>
     </div>
 </div>
-
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const serviceSelect = document.getElementById('service');
     const watertaxiSection = document.getElementById('watertaxi-section');
     const routeSelect = document.getElementById('watertaxi_route_id');
     const summaryDiv = document.getElementById('watertaxi-summary');
@@ -117,27 +280,41 @@ document.addEventListener('DOMContentLoaded', function () {
     const durSpan = document.getElementById('summary-duration');
     const priceSpan = document.getElementById('summary-price');
 
+    const serviceRadios = document.querySelectorAll('input[name="service"]');
+
     function toggleWatertaxi() {
-        watertaxiSection.style.display = serviceSelect.value === 'Watertaxi' ? 'block' : 'none';
+        const selected = document.querySelector('input[name="service"]:checked');
+        if (selected && selected.value === 'Watertaxi') {
+            watertaxiSection.style.display = 'block';
+            routeSelect.required = true;
+        } else {
+            watertaxiSection.style.display = 'none';
+            routeSelect.required = false;
+        }
     }
 
     function updateSummary() {
-        const selected = routeSelect.options[routeSelect.selectedIndex];
-        if (selected && selected.value) {
-            destSpan.textContent = selected.text.split('—')[0].trim();
-            durSpan.textContent = selected.dataset.duration;
-            priceSpan.textContent = selected.dataset.price;
+        const selectedOption = routeSelect.options[routeSelect.selectedIndex];
+        if (selectedOption && selectedOption.value) {
+            destSpan.textContent = selectedOption.text.split('—')[0].trim();
+            durSpan.textContent = selectedOption.dataset.duration;
+            priceSpan.textContent = selectedOption.dataset.price;
             summaryDiv.style.display = 'block';
         } else {
             summaryDiv.style.display = 'none';
         }
     }
 
-    serviceSelect.addEventListener('change', toggleWatertaxi);
+    serviceRadios.forEach(radio => {
+        radio.addEventListener('change', toggleWatertaxi);
+    });
+
     routeSelect.addEventListener('change', updateSummary);
+
     toggleWatertaxi();
 });
 </script>
+
 @endif
 
 
@@ -248,35 +425,45 @@ document.addEventListener('DOMContentLoaded', function () {
                 <input type="hidden" name="step" value="3">
 
             <div class="mb-3">
-                <div>
+
+                <div class="arrangement-options">
+                <label class="option-card">
                     <input type="radio" id="prosecco" name="arrangement" value="prosecco" required>
-                    <label for="prosecco">Prosecco o Vino a Bordo</label>
-                </div>
+                    <img src="/prosecco.png" alt="Prosecco">
+                    <span class="option-title">Prosecco o Vino a Bordo</span>
+                </label>
 
-                <div>
+                <label class="option-card">
                     <input type="radio" id="picnic" name="arrangement" value="picnic">
-                    <label for="picnic">Picknick of Lunch a bordo</label>
-                </div>
+                    <img src="/picnic.png" alt="picnic">
+                    <span class="option-title">Picknick of Lunch a bordo</span>
+                </label>
 
-                <div>
+                <label class="option-card">
                     <input type="radio" id="olala" name="arrangement" value="olala">
-                    <label for="olala">Olala Chocola e Barca</label>
-                </div>
+                    <img src="/olala.png" alt="olala">
+                    <span class="option-title">Olala Chocola e Barca</span>
+                </label>
 
-                <div>
+                <label class="option-card">
                     <input type="radio" id="bistro" name="arrangement" value="bistro">
-                    <label for="bistro">Bistro twee 33 e Barca</label>
-                </div>
+                    <img src="/bistro.png" alt="bistro">
+                    <span class="option-title">Bistro twee 33 e Barca</span>
+                </label>
 
-                <div>
+                <label class="option-card">
                     <input type="radio" id="barca" name="arrangement" value="barca">
-                    <label for="barca">Barca e Vino</label>
-                </div>
+                    <img src="/barca.png" alt="barca">
+                    <span class="option-title">Barca e Vino</span>
+                </label>
 
-                <div>
+                <label class="option-card">
                     <input type="radio" id="has_table" name="arrangement" value="has_table">
-                    <label for="has_table">Tafel aan boord (zelf eten meenemen)</label>
-                </div>
+                    <span class="option-title">Tafel aan boord (zelf eten meenemen)</span>
+                </label>
+
+
+                 </div>
 
 
             </div>
