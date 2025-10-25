@@ -458,6 +458,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 </label>
 
                 <label class="option-card">
+                    <input type="radio" id="stadswandeling" name="arrangement" value="stadswandeling">
+                    <img src="/stadswandeling.png" alt="stadswandeling">
+                    <span class="option-title">Stadswandeling</span>
+                </label>
+
+                <label class="option-card">
                     <input type="radio" id="has_table" name="arrangement" value="has_table">
                     <span class="option-title">Tafel aan boord (zelf eten meenemen)</span>
                 </label>

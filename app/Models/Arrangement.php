@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Arrangement extends Model
 {
     //
-    protected $fillable = ['booking_id', 'prosecco', 'picnic', 'olala', 'bistro', 'barca'];
+    protected $fillable = ['booking_id', 'prosecco', 'picnic', 'olala', 'bistro', 'barca','stadswandeling'];
 
     public function booking()
     {

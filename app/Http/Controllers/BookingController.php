@@ -117,6 +117,7 @@ session()->put([
                         'olala' => 0,
                         'bistro' => 0,
                         'barca' => 0,
+                        'stadswandeling' => 0,
                     ];
 
                     if (isset($data['arrangement']) && isset($arrangement[$data['arrangement']])) {
