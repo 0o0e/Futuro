@@ -15,7 +15,11 @@
 
         .card {
             text-align: center;
+            background-color: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
         }
+
 
         .card form {
             display: flex;

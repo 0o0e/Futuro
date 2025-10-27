@@ -305,6 +305,86 @@
 
 
 
+    .booking-iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+
+
+
+
+
+ .modal {
+
+display: none;
+
+ position: fixed;
+
+ z-index: 9999;
+
+left: 0;
+
+top: 0;
+
+ width: 100%;
+
+ height: 100%;
+
+background-color: rgba(0,0,0,0.6);
+justify-content: center;
+align-items: center;
+
+}
+
+
+
+.modal-content {
+
+background: white;
+width: 90%;
+
+max-width: 1200px;
+height: 90%;
+
+border-radius: 12px;
+overflow: hidden;
+
+position: relative;
+
+}
+
+
+
+.close {
+
+position: absolute;
+
+top: 15px;
+
+ right: 20px;
+
+font-size: 30px;
+
+cursor: pointer;
+
+font-weight: bold;
+
+}
+
+
+
+.booking-iframe {
+
+width: 100%;
+
+height: 100%;
+
+border: none;
+
+}
+
+
   </style>
 </head>
 <body>
@@ -323,7 +403,7 @@
     <div class="viewport-header">
       <div class="hero-text">BOEK VANDAAG NOG UW RONDVAART</div>
       <div class="hero-subtext">ONTDEK DORDRECHT, HET NATIONALE <br> PARK DE BIESBOSCH EN HET HISTORISCHE <br> STADSCENTRUM.</div>
-      <a href="{{ route('booking') }}" class="booking-button">RESERVEER NU</a>
+      <a href="#" class="booking-button" id="openBookingModal">RESERVEER NU</a>
     </div>
 
     <div class="wave">
@@ -446,5 +526,62 @@ alleen varen.
 });
 
 </script>
+
+
+
+<div id="bookingModal" class="modal">
+
+<div class="modal-content">
+<span class="close">&times;</span>
+
+
+
+<iframe src="{{ route('booking') }}" class="booking-iframe"></iframe>
+
+ </div>
+
+</div>
+
+<script>
+
+const modal = document.getElementById('bookingModal');
+const openBtn = document.getElementById('openBookingModal');
+const closeBtn = document.querySelector('.close');
+
+openBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+
+    modal.style.display = 'flex';
+
+    document.body.style.overflow = 'hidden';
+
+});
+
+
+
+closeBtn.addEventListener('click', function() {
+
+    modal.style.display = 'none';
+
+    document.body.style.overflow = 'auto';
+
+});
+
+
+
+
+window.addEventListener('click', function(e) {
+
+if (e.target === modal) {
+
+modal.style.display = 'none';
+document.body.style.overflow = 'auto';
+}
+
+});
+
+</script>
+
+
 </body>
 </html>
