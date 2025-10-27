@@ -91,7 +91,7 @@ class AdminController extends Controller
         return view('admin.createReservation');
     }
 
-        public function storeReservation(Request $request){
+    public function storeReservation(Request $request){
         $validated = $request->validate([
             'service'=> 'required|string|max:255',
             'date'=> 'required|date',
@@ -119,13 +119,13 @@ class AdminController extends Controller
             'comment' => $validated['comment'] ?? null,
         ]);
 
-    $booking->arrangement()->create([
-        'prosecco' => $validated['prosecco'] ?? 0,
-        'picnic' => $validated['picnic'] ?? 0,
-        'olala' => $validated['olala'] ?? 0,
-        'bistro' => $validated['bistro'] ?? 0,
-        'barca' => $validated['barca'] ?? 0,
-    ]);
+        $booking->arrangement()->create([
+            'prosecco' => $validated['prosecco'] ?? 0,
+            'picnic' => $validated['picnic'] ?? 0,
+            'olala' => $validated['olala'] ?? 0,
+            'bistro' => $validated['bistro'] ?? 0,
+            'barca' => $validated['barca'] ?? 0,
+        ]);
 
 
 
