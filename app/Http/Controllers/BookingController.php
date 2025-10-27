@@ -72,12 +72,12 @@ class BookingController extends Controller
             }
 
             elseif ($step == 4) {
-session()->put([
-    'name' => $request->name,
-    'email' => $request->email,
-    'opmerking' => $request->opmerking,
-    'people' => $request->people,
-]);
+                session()->put([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'opmerking' => $request->opmerking,
+                    'people' => $request->people,
+                ]);
 
 
                 $data = session()->only([
@@ -139,4 +139,5 @@ session()->put([
             'watertaxiRoutes' => $watertaxiRoutes,
         ]);
     }
+
 }

@@ -117,21 +117,14 @@
 
 
 
-
-
-
-
-
-
 .arrangement-options {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* exactly 3 per row */
+    grid-template-columns: repeat(3, 1fr);
     gap: 8px;
     margin-bottom: 20px;
     align-items: stretch;
 }
 
-/* Card (label) */
 .arrangement-options .option-card {
     position: relative;
     width: 100%;
@@ -140,19 +133,19 @@
     overflow: hidden;
     background: #fff;
     cursor: pointer;
-    border: 1px solid transparent; /* keep layout stable */
+    border: 1px solid transparent;
     transition: box-shadow .22s ease, border-color .22s ease;
     display: flex;
     align-items: stretch;
 }
 
-/* hide the native radio */
+
 .arrangement-options .option-card input[type="radio"] {
     display: none;
     pointer-events: none;
 }
 
-/* Image fills the card; only the image will scale on hover */
+
 .arrangement-options .option-card img {
     width: 100%;
     height: 100%;
@@ -211,6 +204,66 @@
     outline: none;
 }
 
+.time-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.time-btn {
+    padding: 10px 0;
+    background: #e9ecef;
+    border-radius: 6px;
+    font-weight: 600;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: .2s;
+    text-align: center;
+}
+
+.time-btn:hover {
+    background: #d4dadf;
+}
+
+.time-btn.selected {
+    border-color: #4C807F;
+    background: #cfe8e7;
+}
+
+#calendar {
+    width: 450px !important;
+    margin: 0;
+}
+
+
+
+.booking-layout {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+#time-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#calendar {
+    flex: 0 0 450px;
+}
+
+#time-section {
+    display: flex;
+    flex-direction: row;
+    gap: 80px;
+}
+
+
 
     </style>
 </head>
@@ -224,7 +277,7 @@
             <input type="hidden" name="step" value="1">
 
 
-            <div class="service-options">
+            <div class="arrangement-options">
                 <label class="option-card">
                     <input type="radio" name="service" value="Rondvaart" required>
                     <img src="/rondvaart.png" alt="Rondvaart">
@@ -236,6 +289,12 @@
                     <img src="/watertaxi.png" alt="Watertaxi">
                     <span class="option-title">Watertaxi</span>
                 </label>
+
+                <label class="option-card">
+                    <input type="radio" name="service" value="vaardebon" required>
+                    <span class="option-title">Vaardebon kopen</span>
+                </label>
+
             </div>
 
             <div id="watertaxi-section" class="mt-4" style="display:none;">
@@ -327,45 +386,29 @@ document.addEventListener('DOMContentLoaded', function () {
                 <input type="hidden" name="step" value="2">
                 <input type="hidden" id="date" name="date" required>
 
+
+                <div class="booking-layout">
+
                 <div id="calendar"></div>
 
-                <div class="mb-3 mt-4">
-                    <label for="time" class="form-label">Begin Tijd</label>
+                <div id="time-section">
 
-                    <select id="time_start" name="time_start" class="form-control" required>
-                        <option value="">-- Kies een tijd --</option>
+                    <div class="single-time">
+                    <h5 class="mb-2">Begin Tijd</h5>
+                    <div id="start-times" class="time-buttons"></div>
+                    <input type="hidden" id="time_start" name="time_start" required>
+                    </div>
 
-                        @for ($hour = 10; $hour < 22; $hour++)
-                            @for ($minute = 0; $minute < 60; $minute += 30)
-                                <option value="{{ sprintf('%02d:%02d', $hour, $minute) }}">
-                                    {{ sprintf('%02d:%02d', $hour, $minute) }}
-                                </option>
-                            @endfor
-                        @endfor
-                    </select>
-
-
-
+                    <div class="single-time">
                     @if(session('service') !== 'Watertaxi')
-
-                    <label for="time" class="form-label">Eind Tijd</label>
-
-                    <select id="time_end" name="time_end" class="form-control" required>
-                        <option value="">-- Kies een tijd --</option>
-
-                        @for ($hour = 10; $hour < 22; $hour++)
-                            @for ($minute = 0; $minute < 60; $minute += 30)
-                                <option value="{{ sprintf('%02d:%02d', $hour, $minute) }}">
-                                    {{ sprintf('%02d:%02d', $hour, $minute) }}
-                                </option>
-                            @endfor
-                        @endfor
-                    </select>
+                    <h5 class="mb-2">Eind Tijd</h5>
+                    <div id="end-times" class="time-buttons"></div>
+                    <input type="hidden" id="time_end" name="time_end" required>
                     @endif
-
-
-
+                    </div>
                 </div>
+                </div>
+
 
                 <button type="submit" class="booking-button">Ga verder</button>
             </form>
@@ -376,6 +419,8 @@ document.addEventListener('DOMContentLoaded', function () {
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
+                unselectAuto: false,
+
                 initialView: 'dayGridMonth',
                 selectable: true,
 
@@ -411,6 +456,46 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
             calendar.render();
+
+            function generateTimes(){
+                let times = [];
+                for (let hour = 10; hour < 22; hour++) {
+                    for (let min = 0; min < 60; min+=30) {
+                        times.push(`${String(hour).padStart(2,'0')}:${String(min).padStart(2,'0')}`);
+                    }
+                }
+                return times;
+            }
+
+            function makeButtons(containerId, times, hiddenFieldId){
+                const container = document.getElementById(containerId);
+                const hiddenField = document.getElementById(hiddenFieldId);
+
+                container.innerHTML = "";
+
+                times.forEach(time => {
+                    const btn = document.createElement('div');
+                    btn.classList.add('time-btn');
+                    btn.innerText = time;
+
+                    btn.addEventListener('click', () => {
+                        container.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
+                        btn.classList.add('selected');
+                        hiddenField.value = time;
+                    })
+
+                    container.appendChild(btn);
+
+                });
+            }
+
+            const times = generateTimes();
+            makeButtons('start-times', times, 'time_start');
+
+            @if (session('service') !== 'Watertaxi')
+            makeButtons('end-times', times, 'time_end');
+            @endif
+
         });
     </script>
 
