@@ -84,7 +84,6 @@
         line-height: 1.2;
         max-width: 1200px;
         margin-bottom: 20px;
-
     }
 
     .hero-subtext {
@@ -93,6 +92,38 @@
         text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
         margin-left: 870px;
         text-align: left;
+    }
+
+    /* Mobile responsive styles */
+    @media (max-width: 768px) {
+        .viewport-header {
+            top: 25%;
+            left: 5%;
+            right: 5%;
+            transform: translateY(-50%);
+        }
+        
+        .hero-text {
+            font-size: 28px;
+            line-height: 1.3;
+            margin-bottom: 15px;
+        }
+        
+        .hero-subtext {
+            margin-top: 0;
+            margin-left: 0;
+            font-size: 14px;
+            text-align: left;
+        }
+        
+        .booking-button {
+            padding: 12px 24px;
+            font-size: 16px;
+        }
+        
+        .wave svg {
+            height: 150px;
+        }
     }
 
     .booking-button {
@@ -165,13 +196,6 @@
 
     }
 
-
-
-    .scroll-container::-webkit-scrollbar {
-        display: none;
-
-    }
-
     .card {
         width: 350px;
         flex-shrink: 0;
@@ -185,6 +209,37 @@
         border-radius: 30px;
         overflow: hidden;
 
+    }
+
+    /* Mobile responsive scroll container and cards */
+    @media (max-width: 768px) {
+        .scroll-container {
+            padding: 20px 15px;
+            gap: 1rem;
+        }
+        
+        .card {
+            width: 280px;
+            height: 600px;
+        }
+        
+        .card img {
+            height: 150px;
+        }
+        
+        .card-content {
+            padding: 1rem;
+        }
+        
+        .card-content h2 {
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+        
+        .card-content p {
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
     }
     .card:hover {
         transform: translateY(-5px);
@@ -247,6 +302,34 @@
         font-size: 1rem;
     }
 
+    /* Mobile responsive intro section */
+    @media (max-width: 768px) {
+        .intro {
+            flex-direction: column;
+            gap: 2rem;
+            padding: 3rem 5vw;
+        }
+        
+        .intro-image {
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .intro-text {
+            max-width: 100%;
+        }
+        
+        .intro-text h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .intro-text p {
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+    }
+
     .hero,
     .scroll-container,
     .card {
@@ -289,8 +372,7 @@
         padding: 14px 36px;
         border-radius: 4px;
         font-size: 1rem;
-                background: linear-gradient(135deg, var(--primary), var(--button));
-
+        background: linear-gradient(135deg, var(--primary), var(--button));
         letter-spacing: 0.5px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
         z-index: 1000;
@@ -300,6 +382,16 @@
     .floating-button:hover {
         background-color: var(--primary-light);
         transform: translateY(-2px);
+    }
+
+    /* Mobile responsive floating button */
+    @media (max-width: 768px) {
+        .floating-button {
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            font-size: 0.9rem;
+        }
     }
 
 

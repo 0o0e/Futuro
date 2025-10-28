@@ -79,6 +79,43 @@
       color: #777;
       font-size: 13px;
     }
+
+    /* Mobile responsive footer */
+    @media (max-width: 768px) {
+      footer {
+        padding: 40px 20px;
+        gap: 30px;
+        flex-direction: column;
+      }
+      
+      .footer-column {
+        min-width: 100%;
+        text-align: center;
+      }
+      
+      .footer-column h3 {
+        font-size: 16px;
+        margin-bottom: 15px;
+      }
+      
+      .footer-column p {
+        font-size: 13px;
+      }
+      
+      .footer-column ul li a {
+        font-size: 13px;
+      }
+      
+      .social-icons {
+        justify-content: center;
+        gap: 20px;
+      }
+      
+      .footer-bottom {
+        margin-top: 30px;
+        font-size: 12px;
+      }
+    }
     </style>
 </head>
 <body>

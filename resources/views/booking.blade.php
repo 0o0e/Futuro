@@ -42,7 +42,6 @@
             background-color: #3a5f5e;
         }
 
-
         #calendar {
             max-width: 900px;
             margin: 20px auto;
@@ -50,6 +49,30 @@
             padding: 25px;
             border-radius: 15px;
             box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+        }
+
+        /* Mobile responsive styles */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .card {
+                margin: 10px 0;
+                padding: 15px;
+            }
+            
+            #calendar {
+                max-width: 100%;
+                margin: 10px auto;
+                padding: 15px;
+            }
+            
+            .booking-button {
+                padding: 12px 24px;
+                font-size: 16px;
+                margin-top: 20px;
+            }
         }
 
 
@@ -123,6 +146,18 @@
     gap: 8px;
     margin-bottom: 20px;
     align-items: stretch;
+}
+
+/* Mobile responsive arrangement options */
+@media (max-width: 768px) {
+    .arrangement-options {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .arrangement-options .option-card {
+        height: 250px;
+    }
 }
 
 .arrangement-options .option-card {
@@ -249,18 +284,44 @@
 
 #time-section {
     display: flex;
-    flex-direction: column;
-    gap: 20px;
+    flex-direction: row;
+    gap: 80px;
 }
 
 #calendar {
     flex: 0 0 450px;
 }
 
-#time-section {
-    display: flex;
-    flex-direction: row;
-    gap: 80px;
+/* Mobile responsive booking layout */
+@media (max-width: 768px) {
+    .booking-layout {
+        flex-direction: column;
+        gap: 20px;
+        align-items: center;
+    }
+    
+    #calendar {
+        flex: none;
+        width: 100%;
+        max-width: 400px;
+    }
+    
+    #time-section {
+        flex-direction: column;
+        gap: 20px;
+        width: 100%;
+        max-width: 400px;
+    }
+    
+    .time-buttons {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    
+    .time-btn {
+        padding: 8px 0;
+        font-size: 14px;
+    }
 }
 
 
@@ -381,10 +442,16 @@ document.addEventListener('DOMContentLoaded', function () {
     <div class="container py-5">
         <h2 class="mb-4 text-center">Kies een datum</h2>
         <div class="card shadow p-4">
-            <form method="POST" action="{{ route('booking') }}">
+            <form method="POST" action="{{ route('booking') }}" id="time-form">
                 @csrf
                 <input type="hidden" name="step" value="2">
                 <input type="hidden" id="date" name="date" required>
+
+                @if($errors->has('time_end'))
+                    <div class="alert alert-danger" role="alert">
+                        {{ $errors->first('time_end') }}
+                    </div>
+                @endif
 
 
                 <div class="booking-layout">
@@ -482,10 +549,58 @@ document.addEventListener('DOMContentLoaded', function () {
                         container.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
                         btn.classList.add('selected');
                         hiddenField.value = time;
+
+                        // Validate start vs end time
+                        if (containerId === 'end-times') {
+                            const startTime = document.getElementById('time_start').value;
+                            if (startTime && time <= startTime) {
+                                alert('De eind tijd moet later zijn dan de start tijd.');
+                                btn.classList.remove('selected');
+                                hiddenField.value = '';
+                                return;
+                            }
+                        }
+
+                        // Disable/enable end time buttons based on start time
+                        if (containerId === 'start-times') {
+                            updateEndTimeButtons();
+                            // Clear end time if it's now invalid
+                            clearInvalidEndTime();
+                        }
                     })
 
                     container.appendChild(btn);
 
+                });
+            }
+
+            function clearInvalidEndTime() {
+                const startTime = document.getElementById('time_start').value;
+                const endTime = document.getElementById('time_end').value;
+                
+                if (startTime && endTime && startTime >= endTime) {
+                    // Clear the selected end time
+                    document.getElementById('time_end').value = '';
+                    // Remove selected class from end time buttons
+                    document.querySelectorAll('#end-times .time-btn').forEach(b => b.classList.remove('selected'));
+                    alert('De eind tijd is gewist omdat deze eerder is dan de nieuwe start tijd.');
+                }
+            }
+
+            function updateEndTimeButtons() {
+                const startTime = document.getElementById('time_start').value;
+                const endTimeBtns = document.querySelectorAll('#end-times .time-btn');
+
+                endTimeBtns.forEach(btn => {
+                    if (startTime && btn.innerText <= startTime) {
+                        btn.style.opacity = '0.5';
+                        btn.style.cursor = 'not-allowed';
+                        btn.disabled = true;
+                    } else {
+                        btn.style.opacity = '1';
+                        btn.style.cursor = 'pointer';
+                        btn.disabled = false;
+                    }
                 });
             }
 
@@ -494,7 +609,41 @@ document.addEventListener('DOMContentLoaded', function () {
 
             @if (session('service') !== 'Watertaxi')
             makeButtons('end-times', times, 'time_end');
+            updateEndTimeButtons(); // Initialize end time buttons state
             @endif
+
+            // Add form submission validation
+            const form = document.getElementById('time-form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const startTime = document.getElementById('time_start').value;
+                    const endTime = document.getElementById('time_end').value;
+                    const service = '{{ session('service') }}';
+                    
+                    // Only validate if it's not a Watertaxi service
+                    if (service !== 'Watertaxi') {
+                        if (startTime && endTime && startTime >= endTime) {
+                            e.preventDefault();
+                            alert('De eind tijd moet later zijn dan de start tijd.');
+                            return false;
+                        }
+                        
+                        // Check if both times are selected
+                        if (!startTime || !endTime) {
+                            e.preventDefault();
+                            alert('Selecteer zowel een start tijd als een eind tijd.');
+                            return false;
+                        }
+                    } else {
+                        // For Watertaxi, only start time is required
+                        if (!startTime) {
+                            e.preventDefault();
+                            alert('Selecteer een start tijd.');
+                            return false;
+                        }
+                    }
+                });
+            }
 
         });
     </script>

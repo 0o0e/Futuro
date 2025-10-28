@@ -9,7 +9,6 @@
 
     nav {
         contain: paint;
-
         top: 0;
         left: 0;
         background-color: var(--primary);
@@ -19,9 +18,7 @@
         align-items: center;
         justify-content: center;
         z-index: 10;
-
     }
-
 
     nav a {
         text-decoration: none;
@@ -40,6 +37,24 @@
     .logo {
         max-width: 150px;
         margin: -15px 20px -15px 0;
+    }
+
+    /* Mobile responsive navbar */
+    @media (max-width: 768px) {
+        nav {
+            padding: 15px 0;
+            flex-wrap: wrap;
+        }
+        
+        nav a {
+            font-size: 12px;
+            margin: 0 5px;
+        }
+        
+        .logo {
+            max-width: 120px;
+            margin: -10px 15px -10px 0;
+        }
     }
     </style>
 </head>

@@ -49,8 +49,14 @@ class BookingController extends Controller
                     $request->validate([
                         'date' => 'required|date',
                         'time_start' => 'required',
-                        'time_end' => 'required|after:time_start',
+                        'time_end' => 'required',
                     ]);
+
+                    // Custom validation: check if end time is after start time
+                    if ($request->time_start >= $request->time_end) {
+                        return back()->withErrors(['time_end' => 'De eind tijd moet later zijn dan de start tijd.'])->withInput();
+                    }
+
                     session([
                         'date' => $request->date,
                         'time_start' => $request->time_start,
