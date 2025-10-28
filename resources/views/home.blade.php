@@ -15,7 +15,7 @@
     --card-bg: #E4EEEC;
     --text-dark: #2E3D39;
     --white: #FFFFFF;
-    --button: #00BFA6;
+    --button: #7bc5bb;
     }
     * {
         margin: 0;
@@ -136,6 +136,8 @@
         color: var(--white);
         background: linear-gradient(135deg, var(--primary), var(--button));
 
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.30);
+
         text-decoration: none;
         font-size: 20px;
         font-weight: bold;
@@ -206,7 +208,7 @@
         box-shadow: 0 3px 10px rgba(0,0,0,0.15);
         transition: transform 0.3s ease;
 
-        border-radius: 30px;
+        border-radius: 20px;
         overflow: hidden;
 
     }
@@ -259,15 +261,17 @@
         padding: 1rem;
         background: var(--primary);
         text-align: center;
-        color: var(--white);
+        color: var(--primary-light);
         font-weight: bold;
         cursor: pointer;
         transition: background 0.3s;
+
     }
 
 
     .card-footer:hover {
         background-color: var(--primary-light);
+        color: var(--primary)
     }
 
     .intro {
@@ -355,7 +359,6 @@
         padding-left: 20px;
         margin-bottom: 20px;
         font-size: 1.2rem;
-
         color: var(--primary);
         font-weight: 500;
 
@@ -395,6 +398,154 @@
     }
 
 
+    .image-section {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        margin-top: 0;
+        margin-bottom: 50px;
+    }
+
+.bottom-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  margin-top: 60px; /* closes tiny visual gap */
+}
+
+.wave-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  transform: rotate(180deg);
+  z-index: 2;
+}
+
+.wave-top svg {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 200px;
+  transform: translateY(2px); /* overlaps the image slightly */
+}
+
+.wave-top path {
+  fill: #eff3f1; /* match the background color above the image */
+}
+
+
+
+.text-box {
+    position: relative;
+    width: 100%%;
+    max-width: 1200px;
+    height: 700px;
+    margin: -130px auto 80px auto; /* moves it upward to overlap image */
+    background: var(--white);
+    border-radius: 2px;
+    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.15);
+    padding: 40px 50px;
+    text-align: center;
+    z-index: 3;
+}
+
+.text-box h2 {
+  color: var(--text-dark);
+  font-size: 3rem;
+  margin-bottom: 15px;
+  text-align: left;
+  font-weight: 500;
+  margin: 30px;
+}
+
+.text-box p {
+  color: var(--text-dark);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+    .booking-iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+
+
+
+
+
+ .modal {
+
+display: none;
+
+ position: fixed;
+
+ z-index: 9999;
+
+left: 0;
+
+top: 0;
+
+ width: 100%;
+
+ height: 100%;
+
+background-color: rgba(0,0,0,0.6);
+justify-content: center;
+align-items: center;
+
+}
+
+
+
+.modal-content {
+
+background: white;
+width: 90%;
+
+max-width: 1200px;
+height: 90%;
+
+border-radius: 12px;
+overflow: hidden;
+
+position: relative;
+
+}
+
+
+
+.close {
+
+position: absolute;
+
+top: 15px;
+
+ right: 20px;
+
+font-size: 30px;
+
+cursor: pointer;
+
+font-weight: bold;
+
+}
+
+
+
+.booking-iframe {
+
+width: 100%;
+
+height: 100%;
+
+border: none;
+
+}
 
 
   </style>
@@ -415,7 +566,7 @@
     <div class="viewport-header">
       <div class="hero-text">BOEK VANDAAG NOG UW RONDVAART</div>
       <div class="hero-subtext">ONTDEK DORDRECHT, HET NATIONALE <br> PARK DE BIESBOSCH EN HET HISTORISCHE <br> STADSCENTRUM.</div>
-      <a href="{{ route('booking') }}" class="booking-button">RESERVEER NU</a>
+      <a href="#" class="booking-button" id="openBookingModal">RESERVEER NU</a>
     </div>
 
     <div class="wave">
@@ -526,6 +677,23 @@ alleen varen.
 
 <a href="{{ route('booking') }}" class="floating-button">Reserveer nu</a>
 
+<section class="image-section">
+  <div class="wave-top">
+    <svg viewBox="0 0 1440 320" preserveAspectRatio="none">
+      <path d="M0,160 C240,20 480,300 720,160 C960,20 1200,300 1440,160 L1440,320 L0,320 Z"></path>
+    </svg>
+  </div>
+
+  <img src="image1.png" alt="Decorative section image" class="bottom-image">
+</section>
+
+
+<div class="text-box">
+  <h2>FUTURO'S <br>REIS</h2>
+  <p>
+
+  </p>
+</div>
 
 @include('includes.footer')
 
@@ -538,5 +706,62 @@ alleen varen.
 });
 
 </script>
+
+
+
+<div id="bookingModal" class="modal">
+
+<div class="modal-content">
+<span class="close">&times;</span>
+
+
+
+<iframe src="{{ route('booking') }}" class="booking-iframe"></iframe>
+
+ </div>
+
+</div>
+
+<script>
+
+const modal = document.getElementById('bookingModal');
+const openBtn = document.getElementById('openBookingModal');
+const closeBtn = document.querySelector('.close');
+
+openBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+
+    modal.style.display = 'flex';
+
+    document.body.style.overflow = 'hidden';
+
+});
+
+
+
+closeBtn.addEventListener('click', function() {
+
+    modal.style.display = 'none';
+
+    document.body.style.overflow = 'auto';
+
+});
+
+
+
+
+window.addEventListener('click', function(e) {
+
+if (e.target === modal) {
+
+modal.style.display = 'none';
+document.body.style.overflow = 'auto';
+}
+
+});
+
+</script>
+
+
 </body>
 </html>

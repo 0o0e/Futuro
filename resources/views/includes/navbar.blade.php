@@ -11,7 +11,7 @@
         contain: paint;
         top: 0;
         left: 0;
-        background-color: var(--primary);
+        /* background-color: var(--primary); */
         padding: 20px 0;
         text-align: center;
         display: flex;
@@ -35,7 +35,7 @@
     }
 
     .logo {
-        max-width: 150px;
+        max-width: 170px;
         margin: -15px 20px -15px 0;
     }
 
