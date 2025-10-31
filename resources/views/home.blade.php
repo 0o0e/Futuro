@@ -283,19 +283,21 @@
 
     .floating-button {
         position: fixed;
-        bottom: 30px;
+        bottom: 20px;
         right: 30px;
         background-color: var(--button);
         color: var(--white);
         font-weight: 600;
         text-decoration: none;
         padding: 14px 36px;
-        border-radius: 4px;
-        font-size: 1rem;
+
+        border-radius: 30px;
+        font-size: 15px;
         background: linear-gradient(135deg, var(--primary), var(--button));
         letter-spacing: 0.5px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
         z-index: 1000;
+        border: 2px solid var(--primary);
         transition: background-color 0.25s ease, transform 0.25s ease;
     }
 
