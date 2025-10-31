@@ -21,5 +21,9 @@ class Booking extends Model
         return $this->belongsTo(WatertaxiRoute::class);
     }
 
+    public function invoice(){
+        return $this->hasOne(Invoice::class);
+    }
+
 
 }
