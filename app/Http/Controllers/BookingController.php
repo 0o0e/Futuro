@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Booking;
 use App\Models\Arrangement;
 use App\Models\WatertaxiRoute;
+use App\Models\Invoice;
 
 class BookingController extends Controller
 {
@@ -93,8 +94,12 @@ class BookingController extends Controller
                     'watertaxi_route_id',
                     'people',
                     'has_table',
-                    'phone'
+                    'phone',
+                    'price',
                 ]);
+
+
+                $price = $this->calculatePrice($data);
 
 
 
@@ -110,6 +115,7 @@ class BookingController extends Controller
                     'watertaxi_route_id' => session('watertaxi_route_id') ?? null,
                     'people' => $data['people'],
                     'has_table' => $data['has_table'] ?? 0,
+                    'price' => $price,
                 ]);
 
                 if ($data['service'] !== 'Watertaxi' && !$data['has_table']) {
@@ -141,6 +147,53 @@ class BookingController extends Controller
             'step' => $step,
             'watertaxiRoutes' => $watertaxiRoutes,
         ]);
+    }
+
+    protected function calculatePrice($data){
+        $total = 0;
+
+        switch ($data['service']) {
+            case 'Rondvaart':
+                $start = strtotime($data['time_start']);
+                $end = strtotime($data['time_end']);
+                $minutes = ($end - $start) / 60;
+
+                if ($minutes < 60) {
+                    $minutes = 60;
+                }
+
+                $halfHours = ceil($minutes / 30);
+                $total += $halfHours * 20;
+
+
+
+                $arrangementPrices = [
+                    'prosecco' => 15,
+                    'picnic' => 20,
+                    'olala' => 18,
+                    'bistro' => 22,
+                    'barca' => 25,
+                    'stadswandeling' => 12,
+                ];
+
+                if (!empty($data['arrangement']) && isset($arrangementPrices[$data['arrangement']])) {
+                    $total += $arrangementPrices[$data['arrangement']];
+                }
+                break;
+            case 'Watertaxi':
+                if (!empty($data['watertaxi_route_id'])) {
+                    $route = WatertaxiRoute::find($data['watertaxi_route_id']);
+                    if ($route) {
+                        $total += $route->price;
+                    }
+                }
+                break;
+            default:
+                $total += 0;
+                break;
+        }
+        return $total;
+
     }
 
 }
