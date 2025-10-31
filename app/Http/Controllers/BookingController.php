@@ -63,9 +63,9 @@ class BookingController extends Controller
 
             elseif ($step == 3) {
                 session([
-    'has_table' => $request->arrangement === 'has_table' ? 1 : 0,
-    'arrangement' => $request->arrangement === 'has_table' ? null : $request->arrangement,
-]);
+                    'has_table' => $request->arrangement === 'has_table' ? 1 : 0,
+                    'arrangement' => $request->arrangement === 'has_table' ? null : $request->arrangement,
+                ]);
 
 
                 $step = 4;
@@ -77,6 +77,7 @@ class BookingController extends Controller
                     'email' => $request->email,
                     'opmerking' => $request->opmerking,
                     'people' => $request->people,
+                    'phone' => $request->phone,
                 ]);
 
 
@@ -91,7 +92,8 @@ class BookingController extends Controller
                     'opmerking',
                     'watertaxi_route_id',
                     'people',
-                    'has_table'
+                    'has_table',
+                    'phone'
                 ]);
 
 
@@ -103,6 +105,7 @@ class BookingController extends Controller
                     'time_end' => $data['time_end'],
                     'name' => $data['name'],
                     'email' => $data['email'],
+                    'phone' => $data['phone'],
                     'comment' => $data['opmerking'],
                     'watertaxi_route_id' => session('watertaxi_route_id') ?? null,
                     'people' => $data['people'],
