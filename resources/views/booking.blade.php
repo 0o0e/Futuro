@@ -591,6 +591,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
 
                 <div class="mb-3">
+                    <label for="phone" class="form-label">Telefoon nummer</label>
+                    <input type="tel" class="form-control" id="phone" name="phone" placeholder="06 12345678" required>
+                </div>
+
+                <div class="mb-3">
                     <label for="opmerking" class="form-label">Opmerking</label>
                     <textarea class="form-control" id="opmerking" name="opmerking" rows="3" placeholder="Eventuele opmerkingen..."></textarea>
                 </div>
@@ -598,7 +603,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 <div>
                     <label for="people">Aantal personen</label>
-                    <input type="number" class="form-control" id="people" name="people" placeholder="Aantal personen..." >
+                    <input type="number" class="form-control" id="people" name="people" placeholder="Aantal personen..." required>
                 </div>
 
                 @if(session('service') == 'Watertaxi')

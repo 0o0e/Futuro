@@ -8,7 +8,7 @@ use App\Http\Controllers\AdminController;
 
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('/home');
 });
 
 Route::match(['get', 'post'], '/booking', [BookingController::class, 'index'])->name('booking');
