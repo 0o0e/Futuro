@@ -210,7 +210,7 @@
 
 .time-buttons {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 6px;
     margin-bottom: 10px;
 }
@@ -252,6 +252,7 @@
 }
 
 #time-section {
+    margin-left: 60px;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -303,7 +304,7 @@
 
             <div id="people-section" class="mt-3" style="display:none;">
                 <label for="people" class="form-label">Aantal personen</label>
-                <input type="number" id="people" name="people" class="form-control" placeholder="Aantal personen" min="1">
+                <input type="number" id="people" name="people" class="form-control" placeholder="Aantal personen" min="1" max="12">
             </div>
 
 
@@ -486,8 +487,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             function generateTimes(){
                 let times = [];
-                for (let hour = 10; hour < 22; hour++) {
-                    for (let min = 0; min < 60; min+=30) {
+                for (let hour = 8; hour < 23; hour++) {
+                    for (let min = 0; min < 60; min+=60) {
                         times.push(`${String(hour).padStart(2,'0')}:${String(min).padStart(2,'0')}`);
                     }
                 }

@@ -162,8 +162,8 @@ class BookingController extends Controller
                     $minutes = 60;
                 }
 
-                $halfHours = ceil($minutes / 30);
-                $total += $halfHours * 20;
+                $hours = floor($minutes / 60);
+                $total = ($hours * 150) - (max(0, $hours - 1) * 10);
 
 
 
