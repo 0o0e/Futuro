@@ -18,7 +18,7 @@ class BookingController extends Controller
         if ($request->isMethod('post')) {
 
             if ($step == 1) {
-                session(['service' => $request->service]);
+                session(['service' => $request->service , 'people' => $request->people]);
 
                 if ($request->service == 'Watertaxi') {
                     $request->validate([
@@ -77,7 +77,7 @@ class BookingController extends Controller
                     'name' => $request->name,
                     'email' => $request->email,
                     'opmerking' => $request->opmerking,
-                    'people' => $request->people,
+                    // 'people' => $request->people,
                     'phone' => $request->phone,
                 ]);
 

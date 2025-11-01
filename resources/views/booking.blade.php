@@ -301,6 +301,12 @@
 
             </div>
 
+            <div id="people-section" class="mt-3" style="display:none;">
+                <label for="people" class="form-label">Aantal personen</label>
+                <input type="number" id="people" name="people" class="form-control" placeholder="Aantal personen" min="1">
+            </div>
+
+
             <div id="watertaxi-section" class="mt-4" style="display:none;">
                 <h4 class="mb-3">Kies je bestemming (vertrek: Dordrecht)</h4>
             <select name="watertaxi_route_id" id="watertaxi_route_id" class="form-select"
@@ -343,6 +349,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const durSpan = document.getElementById('summary-duration');
     const priceSpan = document.getElementById('summary-price');
 
+    const peopleSection = document.getElementById('people-section');
+    const peopleInput = document.getElementById('people');
+
+
     const serviceRadios = document.querySelectorAll('input[name="service"]');
 
     function toggleWatertaxi() {
@@ -354,7 +364,20 @@ document.addEventListener('DOMContentLoaded', function () {
             watertaxiSection.style.display = 'none';
             routeSelect.required = false;
         }
+        togglePeopleInput();
     }
+
+    function togglePeopleInput() {
+        const selected = document.querySelector('input[name="service"]:checked');
+        if (selected && (selected.value === 'Watertaxi' || selected.value === 'Rondvaart')) {
+            peopleSection.style.display = 'block';
+            peopleInput.required = true;
+        } else {
+            peopleSection.style.display = 'none';
+            peopleInput.required = false;
+        }
+    }
+
 
     function updateSummary() {
         const selectedOption = routeSelect.options[routeSelect.selectedIndex];
@@ -598,12 +621,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div class="mb-3">
                     <label for="opmerking" class="form-label">Opmerking</label>
                     <textarea class="form-control" id="opmerking" name="opmerking" rows="3" placeholder="Eventuele opmerkingen..."></textarea>
-                </div>
-
-
-                <div>
-                    <label for="people">Aantal personen</label>
-                    <input type="number" class="form-control" id="people" name="people" placeholder="Aantal personen..." required>
                 </div>
 
                 @if(session('service') == 'Watertaxi')
