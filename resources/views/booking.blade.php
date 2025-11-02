@@ -593,46 +593,120 @@ document.addEventListener('DOMContentLoaded', function () {
         </div>
     </div>
     @endif
+@if($step==4)
+<div class="container py-5">
+    <h1 class="mb-4 text-center">Maak een Reservering</h1>
 
+    <div class="card shadow p-4 mb-4">
+        <h4 class="mb-3">Reserveringsoverzicht</h4>
 
-    @if($step==4)
-    <div class="container py-5">
-        <h1 class="mb-4 text-center">Maak een Reservering</h1>
-        <div class="card shadow p-4">
-            <form action="{{ route('booking') }}" method="POST">
-                @csrf
-                <input type="hidden" name="step" value="4">
+        <table class="table table-borderless">
+            <tbody>
+                <tr>
+                    <td><strong>Service</strong></td>
+                    <td>{{ $data['service'] ?? '' }}</td>
+                    <td></td>
+                </tr>
 
+                @if($data['service'] == 'Rondvaart')
+                <tr>
+                    <td><strong>Datum</strong></td>
+                    <td>{{ \Carbon\Carbon::parse($data['date'])->format('D d/m/Y') }}</td>
+                    <td>{{ $data['people'] ?? '' }}p</td>
+                </tr>
 
-                <div class="mb-3">
-                    <label for="name" class="form-label">Naam</label>
-                    <input type="text" class="form-control" id="name" name="name" placeholder="Jouw naam" required>
-                </div>
+                <tr>
+                    <td>Begin Tijd</td>
+                    <td>{{ $data['time_start'] ?? '' }}</td>
+                    <td>{{ $data['service_price'] ?? 0 }}€</td>
+                </tr>
 
-                <div class="mb-3">
-                    <label for="email" class="form-label">E-mailadres</label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="jij@example.com" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="phone" class="form-label">Telefoon nummer</label>
-                    <input type="tel" class="form-control" id="phone" name="phone" placeholder="06 12345678" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="opmerking" class="form-label">Opmerking</label>
-                    <textarea class="form-control" id="opmerking" name="opmerking" rows="3" placeholder="Eventuele opmerkingen..."></textarea>
-                </div>
-
-                @if(session('service') == 'Watertaxi')
-                    <input type="hidden" name="watertaxi_route_id" value="{{ session('watertaxi_route_id') }}">
+                @if(!empty($data['time_end']))
+                <tr>
+                    <td>Eind Tijd</td>
+                    <td>{{ $data['time_end'] }}</td>
+                    <td></td>
+                </tr>
                 @endif
 
-                <button type="submit" class="booking-button">Verstuur Booking</button>
-            </form>
-        </div>
+                @if(!empty($data['arrangement']))
+                <tr>
+                    <td>Arrangement</td>
+                    <td>{{ $data['arrangement'] }}</td>
+                    <td>{{ $data['arrangement_price'] ?? 0 }}€</td>
+                </tr>
+                @endif
+
+                @elseif($data['service'] == 'Watertaxi')
+                <tr>
+                    <td>Datum</td>
+                    <td>{{ \Carbon\Carbon::parse($data['date'])->format('D d/m/Y') }}</td>
+                    <td>{{ $data['people'] ?? '' }}p</td>
+                </tr>
+                <tr>
+                    <td>Vertrekpunt</td>
+                    <td>{{ $data['departure'] ?? '' }}</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Bestemming</td>
+                    <td>{{ $data['destination'] ?? '' }}</td>
+                    <td>{{ $data['price'] ?? 0 }}€</td>
+                </tr>
+                <tr>
+                    <td>Begin Tijd</td>
+                    <td>{{ $data['time_start'] ?? '' }}</td>
+                    <td></td>
+                </tr>
+                @endif
+
+                <tr>
+                    <td colspan="2"><hr></td>
+                    <td><hr></td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="text-end"><strong>Totaal</strong></td>
+                    <td><strong>{{ $data['price'] ?? 0 }}€</strong></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
-    @endif
+
+    <div class="card shadow p-4">
+        <form action="{{ route('booking') }}" method="POST">
+            @csrf
+            <input type="hidden" name="step" value="4">
+
+            <div class="mb-3">
+                <label for="name" class="form-label">Naam</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Jouw naam" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">E-mailadres</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="jij@example.com" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="phone" class="form-label">Telefoon nummer</label>
+                <input type="tel" class="form-control" id="phone" name="phone" placeholder="06 12345678" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="opmerking" class="form-label">Opmerking</label>
+                <textarea class="form-control" id="opmerking" name="opmerking" rows="3" placeholder="Eventuele opmerkingen..."></textarea>
+            </div>
+
+            @if(session('service') == 'Watertaxi')
+                <input type="hidden" name="watertaxi_route_id" value="{{ session('watertaxi_route_id') }}">
+            @endif
+
+            <button type="submit" class="booking-button">Verstuur Booking</button>
+        </form>
+    </div>
+</div>
+@endif
+
 
 
     @if($step == 5)

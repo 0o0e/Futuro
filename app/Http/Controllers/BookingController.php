@@ -45,6 +45,14 @@ class BookingController extends Controller
                         'time_start' => $request->time_start,
                         'time_end' => null
                     ]);
+
+
+                    $route = WatertaxiRoute::find(session('watertaxi_route_id'));
+                    if ($route) {
+                        session(['price' => $route->price]);
+                    }
+
+
                     $step = 4;
                 } else {
                     $request->validate([
@@ -66,6 +74,13 @@ class BookingController extends Controller
                 session([
                     'has_table' => $request->arrangement === 'has_table' ? 1 : 0,
                     'arrangement' => $request->arrangement === 'has_table' ? null : $request->arrangement,
+                ]);
+
+                $prices = $this->calculatePrice(session()->all());
+                session([
+                    'service_price' => $prices['service'],
+                    'arrangement_price' => $prices['arrangement'],
+                    'price' => $prices['total']
                 ]);
 
 
@@ -99,7 +114,7 @@ class BookingController extends Controller
                 ]);
 
 
-                $price = $this->calculatePrice($data);
+                // $price = $this->calculatePrice($data);
 
 
 
@@ -115,7 +130,7 @@ class BookingController extends Controller
                     'watertaxi_route_id' => session('watertaxi_route_id') ?? null,
                     'people' => $data['people'],
                     'has_table' => $data['has_table'] ?? 0,
-                    'price' => $price,
+                    'price' => $data['price'],
                 ]);
 
                 if ($data['service'] !== 'Watertaxi' && !$data['has_table']) {
@@ -150,22 +165,17 @@ class BookingController extends Controller
     }
 
     protected function calculatePrice($data){
-        $total = 0;
+        $serviceTotal = 0;
+        $arrangementTotal = 0;
 
         switch ($data['service']) {
             case 'Rondvaart':
                 $start = strtotime($data['time_start']);
                 $end = strtotime($data['time_end']);
                 $minutes = ($end - $start) / 60;
-
-                if ($minutes < 60) {
-                    $minutes = 60;
-                }
-
+                if ($minutes < 60) $minutes = 60;
                 $hours = floor($minutes / 60);
-                $total = ($hours * 150) - (max(0, $hours - 1) * 10);
-
-
+                $serviceTotal = ($hours * 150) - (max(0, $hours - 1) * 10);
 
                 $arrangementPrices = [
                     'prosecco' => 15,
@@ -177,23 +187,24 @@ class BookingController extends Controller
                 ];
 
                 if (!empty($data['arrangement']) && isset($arrangementPrices[$data['arrangement']])) {
-                    $total += $arrangementPrices[$data['arrangement']];
+                    $arrangementTotal = $arrangementPrices[$data['arrangement']];
                 }
                 break;
+
             case 'Watertaxi':
                 if (!empty($data['watertaxi_route_id'])) {
                     $route = WatertaxiRoute::find($data['watertaxi_route_id']);
-                    if ($route) {
-                        $total += $route->price;
-                    }
+                    if ($route) $serviceTotal = $route->price;
                 }
                 break;
-            default:
-                $total += 0;
-                break;
         }
-        return $total;
 
+        return [
+            'service' => $serviceTotal,
+            'arrangement' => $arrangementTotal,
+            'total' => $serviceTotal + $arrangementTotal
+        ];
     }
+
 
 }
