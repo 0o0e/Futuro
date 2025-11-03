@@ -13,6 +13,7 @@
                 <th>Email</th>
                 <th>Datum & Tijd</th>
                 <th>Status</th>
+                <th>Betaling</th>
             </tr>
         </thead>
         <tbody>
@@ -26,6 +27,7 @@
                 <td>{{ $booking->email }}</td>
                 <td>{{ \Carbon\Carbon::parse($booking->date)->format('d-m-Y H:i') }}</td>
                 <td>{{ $status }}</td>
+                <td>{{ $booking->invoice ? $booking->invoice->status : 'Geen factuur' }}</td>
             </tr>
             @endforeach
         </tbody>

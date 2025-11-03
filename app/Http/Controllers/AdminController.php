@@ -7,6 +7,8 @@ use App\Models\Booking;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Carbon\Carbon;
+use App\Models\Arrangement;
+use App\Models\Invoice;
 class AdminController extends Controller
 {
     public function showLoginPage(){
@@ -83,8 +85,9 @@ class AdminController extends Controller
     public function reservations(){
         $bookings = Booking::orderBy('date','asc')->get();
         $today = Carbon::today();
+        $payment_status = Invoice::where('status')->get();
 
-        return view('admin.reservations', compact('bookings', 'today'));
+        return view('admin.reservations', compact('bookings', 'today', 'payment_status'));
     }
 
     public function createReservation(){

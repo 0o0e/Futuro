@@ -137,7 +137,7 @@ class BookingController extends Controller
                     'booking_id' => $booking->id,
                     'invoice_number' => 'INV-' . strtoupper(uniqid()),
                     'amount' => $data['price'],
-                    'status' => 'pending',
+                    'status' => 'onbetaald',
                     'due_date' => date('Y-m-d', strtotime($booking->date . ' +14 days')),
                 ]);
 
