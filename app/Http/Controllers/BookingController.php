@@ -135,7 +135,7 @@ class BookingController extends Controller
 
                 Invoice::create([
                     'booking_id' => $booking->id,
-                    'invoice_number' => 'INV-' . strtoupper(uniqid()),
+                    'invoice_number' => strtoupper(uniqid()),
                     'amount' => $data['price'],
                     'status' => 'onbetaald',
                     'due_date' => date('Y-m-d', strtotime($booking->date . ' +14 days')),
@@ -165,10 +165,25 @@ class BookingController extends Controller
 
         $data = session()->all();
 
+
+        $allBookings = Booking::select('date','time_start','time_end')->get();
+
+        // build associative array: 'YYYY-MM-DD' => [ {start:'HH:MM', end:'HH:MM'}, ... ]
+        $bookingsByDate = [];
+        foreach ($allBookings as $b) {
+            $d = $b->date; // make sure stored as 'YYYY-MM-DD'
+            if (!isset($bookingsByDate[$d])) $bookingsByDate[$d] = [];
+            $bookingsByDate[$d][] = [
+                'start' => $b->time_start,
+                'end'   => $b->time_end,
+            ];
+        }
+
         return view('booking', [
             'data' => $data,
             'step' => $step,
             'watertaxiRoutes' => $watertaxiRoutes,
+            'bookingsByDate' => $bookingsByDate,
         ]);
     }
 

@@ -268,6 +268,20 @@
     gap: 80px;
 }
 
+/* unavailable state */
+.time-btn.unavailable {
+    background: #f8d7da;
+    border-color: #f5c2c7;
+    color: #842029;
+    cursor: not-allowed;
+    opacity: 0.95;
+}
+
+/* visually stronger selected state if button is also selected (shouldn't happen) */
+.time-btn.unavailable.selected {
+    box-shadow: none;
+    border-color: #842029;
+}
 
 
     </style>
@@ -445,6 +459,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+
+            const bookingsByDate = @json($bookingsByDate);
+
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 unselectAuto: false,
@@ -480,7 +497,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
 
                 select: function(info) {
+                    const selectedDate = info.startStr;
                     document.getElementById('date').value = info.startStr;
+                    markUnavailable(selectedDate);
+
                 }
             });
             calendar.render();
@@ -495,6 +515,63 @@ document.addEventListener('DOMContentLoaded', function () {
                 return times;
             }
 
+            function toMinutes(t){
+                const [hours, minutes] = t.split(':').map(Number)
+                return hours * 60 + minutes;
+            }
+
+            function markUnavailable(dateStr){
+                const bookings = bookingsByDate[dateStr] || [];
+                const startBtns = document.querySelectorAll('#start-times .time-btn');
+                const endBtns = document.querySelectorAll('#end-times .time-btn');
+
+
+                function clearButtons(btns) {
+                    btns.forEach(btn => {
+                        btn.classList.remove('unavailable');
+                        btn.disabled = false;
+
+                        btn.removeAttribute('aria-disabled');
+                    });
+
+                }
+
+                clearButtons(startBtns);
+                clearButtons(endBtns);
+
+                bookings.forEach(booking => {
+                    if (!booking.start) return;
+
+                    const bookingStart = toMinutes(booking.start)
+
+                    //voor watertaxi, verander later
+                    const bookingEnd = booking.end ? toMinutes(booking.end) : (bookingStart + 120);
+
+                    startBtns.forEach(btn => {
+                        const t = btn.dataset.time;
+                        const tMin = toMinutes(t);
+
+                        if (tMin >= bookingStart && tMin < bookingEnd) {
+                            btn.classList.add('unavailable');
+                            btn.setAttribute('aria-disabled','true');
+                        }
+                    });
+
+
+                    endBtns.forEach(btn => {
+                        const t = btn.dataset.time;
+                        const tMin = toMinutes(t);
+
+                        if (tMin > bookingStart && tMin <= bookingEnd) {
+                            btn.classList.add('unavailable');
+                            btn.setAttribute('aria-disabled','true');
+                        }
+                    });
+
+
+                });
+            }
+
             function makeButtons(containerId, times, hiddenFieldId){
                 const container = document.getElementById(containerId);
                 const hiddenField = document.getElementById(hiddenFieldId);
@@ -506,7 +583,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     btn.classList.add('time-btn');
                     btn.innerText = time;
 
+                    btn.dataset.time = time;
+
                     btn.addEventListener('click', () => {
+
+                        if (btn.classList.contains('unavailable')) return;
+
                         container.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
                         btn.classList.add('selected');
                         hiddenField.value = time;
@@ -524,7 +606,12 @@ document.addEventListener('DOMContentLoaded', function () {
             makeButtons('end-times', times, 'time_end');
             @endif
 
+
+
+
         });
+
+
     </script>
 
     @endif
@@ -611,7 +698,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 @if($data['service'] == 'Rondvaart')
                 <tr>
                     <td><strong>Datum</strong></td>
-                    <td>{{ \Carbon\Carbon::parse($data['date'])->format('D d/m/Y') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($data['date'])->format('d/m/Y') }}</td>
                     <td>{{ $data['people'] ?? '' }}p</td>
                 </tr>
 
@@ -640,7 +727,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 @elseif($data['service'] == 'Watertaxi')
                 <tr>
                     <td>Datum</td>
-                    <td>{{ \Carbon\Carbon::parse($data['date'])->format('D d/m/Y') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($data['date'])->format('d/m/Y') }}</td>
                     <td>{{ $data['people'] ?? '' }}p</td>
                 </tr>
                 <tr>
