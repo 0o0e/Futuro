@@ -133,6 +133,14 @@ class BookingController extends Controller
                     'price' => $data['price'],
                 ]);
 
+                Invoice::create([
+                    'booking_id' => $booking->id,
+                    'invoice_number' => 'INV-' . strtoupper(uniqid()),
+                    'amount' => $data['price'],
+                    'status' => 'pending',
+                    'due_date' => date('Y-m-d', strtotime($booking->date . ' +14 days')),
+                ]);
+
                 if ($data['service'] !== 'Watertaxi' && !$data['has_table']) {
                     $arrangement = [
                         'booking_id' => $booking->id,
