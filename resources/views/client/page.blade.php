@@ -7,6 +7,21 @@
         color: #333;
     }
 
+        * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Verdana', sans-serif;
+    }
+
+    body, html {
+        height: 100%;
+        overflow-x: hidden;
+        background-color: var(--white);
+        color: var(--text-dark);
+    }
+
+
     nav {
         background-color: #4C807F;
         margin: -10px;

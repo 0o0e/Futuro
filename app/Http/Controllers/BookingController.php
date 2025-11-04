@@ -7,6 +7,8 @@ use App\Models\Booking;
 use App\Models\Arrangement;
 use App\Models\WatertaxiRoute;
 use App\Models\Invoice;
+use App\Mail\BookingConfirmationMail;
+use Illuminate\Support\Facades\Mail;
 
 class BookingController extends Controller
 {
@@ -158,6 +160,8 @@ class BookingController extends Controller
 
                     Arrangement::create($arrangement);
                 }
+
+                Mail::to($booking->email)->send(new BookingConfirmationMail($booking));
 
                 $step = 5;
             }
