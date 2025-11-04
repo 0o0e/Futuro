@@ -25,7 +25,7 @@
 
     nav a {
         text-decoration: none;
-        color: var(--white);
+        color: white;
         font-size: 15px;
         margin: 0 10px;
         transition: all 0.3s ease;
@@ -39,6 +39,7 @@
 
     .logo {
         max-width: 170px;
+        margin
         margin: -15px 20px -15px 0;
     }
     </style>

@@ -493,7 +493,10 @@ document.addEventListener('DOMContentLoaded', function () {
                         info.el.style.backgroundColor = '#ffcccc';
                         info.el.style.opacity = '0.7';
                         info.el.style.cursor = 'not-allowed';
+
                     }
+
+
                 },
 
                 select: function(info) {
@@ -605,9 +608,6 @@ document.addEventListener('DOMContentLoaded', function () {
             @if (session('service') !== 'Watertaxi')
             makeButtons('end-times', times, 'time_end');
             @endif
-
-
-
 
         });
 

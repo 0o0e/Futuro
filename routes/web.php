@@ -6,6 +6,11 @@ use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\OwnerMiddleware;
 use App\Http\Controllers\AdminController;
 
+use App\Http\Controllers\ClientController;
+
+Route::get('/client', [ClientController::class, 'index'])->name('client.page');
+Route::post('/client', [ClientController::class, 'showBooking'])->name('client.show');
+Route::post('/client/update/{id}', [ClientController::class, 'updateBooking'])->name('client.update');
 
 Route::get('/', function () {
     return view('/home');
