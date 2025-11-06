@@ -85,9 +85,8 @@ class AdminController extends Controller
     public function reservations(){
         $bookings = Booking::orderBy('date','asc')->get();
         $today = Carbon::today();
-        $payment_status = Invoice::where('status')->get();
 
-        return view('admin.reservations', compact('bookings', 'today', 'payment_status'));
+        return view('admin.reservations', compact('bookings', 'today'));
     }
 
     public function createReservation(){
@@ -134,4 +133,61 @@ class AdminController extends Controller
 
         return redirect()->route('admin.reservations')->with('success','Boeking succesvol aangemaakt');
     }
+public function editReservation($id)
+{
+    $booking = Booking::with(['arrangement', 'invoice'])->findOrFail($id);
+    return view('admin.editReservation', compact('booking'));
+}
+
+public function updateReservation(Request $request, $id)
+{
+    $validated = $request->validate([
+        'service'=> 'required|string|max:255',
+        'date'=> 'required|date',
+        'time_start'=> 'required',
+        'time_end'=> 'required',
+        'people'=> 'required|integer|min:1',
+        'name'=> 'required|string|max:255',
+        'email'=> 'required|email',
+        'comment'=> 'nullable|string|max:1000',
+        'invoice_status' => 'nullable|string|max:255',
+        'prosecco' => 'nullable|integer|min:0',
+        'picnic' => 'nullable|integer|min:0',
+        'olala' => 'nullable|integer|min:0',
+        'bistro' => 'nullable|integer|min:0',
+        'barca' => 'nullable|integer|min:0',
+    ]);
+
+    $booking = Booking::findOrFail($id);
+
+    $booking->update([
+        'service' => $validated['service'],
+        'date' => $validated['date'],
+        'time_start' => $validated['time_start'],
+        'time_end' => $validated['time_end'],
+        'people' => $validated['people'],
+        'name' => $validated['name'],
+        'email' => $validated['email'],
+        'comment' => $validated['comment'] ?? null,
+    ]);
+
+    if ($booking->arrangement) {
+        $booking->arrangement->update([
+            'prosecco' => $validated['prosecco'] ?? 0,
+            'picnic' => $validated['picnic'] ?? 0,
+            'olala' => $validated['olala'] ?? 0,
+            'bistro' => $validated['bistro'] ?? 0,
+            'barca' => $validated['barca'] ?? 0,
+        ]);
+    }
+
+    if ($booking->invoice) {
+        $booking->invoice->update([
+            'status' => $validated['invoice_status'] ?? $booking->invoice->status,
+        ]);
+    }
+
+    return redirect()->route('admin.reservations')->with('success', 'Boeking succesvol bijgewerkt.');
+}
+
 }

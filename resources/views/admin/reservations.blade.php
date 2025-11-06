@@ -1,4 +1,4 @@
-@extends('layouts.admin') {{-- your admin layout --}}
+@extends('layouts.admin')
 
 @section('title', 'Alle Boekingen')
 
@@ -17,11 +17,13 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($bookings as $booking)
+        @foreach($bookings as $booking)
             @php
                 $status = $booking->date < $today ? 'Verleden' : ($booking->date == $today ? 'Vandaag' : 'Komend');
             @endphp
-            <tr class="{{ $booking->date < $today ? 'table-secondary' : ($booking->date == $today ? 'table-warning' : 'table-success') }}">
+            <tr onclick="window.location='{{ route('admin.reservations.edit', $booking->id) }}'"
+                style="cursor:pointer;"
+                class="{{ $booking->date < $today ? 'table-secondary' : ($booking->date == $today ? 'table-warning' : 'table-success') }}">
                 <td>{{ $booking->id }}</td>
                 <td>{{ $booking->name }}</td>
                 <td>{{ $booking->email }}</td>
@@ -29,8 +31,9 @@
                 <td>{{ $status }}</td>
                 <td>{{ $booking->invoice ? $booking->invoice->status : 'Geen factuur' }}</td>
             </tr>
-            @endforeach
+        @endforeach
         </tbody>
+
     </table>
 </div>
 @endsection

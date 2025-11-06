@@ -456,163 +456,167 @@ document.addEventListener('DOMContentLoaded', function () {
             </form>
         </div>
     </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
+    const bookingsByDate = @json($bookingsByDate);
 
-            const bookingsByDate = @json($bookingsByDate);
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        unselectAuto: false,
+        initialView: 'dayGridMonth',
+        selectable: true,
 
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                unselectAuto: false,
+        selectAllow: function(selectInfo) {
+            let today = new Date();
+            today.setHours(0,0,0,0);
+            let minDate = new Date(today);
+            minDate.setDate(minDate.getDate() + 7);
+            return selectInfo.start >= minDate;
+        },
 
-                initialView: 'dayGridMonth',
-                selectable: true,
+        dayCellDidMount: function(info) {
+            let today = new Date();
+            today.setHours(0,0,0,0);
+            let blockDate = new Date(today);
+            blockDate.setDate(blockDate.getDate() + 7);
 
-                selectAllow: function(selectInfo) {
-                    let today = new Date();
-                    today.setHours(0,0,0,0);
+            let cellDate = info.date;
+            cellDate.setHours(0,0,0,0);
 
-                    let minDate = new Date(today);
-                    minDate.setDate(minDate.getDate() + 7);
+            if (cellDate >= today && cellDate <= blockDate) {
+                info.el.style.backgroundColor = '#ffcccc';
+                info.el.style.opacity = '0.7';
+                info.el.style.cursor = 'not-allowed';
+            }
+        },
 
-                    return selectInfo.start >= minDate;
-                },
+        select: function(info) {
+            const selectedDate = info.startStr;
+            document.getElementById('date').value = info.startStr;
+            markUnavailable(selectedDate);
+        }
+    });
+    calendar.render();
 
-                dayCellDidMount: function(info) {
-                    let today = new Date();
-                    today.setHours(0,0,0,0);
+    function generateTimes() {
+        let times = [];
+        for (let hour = 8; hour < 23; hour++) {
+            times.push(`${String(hour).padStart(2,'0')}:00`);
+        }
+        return times;
+    }
 
-                    let blockDate = new Date(today);
-                    blockDate.setDate(blockDate.getDate() + 7);
+    function toMinutes(t) {
+        const [h, m] = t.split(':').map(Number);
+        return h * 60 + m;
+    }
 
-                    let cellDate = info.date;
-                    cellDate.setHours(0,0,0,0);
+    function markUnavailable(dateStr) {
+        const bookings = bookingsByDate[dateStr] || [];
+        const startBtns = document.querySelectorAll('#start-times .time-btn');
+        const endBtns = document.querySelectorAll('#end-times .time-btn');
 
-                    if (cellDate >= today && cellDate <= blockDate) {
-                        info.el.style.backgroundColor = '#ffcccc';
-                        info.el.style.opacity = '0.7';
-                        info.el.style.cursor = 'not-allowed';
+        clearButtons(startBtns);
+        clearButtons(endBtns);
 
-                    }
+        bookings.forEach(booking => {
+            const start = toMinutes(booking.start);
+            const end = toMinutes(booking.end || '23:00');
 
-
-                },
-
-                select: function(info) {
-                    const selectedDate = info.startStr;
-                    document.getElementById('date').value = info.startStr;
-                    markUnavailable(selectedDate);
-
+            startBtns.forEach(btn => {
+                const t = toMinutes(btn.dataset.time);
+                if (t >= start && t < end) {
+                    makeUnavailable(btn);
                 }
             });
-            calendar.render();
-
-            function generateTimes(){
-                let times = [];
-                for (let hour = 8; hour < 23; hour++) {
-                    for (let min = 0; min < 60; min+=60) {
-                        times.push(`${String(hour).padStart(2,'0')}:${String(min).padStart(2,'0')}`);
-                    }
+            endBtns.forEach(btn => {
+                const t = toMinutes(btn.dataset.time);
+                if (t > start && t <= end) {
+                    makeUnavailable(btn);
                 }
-                return times;
-            }
-
-            function toMinutes(t){
-                const [hours, minutes] = t.split(':').map(Number)
-                return hours * 60 + minutes;
-            }
-
-            function markUnavailable(dateStr){
-                const bookings = bookingsByDate[dateStr] || [];
-                const startBtns = document.querySelectorAll('#start-times .time-btn');
-                const endBtns = document.querySelectorAll('#end-times .time-btn');
-
-
-                function clearButtons(btns) {
-                    btns.forEach(btn => {
-                        btn.classList.remove('unavailable');
-                        btn.disabled = false;
-
-                        btn.removeAttribute('aria-disabled');
-                    });
-
-                }
-
-                clearButtons(startBtns);
-                clearButtons(endBtns);
-
-                bookings.forEach(booking => {
-                    if (!booking.start) return;
-
-                    const bookingStart = toMinutes(booking.start)
-
-                    //voor watertaxi, verander later
-                    const bookingEnd = booking.end ? toMinutes(booking.end) : (bookingStart + 120);
-
-                    startBtns.forEach(btn => {
-                        const t = btn.dataset.time;
-                        const tMin = toMinutes(t);
-
-                        if (tMin >= bookingStart && tMin < bookingEnd) {
-                            btn.classList.add('unavailable');
-                            btn.setAttribute('aria-disabled','true');
-                        }
-                    });
-
-
-                    endBtns.forEach(btn => {
-                        const t = btn.dataset.time;
-                        const tMin = toMinutes(t);
-
-                        if (tMin > bookingStart && tMin <= bookingEnd) {
-                            btn.classList.add('unavailable');
-                            btn.setAttribute('aria-disabled','true');
-                        }
-                    });
-
-
-                });
-            }
-
-            function makeButtons(containerId, times, hiddenFieldId){
-                const container = document.getElementById(containerId);
-                const hiddenField = document.getElementById(hiddenFieldId);
-
-                container.innerHTML = "";
-
-                times.forEach(time => {
-                    const btn = document.createElement('div');
-                    btn.classList.add('time-btn');
-                    btn.innerText = time;
-
-                    btn.dataset.time = time;
-
-                    btn.addEventListener('click', () => {
-
-                        if (btn.classList.contains('unavailable')) return;
-
-                        container.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
-                        btn.classList.add('selected');
-                        hiddenField.value = time;
-                    })
-
-                    container.appendChild(btn);
-
-                });
-            }
-
-            const times = generateTimes();
-            makeButtons('start-times', times, 'time_start');
-
-            @if (session('service') !== 'Watertaxi')
-            makeButtons('end-times', times, 'time_end');
-            @endif
-
+            });
         });
+    }
 
+    function clearButtons(btns) {
+        btns.forEach(btn => {
+            btn.classList.remove('unavailable', 'selected');
+            btn.disabled = false;
+        });
+    }
 
-    </script>
+    function makeUnavailable(btn) {
+        btn.classList.add('unavailable');
+        btn.disabled = true;
+    }
+
+    // Create time buttons
+    function makeButtons(containerId, times, hiddenFieldId) {
+        const container = document.getElementById(containerId);
+        const hiddenField = document.getElementById(hiddenFieldId);
+        container.innerHTML = "";
+
+        times.forEach(time => {
+            const btn = document.createElement('div');
+            btn.classList.add('time-btn');
+            btn.innerText = time;
+            btn.dataset.time = time;
+
+            btn.addEventListener('click', () => {
+                if (btn.classList.contains('unavailable')) return;
+                container.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                hiddenField.value = time;
+
+                if (containerId === 'start-times') {
+                    updateEndTimes(time);
+                }
+            });
+            container.appendChild(btn);
+        });
+    }
+
+    function updateEndTimes(startTime) {
+        const selectedDate = document.getElementById('date').value;
+        const bookings = bookingsByDate[selectedDate] || [];
+        const endBtns = document.querySelectorAll('#end-times .time-btn');
+        const startMin = toMinutes(startTime);
+
+        endBtns.forEach(btn => {
+            const endMin = toMinutes(btn.dataset.time);
+            let isBlocked = false;
+
+            if (endMin <= startMin) {
+                isBlocked = true;
+            }
+
+            bookings.forEach(booking => {
+                const bookingStart = toMinutes(booking.start);
+                const bookingEnd = toMinutes(booking.end || '23:00');
+
+                if (startMin < bookingEnd && endMin > bookingStart) {
+                    isBlocked = true;
+                }
+            });
+
+            if (isBlocked) {
+                makeUnavailable(btn);
+            } else {
+                btn.classList.remove('unavailable');
+                btn.disabled = false;
+            }
+        });
+    }
+
+    const times = generateTimes();
+    makeButtons('start-times', times, 'time_start');
+
+    @if (session('service') !== 'Watertaxi')
+    makeButtons('end-times', times, 'time_end');
+    @endif
+});
+</script>
 
     @endif
 

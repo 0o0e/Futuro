@@ -37,6 +37,10 @@ Route::middleware(AdminMiddleware::class)->prefix('admin')->group(function () {
 
     Route::get('/reserveringen', [AdminController::class, 'reservations'])->name('admin.reservations');
 
+    Route::get('/reservations/{id}/edit', [AdminController::class, 'editReservation'])->name('admin.reservations.edit');
+    Route::post('/reservations/{id}/update', [AdminController::class, 'updateReservation'])->name('admin.reservations.update');
+
+
     Route::get('/boeking/aanmaken', [Admincontroller::class, 'createReservation'])->name('admin.reservation.create');
     Route::post('/boeking/aanmaken', [Admincontroller::class, 'storeReservation'])->name('admin.reservation.store');
 
