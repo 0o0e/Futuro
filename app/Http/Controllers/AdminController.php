@@ -141,11 +141,12 @@ public function editReservation($id)
 
 public function updateReservation(Request $request, $id)
 {
+
     $validated = $request->validate([
         'service'=> 'required|string|max:255',
         'date'=> 'required|date',
         'time_start'=> 'required',
-        'time_end'=> 'required',
+        'time_end' => $request->service === 'Watertaxi' ? 'nullable' : 'required',
         'people'=> 'required|integer|min:1',
         'name'=> 'required|string|max:255',
         'email'=> 'required|email',

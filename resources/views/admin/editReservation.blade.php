@@ -7,6 +7,7 @@
     <h1>Boeking Bewerken</h1>
 
     <form method="POST" action="{{ route('admin.reservations.update', $booking->id) }}">
+
         @csrf
 
         <div class="mb-3">
@@ -43,6 +44,8 @@
             <label>Aantal Personen</label>
             <input type="number" name="people" value="{{ old('people', $booking->people) }}" class="form-control">
         </div>
+
+
 
         <div class="mb-3">
             <label>Opmerkingen</label>
