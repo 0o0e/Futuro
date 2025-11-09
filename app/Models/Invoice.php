@@ -10,7 +10,7 @@ class Invoice extends Model
 
     protected $fillable = ['booking_id','invoice_number','amount','status','sent_at','due_date','payment_method','paid_at','notes'];
 
-    public function bookings(){
+    public function booking(){
         return $this->belongsTo(Booking::class);
 
     }

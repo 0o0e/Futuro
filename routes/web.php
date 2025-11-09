@@ -6,6 +6,11 @@ use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\OwnerMiddleware;
 use App\Http\Controllers\AdminController;
 
+use App\Http\Controllers\ClientController;
+
+Route::get('/client', [ClientController::class, 'index'])->name('client.page');
+Route::post('/client', [ClientController::class, 'showBooking'])->name('client.show');
+Route::post('/client/update/{id}', [ClientController::class, 'updateBooking'])->name('client.update');
 
 Route::get('/', function () {
     return view('/home');
@@ -31,6 +36,10 @@ Route::middleware(AdminMiddleware::class)->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
     Route::get('/reserveringen', [AdminController::class, 'reservations'])->name('admin.reservations');
+
+    Route::get('/reservations/{id}/edit', [AdminController::class, 'editReservation'])->name('admin.reservations.edit');
+    Route::post('/reservations/{id}/update', [AdminController::class, 'updateReservation'])->name('admin.reservations.update');
+
 
     Route::get('/boeking/aanmaken', [Admincontroller::class, 'createReservation'])->name('admin.reservation.create');
     Route::post('/boeking/aanmaken', [Admincontroller::class, 'storeReservation'])->name('admin.reservation.store');

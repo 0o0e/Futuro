@@ -210,7 +210,7 @@
 
 .time-buttons {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 6px;
     margin-bottom: 10px;
 }
@@ -252,6 +252,7 @@
 }
 
 #time-section {
+    margin-left: 60px;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -267,6 +268,20 @@
     gap: 80px;
 }
 
+/* unavailable state */
+.time-btn.unavailable {
+    background: #f8d7da;
+    border-color: #f5c2c7;
+    color: #842029;
+    cursor: not-allowed;
+    opacity: 0.95;
+}
+
+/* visually stronger selected state if button is also selected (shouldn't happen) */
+.time-btn.unavailable.selected {
+    box-shadow: none;
+    border-color: #842029;
+}
 
 
     </style>
@@ -300,6 +315,12 @@
                 </label>
 
             </div>
+
+            <div id="people-section" class="mt-3" style="display:none;">
+                <label for="people" class="form-label">Aantal personen</label>
+                <input type="number" id="people" name="people" class="form-control" placeholder="Aantal personen" min="1" max="12">
+            </div>
+
 
             <div id="watertaxi-section" class="mt-4" style="display:none;">
                 <h4 class="mb-3">Kies je bestemming (vertrek: Dordrecht)</h4>
@@ -343,6 +364,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const durSpan = document.getElementById('summary-duration');
     const priceSpan = document.getElementById('summary-price');
 
+    const peopleSection = document.getElementById('people-section');
+    const peopleInput = document.getElementById('people');
+
+
     const serviceRadios = document.querySelectorAll('input[name="service"]');
 
     function toggleWatertaxi() {
@@ -354,7 +379,20 @@ document.addEventListener('DOMContentLoaded', function () {
             watertaxiSection.style.display = 'none';
             routeSelect.required = false;
         }
+        togglePeopleInput();
     }
+
+    function togglePeopleInput() {
+        const selected = document.querySelector('input[name="service"]:checked');
+        if (selected && (selected.value === 'Watertaxi' || selected.value === 'Rondvaart')) {
+            peopleSection.style.display = 'block';
+            peopleInput.required = true;
+        } else {
+            peopleSection.style.display = 'none';
+            peopleInput.required = false;
+        }
+    }
+
 
     function updateSummary() {
         const selectedOption = routeSelect.options[routeSelect.selectedIndex];
@@ -418,90 +456,167 @@ document.addEventListener('DOMContentLoaded', function () {
             </form>
         </div>
     </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                unselectAuto: false,
+    const bookingsByDate = @json($bookingsByDate);
 
-                initialView: 'dayGridMonth',
-                selectable: true,
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        unselectAuto: false,
+        initialView: 'dayGridMonth',
+        selectable: true,
 
-                selectAllow: function(selectInfo) {
-                    let today = new Date();
-                    today.setHours(0,0,0,0);
+        selectAllow: function(selectInfo) {
+            let today = new Date();
+            today.setHours(0,0,0,0);
+            let minDate = new Date(today);
+            minDate.setDate(minDate.getDate() + 7);
+            return selectInfo.start >= minDate;
+        },
 
-                    let minDate = new Date(today);
-                    minDate.setDate(minDate.getDate() + 7);
+        dayCellDidMount: function(info) {
+            let today = new Date();
+            today.setHours(0,0,0,0);
+            let blockDate = new Date(today);
+            blockDate.setDate(blockDate.getDate() + 7);
 
-                    return selectInfo.start >= minDate;
-                },
+            let cellDate = info.date;
+            cellDate.setHours(0,0,0,0);
 
-                dayCellDidMount: function(info) {
-                    let today = new Date();
-                    today.setHours(0,0,0,0);
+            if (cellDate >= today && cellDate <= blockDate) {
+                info.el.style.backgroundColor = '#ffcccc';
+                info.el.style.opacity = '0.7';
+                info.el.style.cursor = 'not-allowed';
+            }
+        },
 
-                    let blockDate = new Date(today);
-                    blockDate.setDate(blockDate.getDate() + 7);
+        select: function(info) {
+            const selectedDate = info.startStr;
+            document.getElementById('date').value = info.startStr;
+            markUnavailable(selectedDate);
+        }
+    });
+    calendar.render();
 
-                    let cellDate = info.date;
-                    cellDate.setHours(0,0,0,0);
+    function generateTimes() {
+        let times = [];
+        for (let hour = 8; hour < 23; hour++) {
+            times.push(`${String(hour).padStart(2,'0')}:00`);
+        }
+        return times;
+    }
 
-                    if (cellDate >= today && cellDate <= blockDate) {
-                        info.el.style.backgroundColor = '#ffcccc';
-                        info.el.style.opacity = '0.7';
-                        info.el.style.cursor = 'not-allowed';
-                    }
-                },
+    function toMinutes(t) {
+        const [h, m] = t.split(':').map(Number);
+        return h * 60 + m;
+    }
 
-                select: function(info) {
-                    document.getElementById('date').value = info.startStr;
+    function markUnavailable(dateStr) {
+        const bookings = bookingsByDate[dateStr] || [];
+        const startBtns = document.querySelectorAll('#start-times .time-btn');
+        const endBtns = document.querySelectorAll('#end-times .time-btn');
+
+        clearButtons(startBtns);
+        clearButtons(endBtns);
+
+        bookings.forEach(booking => {
+            const start = toMinutes(booking.start);
+            const end = toMinutes(booking.end || '23:00');
+
+            startBtns.forEach(btn => {
+                const t = toMinutes(btn.dataset.time);
+                if (t >= start && t < end) {
+                    makeUnavailable(btn);
                 }
             });
-            calendar.render();
-
-            function generateTimes(){
-                let times = [];
-                for (let hour = 10; hour < 22; hour++) {
-                    for (let min = 0; min < 60; min+=30) {
-                        times.push(`${String(hour).padStart(2,'0')}:${String(min).padStart(2,'0')}`);
-                    }
+            endBtns.forEach(btn => {
+                const t = toMinutes(btn.dataset.time);
+                if (t > start && t <= end) {
+                    makeUnavailable(btn);
                 }
-                return times;
-            }
-
-            function makeButtons(containerId, times, hiddenFieldId){
-                const container = document.getElementById(containerId);
-                const hiddenField = document.getElementById(hiddenFieldId);
-
-                container.innerHTML = "";
-
-                times.forEach(time => {
-                    const btn = document.createElement('div');
-                    btn.classList.add('time-btn');
-                    btn.innerText = time;
-
-                    btn.addEventListener('click', () => {
-                        container.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
-                        btn.classList.add('selected');
-                        hiddenField.value = time;
-                    })
-
-                    container.appendChild(btn);
-
-                });
-            }
-
-            const times = generateTimes();
-            makeButtons('start-times', times, 'time_start');
-
-            @if (session('service') !== 'Watertaxi')
-            makeButtons('end-times', times, 'time_end');
-            @endif
-
+            });
         });
-    </script>
+    }
+
+    function clearButtons(btns) {
+        btns.forEach(btn => {
+            btn.classList.remove('unavailable', 'selected');
+            btn.disabled = false;
+        });
+    }
+
+    function makeUnavailable(btn) {
+        btn.classList.add('unavailable');
+        btn.disabled = true;
+    }
+
+    // Create time buttons
+    function makeButtons(containerId, times, hiddenFieldId) {
+        const container = document.getElementById(containerId);
+        const hiddenField = document.getElementById(hiddenFieldId);
+        container.innerHTML = "";
+
+        times.forEach(time => {
+            const btn = document.createElement('div');
+            btn.classList.add('time-btn');
+            btn.innerText = time;
+            btn.dataset.time = time;
+
+            btn.addEventListener('click', () => {
+                if (btn.classList.contains('unavailable')) return;
+                container.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                hiddenField.value = time;
+
+                if (containerId === 'start-times') {
+                    updateEndTimes(time);
+                }
+            });
+            container.appendChild(btn);
+        });
+    }
+
+    function updateEndTimes(startTime) {
+        const selectedDate = document.getElementById('date').value;
+        const bookings = bookingsByDate[selectedDate] || [];
+        const endBtns = document.querySelectorAll('#end-times .time-btn');
+        const startMin = toMinutes(startTime);
+
+        endBtns.forEach(btn => {
+            const endMin = toMinutes(btn.dataset.time);
+            let isBlocked = false;
+
+            if (endMin <= startMin) {
+                isBlocked = true;
+            }
+
+            bookings.forEach(booking => {
+                const bookingStart = toMinutes(booking.start);
+                const bookingEnd = toMinutes(booking.end || '23:00');
+
+                if (startMin < bookingEnd && endMin > bookingStart) {
+                    isBlocked = true;
+                }
+            });
+
+            if (isBlocked) {
+                makeUnavailable(btn);
+            } else {
+                btn.classList.remove('unavailable');
+                btn.disabled = false;
+            }
+        });
+    }
+
+    const times = generateTimes();
+    makeButtons('start-times', times, 'time_start');
+
+    @if (session('service') !== 'Watertaxi')
+    makeButtons('end-times', times, 'time_end');
+    @endif
+});
+</script>
 
     @endif
 
@@ -569,52 +684,120 @@ document.addEventListener('DOMContentLoaded', function () {
         </div>
     </div>
     @endif
+@if($step==4)
+<div class="container py-5">
+    <h1 class="mb-4 text-center">Maak een Reservering</h1>
 
+    <div class="card shadow p-4 mb-4">
+        <h4 class="mb-3">Reserveringsoverzicht</h4>
 
-    @if($step==4)
-    <div class="container py-5">
-        <h1 class="mb-4 text-center">Maak een Reservering</h1>
-        <div class="card shadow p-4">
-            <form action="{{ route('booking') }}" method="POST">
-                @csrf
-                <input type="hidden" name="step" value="4">
+        <table class="table table-borderless">
+            <tbody>
+                <tr>
+                    <td><strong>Service</strong></td>
+                    <td>{{ $data['service'] ?? '' }}</td>
+                    <td></td>
+                </tr>
 
+                @if($data['service'] == 'Rondvaart')
+                <tr>
+                    <td><strong>Datum</strong></td>
+                    <td>{{ \Carbon\Carbon::parse($data['date'])->format('d/m/Y') }}</td>
+                    <td>{{ $data['people'] ?? '' }}p</td>
+                </tr>
 
-                <div class="mb-3">
-                    <label for="name" class="form-label">Naam</label>
-                    <input type="text" class="form-control" id="name" name="name" placeholder="Jouw naam" required>
-                </div>
+                <tr>
+                    <td>Begin Tijd</td>
+                    <td>{{ $data['time_start'] ?? '' }}</td>
+                    <td>{{ $data['service_price'] ?? 0 }}€</td>
+                </tr>
 
-                <div class="mb-3">
-                    <label for="email" class="form-label">E-mailadres</label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="jij@example.com" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="phone" class="form-label">Telefoon nummer</label>
-                    <input type="tel" class="form-control" id="phone" name="phone" placeholder="06 12345678" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="opmerking" class="form-label">Opmerking</label>
-                    <textarea class="form-control" id="opmerking" name="opmerking" rows="3" placeholder="Eventuele opmerkingen..."></textarea>
-                </div>
-
-
-                <div>
-                    <label for="people">Aantal personen</label>
-                    <input type="number" class="form-control" id="people" name="people" placeholder="Aantal personen..." required>
-                </div>
-
-                @if(session('service') == 'Watertaxi')
-                    <input type="hidden" name="watertaxi_route_id" value="{{ session('watertaxi_route_id') }}">
+                @if(!empty($data['time_end']))
+                <tr>
+                    <td>Eind Tijd</td>
+                    <td>{{ $data['time_end'] }}</td>
+                    <td></td>
+                </tr>
                 @endif
 
-                <button type="submit" class="booking-button">Verstuur Booking</button>
-            </form>
-        </div>
+                @if(!empty($data['arrangement']))
+                <tr>
+                    <td>Arrangement</td>
+                    <td>{{ $data['arrangement'] }}</td>
+                    <td>{{ $data['arrangement_price'] ?? 0 }}€</td>
+                </tr>
+                @endif
+
+                @elseif($data['service'] == 'Watertaxi')
+                <tr>
+                    <td>Datum</td>
+                    <td>{{ \Carbon\Carbon::parse($data['date'])->format('d/m/Y') }}</td>
+                    <td>{{ $data['people'] ?? '' }}p</td>
+                </tr>
+                <tr>
+                    <td>Vertrekpunt</td>
+                    <td>{{ $data['departure'] ?? '' }}</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Bestemming</td>
+                    <td>{{ $data['destination'] ?? '' }}</td>
+                    <td>{{ $data['price'] ?? 0 }}€</td>
+                </tr>
+                <tr>
+                    <td>Begin Tijd</td>
+                    <td>{{ $data['time_start'] ?? '' }}</td>
+                    <td></td>
+                </tr>
+                @endif
+
+                <tr>
+                    <td colspan="2"><hr></td>
+                    <td><hr></td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="text-end"><strong>Totaal</strong></td>
+                    <td><strong>{{ $data['price'] ?? 0 }}€</strong></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
-    @endif
+
+    <div class="card shadow p-4">
+        <form action="{{ route('booking') }}" method="POST">
+            @csrf
+            <input type="hidden" name="step" value="4">
+
+            <div class="mb-3">
+                <label for="name" class="form-label">Naam</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Jouw naam" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">E-mailadres</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="jij@example.com" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="phone" class="form-label">Telefoon nummer</label>
+                <input type="tel" class="form-control" id="phone" name="phone" placeholder="06 12345678" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="opmerking" class="form-label">Opmerking</label>
+                <textarea class="form-control" id="opmerking" name="opmerking" rows="3" placeholder="Eventuele opmerkingen..."></textarea>
+            </div>
+
+            @if(session('service') == 'Watertaxi')
+                <input type="hidden" name="watertaxi_route_id" value="{{ session('watertaxi_route_id') }}">
+            @endif
+
+            <button type="submit" class="booking-button">Verstuur Booking</button>
+        </form>
+    </div>
+</div>
+@endif
+
 
 
     @if($step == 5)

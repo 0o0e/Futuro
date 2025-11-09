@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Booking;
 use App\Models\Arrangement;
 use App\Models\WatertaxiRoute;
+use App\Models\Invoice;
+use App\Mail\BookingConfirmationMail;
+use Illuminate\Support\Facades\Mail;
 
 class BookingController extends Controller
 {
@@ -17,7 +20,7 @@ class BookingController extends Controller
         if ($request->isMethod('post')) {
 
             if ($step == 1) {
-                session(['service' => $request->service]);
+                session(['service' => $request->service , 'people' => $request->people]);
 
                 if ($request->service == 'Watertaxi') {
                     $request->validate([
@@ -44,6 +47,14 @@ class BookingController extends Controller
                         'time_start' => $request->time_start,
                         'time_end' => null
                     ]);
+
+
+                    $route = WatertaxiRoute::find(session('watertaxi_route_id'));
+                    if ($route) {
+                        session(['price' => $route->price]);
+                    }
+
+
                     $step = 4;
                 } else {
                     $request->validate([
@@ -67,6 +78,13 @@ class BookingController extends Controller
                     'arrangement' => $request->arrangement === 'has_table' ? null : $request->arrangement,
                 ]);
 
+                $prices = $this->calculatePrice(session()->all());
+                session([
+                    'service_price' => $prices['service'],
+                    'arrangement_price' => $prices['arrangement'],
+                    'price' => $prices['total']
+                ]);
+
 
                 $step = 4;
             }
@@ -76,7 +94,7 @@ class BookingController extends Controller
                     'name' => $request->name,
                     'email' => $request->email,
                     'opmerking' => $request->opmerking,
-                    'people' => $request->people,
+                    // 'people' => $request->people,
                     'phone' => $request->phone,
                 ]);
 
@@ -93,8 +111,12 @@ class BookingController extends Controller
                     'watertaxi_route_id',
                     'people',
                     'has_table',
-                    'phone'
+                    'phone',
+                    'price',
                 ]);
+
+
+                // $price = $this->calculatePrice($data);
 
 
 
@@ -110,6 +132,15 @@ class BookingController extends Controller
                     'watertaxi_route_id' => session('watertaxi_route_id') ?? null,
                     'people' => $data['people'],
                     'has_table' => $data['has_table'] ?? 0,
+                    'price' => $data['price'],
+                ]);
+
+                Invoice::create([
+                    'booking_id' => $booking->id,
+                    'invoice_number' => strtoupper(uniqid()),
+                    'amount' => $data['price'],
+                    'status' => 'onbetaald',
+                    'due_date' => date('Y-m-d', strtotime($booking->date . ' +14 days')),
                 ]);
 
                 if ($data['service'] !== 'Watertaxi' && !$data['has_table']) {
@@ -130,17 +161,77 @@ class BookingController extends Controller
                     Arrangement::create($arrangement);
                 }
 
+                Mail::to($booking->email)->send(new BookingConfirmationMail($booking));
+
                 $step = 5;
             }
         }
 
         $data = session()->all();
 
+
+        $allBookings = Booking::select('date','time_start','time_end')->get();
+
+        // build associative array: 'YYYY-MM-DD' => [ {start:'HH:MM', end:'HH:MM'}, ... ]
+        $bookingsByDate = [];
+        foreach ($allBookings as $b) {
+            $d = $b->date; // make sure stored as 'YYYY-MM-DD'
+            if (!isset($bookingsByDate[$d])) $bookingsByDate[$d] = [];
+            $bookingsByDate[$d][] = [
+                'start' => $b->time_start,
+                'end'   => $b->time_end,
+            ];
+        }
+
         return view('booking', [
             'data' => $data,
             'step' => $step,
             'watertaxiRoutes' => $watertaxiRoutes,
+            'bookingsByDate' => $bookingsByDate,
         ]);
     }
+
+    protected function calculatePrice($data){
+        $serviceTotal = 0;
+        $arrangementTotal = 0;
+
+        switch ($data['service']) {
+            case 'Rondvaart':
+                $start = strtotime($data['time_start']);
+                $end = strtotime($data['time_end']);
+                $minutes = ($end - $start) / 60;
+                if ($minutes < 60) $minutes = 60;
+                $hours = floor($minutes / 60);
+                $serviceTotal = ($hours * 150) - (max(0, $hours - 1) * 10);
+
+                $arrangementPrices = [
+                    'prosecco' => 15,
+                    'picnic' => 20,
+                    'olala' => 18,
+                    'bistro' => 22,
+                    'barca' => 25,
+                    'stadswandeling' => 12,
+                ];
+
+                if (!empty($data['arrangement']) && isset($arrangementPrices[$data['arrangement']])) {
+                    $arrangementTotal = $arrangementPrices[$data['arrangement']];
+                }
+                break;
+
+            case 'Watertaxi':
+                if (!empty($data['watertaxi_route_id'])) {
+                    $route = WatertaxiRoute::find($data['watertaxi_route_id']);
+                    if ($route) $serviceTotal = $route->price;
+                }
+                break;
+        }
+
+        return [
+            'service' => $serviceTotal,
+            'arrangement' => $arrangementTotal,
+            'total' => $serviceTotal + $arrangementTotal
+        ];
+    }
+
 
 }

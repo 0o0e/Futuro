@@ -9,7 +9,6 @@
 
     nav {
         contain: paint;
-
         top: 0;
         left: 0;
         /* background-color: var(--primary); */
@@ -25,7 +24,7 @@
 
     nav a {
         text-decoration: none;
-        color: var(--white);
+        color: white;
         font-size: 15px;
         margin: 0 10px;
         transition: all 0.3s ease;
@@ -39,6 +38,7 @@
 
     .logo {
         max-width: 170px;
+        margin
         margin: -15px 20px -15px 0;
     }
     </style>
@@ -48,7 +48,7 @@
 
 
     <nav>
-      <img src="logo.png" alt="Futuro Logo" class="logo">
+      <img src="logo_og.png" alt="Futuro Logo" class="logo">
       <a href="#" class="active">HOME</a>
       <a href="#">RONDVAARTEN</a>
       <a href="#">ARRANGEMENTEN</a>
