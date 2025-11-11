@@ -1,61 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    <style>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Navbar</title>
+  <style>
     nav {
-        contain: paint;
-        top: 0;
-        left: 0;
-        /* background-color: var(--primary); */
-        padding: 20px 0;
-        text-align: center;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 10;
-
+      contain: paint;
+      position: relative;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 20px 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 10;
     }
 
+    .nav-links {
+      display: flex;
+      gap: 30px;
+      justify-content: center;
+      align-items: center;
+      flex: 1;
+    }
 
     nav a {
-        text-decoration: none;
-        color: white;
-        font-size: 15px;
-        margin: 0 10px;
-        transition: all 0.3s ease;
-        position: relative;
+      text-decoration: none;
+      color: white;
+      font-size: 17px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      position: relative;
     }
 
     nav a:hover {
-        border-bottom: 2px solid white;
-        padding-bottom: 5px;
+      border-bottom: 2px solid white;
+      padding-bottom: 4px;
     }
 
     .logo {
-        max-width: 170px;
-        margin
-        margin: -15px 20px -15px 0;
+      width: 300px;
+      height: auto;
+      object-fit: contain;
+      margin-right: 45px;
     }
-    </style>
+
+    .nav-container {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 40px;
+      margin-left: 200px;
+    }
+  </style>
 </head>
-
 <body>
+  <nav>
+    <div class="nav-container">
+      <div class="nav-links">
+        <a href="#" class="active">HOME</a>
+        <a href="#">RONDVAARTEN</a>
+        <a href="#">ARRANGEMENTEN</a>
+        <a href="#">OVER FUTURO</a>
+        <a href="#">RESERVEREN</a>
+        <a href="#">CONTACT</a>
+      </div>
 
-
-    <nav>
-      <img src="logo_og.png" alt="Futuro Logo" class="logo">
-      <a href="#" class="active">HOME</a>
-      <a href="#">RONDVAARTEN</a>
-      <a href="#">ARRANGEMENTEN</a>
-      <a href="#">OVER FUTURO</a>
-      <a href="#">RESERVEREN</a>
-      <a href="#">CONTACT</a>
-    </nav>
-
+    </div>
+    <img src="logo_og.png" alt="Futuro Logo" class="logo">
+  </nav>
 </body>
 </html>
