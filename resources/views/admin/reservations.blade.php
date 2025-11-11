@@ -27,7 +27,7 @@
                 <td>{{ $booking->id }}</td>
                 <td>{{ $booking->name }}</td>
                 <td>{{ $booking->email }}</td>
-                <td>{{ \Carbon\Carbon::parse($booking->date)->format('d-m-Y H:i') }}</td>
+                <td>{{ \Carbon\Carbon::parse($booking->date)->format('d-m-Y') }}</td>
                 <td>{{ $status }}</td>
                 <td>{{ $booking->invoice ? $booking->invoice->status : 'Geen factuur' }}</td>
             </tr>

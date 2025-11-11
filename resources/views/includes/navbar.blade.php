@@ -16,6 +16,7 @@
       align-items: center;
       justify-content: space-between;
       z-index: 10;
+      justify-content: flex-end;
     }
 
     .nav-links {
@@ -41,10 +42,12 @@
     }
 
     .logo {
-      width: 300px;
+      width: 310px;
       height: auto;
       object-fit: contain;
-      margin-right: 45px;
+      margin-right: auto;
+      margin-right: 123px;
+
     }
 
     .nav-container {
@@ -71,6 +74,7 @@
 
     </div>
     <img src="logo_og.png" alt="Futuro Logo" class="logo">
+
   </nav>
 </body>
 </html>
