@@ -281,30 +281,6 @@
 
     }
 
-    .floating-button {
-        position: fixed;
-        bottom: 20px;
-        right: 30px;
-        background-color: var(--button);
-        color: var(--white);
-        font-weight: 600;
-        text-decoration: none;
-        padding: 14px 36px;
-
-        border-radius: 30px;
-        font-size: 15px;
-        background: linear-gradient(135deg, var(--primary), var(--button));
-        letter-spacing: 0.5px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-        z-index: 1000;
-        border: 2px solid var(--primary);
-        transition: background-color 0.25s ease, transform 0.25s ease;
-    }
-
-    .floating-button:hover {
-        background-color: var(--primary-light);
-        transform: translateY(-2px);
-    }
 
 
     .image-section {
@@ -385,28 +361,17 @@
 
 
 
-
-
- .modal {
-
-display: none;
-
- position: fixed;
-
- z-index: 9999;
-
-left: 0;
-
-top: 0;
-
- width: 100%;
-
- height: 100%;
-
-background-color: rgba(0,0,0,0.6);
-justify-content: center;
-align-items: center;
-
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 10001; /* higher than the floating button */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
 }
 
 
@@ -455,6 +420,31 @@ height: 100%;
 border: none;
 
 }
+.floating-button {
+    position: absolute;
+    top: 25px;
+    right: 40px;
+    background-color: var(--button);
+    color: var(--white);
+    font-weight: 600;
+    text-decoration: none;
+    padding: 14px 36px;
+    border-radius: 30px;
+    font-size: 15px;
+    background: linear-gradient(135deg, var(--primary), var(--button));
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    z-index: 10000; /* make sure it stays above the logo */
+    border: 2px solid var(--primary);
+    transition: background-color 0.25s ease, transform 0.25s ease;
+}
+
+.floating-button:hover {
+    background-color: var(--primary-light);
+    transform: translateY(-2px);
+}
+
+
 
 
   </style>
@@ -475,7 +465,7 @@ border: none;
     <div class="viewport-header">
       <div class="hero-text">BOEK VANDAAG NOG UW RONDVAART</div>
       <div class="hero-subtext">ONTDEK DORDRECHT, HET NATIONALE <br> PARK DE BIESBOSCH EN HET HISTORISCHE <br> STADSCENTRUM.</div>
-      <a href="#" class="booking-button" id="openBookingModal">RESERVEER NU</a>
+      {{-- <a href="#" class="booking-button" id="openBookingModal">RESERVEER NU</a> --}}
     </div>
 
     <div class="wave">
@@ -584,7 +574,8 @@ alleen varen.
 
 
 
-<a href="{{ route('booking') }}" class="floating-button">Reserveer nu</a>
+<a href="#" class="floating-button" id="openBookingModal">RESERVEER NU</a>
+
 
 <section class="image-section">
   <div class="wave-top">
