@@ -217,7 +217,7 @@
 
 .time-btn {
     padding: 10px 0;
-    background: #e9ecef;
+    background: #b8ecc7;
     border-radius: 6px;
     font-weight: 600;
     border: 2px solid transparent;
@@ -227,12 +227,13 @@
 }
 
 .time-btn:hover {
-    background: #d4dadf;
+    background: #99cd9c;
 }
 
 .time-btn.selected {
     border-color: #4C807F;
-    background: #cfe8e7;
+    background: #99cd9c;
+    /* cfe8e7 */
 }
 
 #calendar {
