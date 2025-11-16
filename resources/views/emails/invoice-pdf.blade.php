@@ -114,8 +114,6 @@
     @php
         $items = [];
         $serviceLabel = '';
-
-        // Base price
         $basePrice = $booking->price;
 
         // Handle the service label
@@ -149,7 +147,9 @@
             'stadswandeling' => 12,
         ];
 
-        if ($booking->service === 'Rondvaart' && $booking->arrangement) {
+
+        // prijs zonder arrangement, dus alleen service prijs
+        if($booking->arrangement){
             foreach ($arrangementPrices as $key => $price) {
                 if ($booking->arrangement->$key == 1) {
                     $basePrice -= $price;
@@ -157,21 +157,44 @@
             }
         }
 
+        // prijzen berekenen exclusief en inclusief btw
+        $serviceExcl = round($basePrice / 1.09, 2);
+        $serviceBtw = round($basePrice - $serviceExcl, 2);
+
+        $arrExcl = 0;
+        $arrBtw = 0;
+
+
+
         $items[] = [
-            'description' => $serviceLabel,
+            'description' => $serviceLabel . " (incl. 9% BTW)",
             'price' => $basePrice,
         ];
+
 
         if ($booking->arrangement) {
             foreach ($arrangementLabels as $key => $label) {
                 if ($booking->arrangement->$key == 1) {
+
+                    $priceIncl = $arrangementPrices[$key];
+                    $priceExcl = round($priceIncl / 1.09, 2);
+                    $priceBtw = round($priceIncl - $priceExcl, 2);
+
+                    $arrExcl += $priceExcl;
+                    $arrBtw += $priceBtw;
+
                     $items[] = [
-                        'description' => $label,
+                        'description' => $label . " (incl. 9% BTW)",
                         'price' => $arrangementPrices[$key],
                     ];
                 }
             }
         }
+
+        $totalExcl = $serviceExcl + $arrExcl;
+        $totalBtw = $serviceBtw + $arrBtw;
+
+
     @endphp
 
     @foreach ($items as $item)
@@ -185,9 +208,13 @@
     </table>
 
     <div class="total">
-        <p><strong>Totaal te betalen: €{{ number_format($booking->price, 2, ',', '.') }}</strong></p>
+        <p><strong>Subtotaal excl. BTW: €{{ number_format($totalExcl, 2 ,',', '.') }}</strong></p>
+        <p><strong>BTW (9%): €{{ number_format($totalBtw, 2) }}</strong></p>
+
+    <p><strong>Totaal incl. BTW: €{{ number_format($booking->price, 2, ',', '.') }}</strong></p>
         <p><strong>Vervaldatum:</strong> {{ \Carbon\Carbon::parse($invoice->due_date)->format('d/m/Y') }}</p>
     </div>
+
 
     <div class="footer">
         <p>Bedankt voor uw reservering bij Futuro!</p>
