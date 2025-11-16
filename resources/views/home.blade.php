@@ -78,20 +78,13 @@
 
     }
 
-    .hero-text {
-        font-size: 67px;
-        font-weight: bold;
-        line-height: 1.2;
-        max-width: 1200px;
-        margin-bottom: 20px;
-
-    }
 
     .hero-subtext {
-        margin-top: -70px;
+        margin-right: 100px;
+        margin-top: -60px;
         font-size: 19px;
         text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
-        margin-left: 870px;
+        margin-left: 800px;
         text-align: left;
     }
 
@@ -182,16 +175,11 @@
         display: flex;
         flex-direction: column;
         box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-        transition: transform 0.3s ease;
 
         border-radius: 20px;
         overflow: hidden;
 
     }
-    .card:hover {
-        transform: translateY(-5px);
-    }
-
     .card img {
         width: 100%; height: 200px; object-fit: cover;
 
@@ -253,12 +241,7 @@
 
     .hero,
     .scroll-container,
-    .card {
-        transform: translateZ(0);
-        will-change: transform;
 
-
-    }
 
     .card p{
         padding-right: 20px;
@@ -296,9 +279,8 @@
   width: 100%;
   height: auto;
   object-fit: cover;
-  margin-top: 60px; /* closes tiny visual gap */
+  margin-top: 60px;
 }
-
 .wave-top {
   position: absolute;
   top: 0;
@@ -315,11 +297,11 @@
   display: block;
   width: 100%;
   height: 200px;
-  transform: translateY(2px); /* overlaps the image slightly */
+  transform: translateY(2px);
 }
 
 .wave-top path {
-  fill: #eff3f1; /* match the background color above the image */
+  fill: #eff3f1;
 }
 
 
@@ -329,7 +311,7 @@
     width: 100%%;
     max-width: 1200px;
     height: 700px;
-    margin: -130px auto 80px auto; /* moves it upward to overlap image */
+    margin: -130px auto 80px auto;
     background: var(--white);
     border-radius: 2px;
     box-shadow: 0 10px 10px rgba(0, 0, 0, 0.15);
@@ -364,7 +346,7 @@
 .modal {
     display: none;
     position: fixed;
-    z-index: 10001; /* higher than the floating button */
+    z-index: 10001;
     left: 0;
     top: 0;
     width: 100%;
@@ -421,8 +403,9 @@ border: none;
 
 }
 .floating-button {
+
     position: absolute;
-    top: 25px;
+    top: 32px;
     right: 40px;
     background-color: var(--button);
     color: var(--white);
@@ -434,18 +417,39 @@ border: none;
     background: linear-gradient(135deg, var(--primary), var(--button));
     letter-spacing: 0.5px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-    z-index: 10000; /* make sure it stays above the logo */
+    z-index: 10000;
     border: 2px solid var(--primary);
     transition: background-color 0.25s ease, transform 0.25s ease;
 }
 
 .floating-button:hover {
-    background-color: var(--primary-light);
-    transform: translateY(-2px);
+    background-color: var(--button);
+    color: var(--primary);
+    background: linear-gradient(135deg, var(--button), var(--primary-light));
 }
+    .hero-header {
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+    }
 
+    .hero-logo {
+        width: 340px;
+        height: auto;
+        margin-left: -185px;
+        margin-right: -99px;
+        position: relative;
+        top: -80px;
+    }
 
-
+    .hero-text {
+        margin-left: 50px;
+        font-size: 65px;
+        font-weight: bold;
+        line-height: 1.2;
+        max-width: 1200px;
+        margin-bottom: 20px;
+    }
 
   </style>
 </head>
@@ -463,7 +467,12 @@ border: none;
 @include('includes.navbar')
 
     <div class="viewport-header">
-      <div class="hero-text">BOEK VANDAAG NOG UW RONDVAART</div>
+
+        <div class="hero-header">
+            <img src="logo_og.png" class="hero-logo" alt="Futuro Logo">
+            <div class="hero-text">BOEK VANDAAG NOG UW RONDVAART</div>
+        </div>
+
       <div class="hero-subtext">ONTDEK DORDRECHT, HET NATIONALE <br> PARK DE BIESBOSCH EN HET HISTORISCHE <br> STADSCENTRUM.</div>
       {{-- <a href="#" class="booking-button" id="openBookingModal">RESERVEER NU</a> --}}
     </div>

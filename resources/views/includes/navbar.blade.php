@@ -5,26 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Navbar</title>
   <style>
-    nav {
-      contain: paint;
-      position: relative;
-      top: 0;
-      left: 0;
-      width: 100%;
-      padding: 20px 80px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      z-index: 10;
-      justify-content: flex-end;
+    body {
+      margin: 0;
+      padding: 0;
+      background: url('78ceae54-bcfd-4305-b90d-38ba3f8a553e.png') no-repeat center center/cover;
+      font-family: Arial, sans-serif;
     }
 
-    .nav-links {
+    nav {
+      width: 100%;
+      padding: 20px 0;
       display: flex;
-      gap: 30px;
-      justify-content: center;
+      justify-content: center; /* center nav content */
       align-items: center;
-      flex: 1;
+      position: relative;
+      z-index: 10;
+    }
+    .nav-links {
+        margin-top: 30px;
+
+        display: flex;
+        gap: 30px;
+        justify-content: center;
+        align-items: center;
     }
 
     nav a {
@@ -58,11 +61,11 @@
       margin-bottom: 40px;
       margin-left: 200px;
     }
+
   </style>
 </head>
 <body>
   <nav>
-    <div class="nav-container">
       <div class="nav-links">
         <a href="#" class="active">HOME</a>
         <a href="#">RONDVAARTEN</a>
@@ -72,8 +75,7 @@
         <a href="#">CONTACT</a>
       </div>
 
-    </div>
-    <img src="logo_og.png" alt="Futuro Logo" class="logo">
+    {{-- <img src="logo_og.png" alt="Futuro Logo" class="logo"> --}}
 
   </nav>
 </body>
