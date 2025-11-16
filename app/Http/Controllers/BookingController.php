@@ -95,6 +95,9 @@ class BookingController extends Controller
                     'email' => $request->email,
                     'opmerking' => $request->opmerking,
                     // 'people' => $request->people,
+                    'address' => $request->address,
+                    'city' => $request->city,
+                    'postcode' => $request->postcode,
                     'phone' => $request->phone,
                 ]);
 
@@ -113,6 +116,9 @@ class BookingController extends Controller
                     'has_table',
                     'phone',
                     'price',
+                    'address',
+                    'city',
+                    'postcode',
                 ]);
 
 
@@ -133,6 +139,9 @@ class BookingController extends Controller
                     'people' => $data['people'],
                     'has_table' => $data['has_table'] ?? 0,
                     'price' => $data['price'],
+                    'address' => $data['address'],
+                    'city' => $data['city'],
+                    'postcode' => $data['postcode'],
                 ]);
 
                 Invoice::create([

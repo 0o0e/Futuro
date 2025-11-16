@@ -10,7 +10,7 @@ class Booking extends Model
     //
     use HasFactory;
 
-    protected $fillable = ['service','date','time_start','time_end','people','name','email','comment','has_table', 'watertaxi_route_id','phone', 'price'];
+    protected $fillable = ['service','date','time_start','time_end','people','name','email','comment','has_table', 'watertaxi_route_id','phone', 'price', 'address', 'city', 'postcode'];
 
     public function arrangement()
     {

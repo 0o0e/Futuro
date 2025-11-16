@@ -269,7 +269,7 @@
     gap: 80px;
 }
 
-/* unavailable state */
+
 .time-btn.unavailable {
     background: #f8d7da;
     border-color: #f5c2c7;
@@ -278,10 +278,17 @@
     opacity: 0.95;
 }
 
-/* visually stronger selected state if button is also selected (shouldn't happen) */
+
 .time-btn.unavailable.selected {
     box-shadow: none;
     border-color: #842029;
+}
+
+
+.form-label.required::after {
+    content: " *";
+    color: red;
+    font-weight: bold;
 }
 
 
@@ -770,18 +777,37 @@ document.addEventListener('DOMContentLoaded', function() {
             <input type="hidden" name="step" value="4">
 
             <div class="mb-3">
-                <label for="name" class="form-label">Naam</label>
+                <label for="name" class="form-label required">Naam</label>
                 <input type="text" class="form-control" id="name" name="name" placeholder="Jouw naam" required>
             </div>
 
             <div class="mb-3">
-                <label for="email" class="form-label">E-mailadres</label>
+                <label for="email" class="form-label required">E-mailadres</label>
                 <input type="email" class="form-control" id="email" name="email" placeholder="jij@example.com" required>
             </div>
 
             <div class="mb-3">
-                <label for="phone" class="form-label">Telefoon nummer</label>
+                <label for="phone" class="form-label required">Telefoon nummer</label>
                 <input type="tel" class="form-control" id="phone" name="phone" placeholder="06 12345678" required>
+            </div>
+
+
+            <div class="mb-3">
+                <label for="address" class="form-label">Adres</label>
+                <input type="text" name="address" id="address" class="form-control" placeholder="Straat 12">
+            </div>
+
+
+            <div class="mb-3">
+                <label for="city" class="form-label">Stad</label>
+                <input type="text" name="city" id="city" class="form-control" placeholder="Stad">
+
+            </div>
+
+
+            <div class="mb-3">
+                <label for="postcode" class="form-label">postcode</label>
+                <input type="text" name="postcode" id="postcode" class="form-control" placeholder="3311XX">
             </div>
 
             <div class="mb-3">
@@ -793,7 +819,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <input type="hidden" name="watertaxi_route_id" value="{{ session('watertaxi_route_id') }}">
             @endif
 
-            <button type="submit" class="booking-button">Verstuur Booking</button>
+            <button type="submit" class="booking-button">Verstuur Boeking</button>
         </form>
     </div>
 </div>
