@@ -20,6 +20,9 @@ Route::match(['get', 'post'], '/booking', [BookingController::class, 'index'])->
 
 Route::view('/home', 'home')->name('home');
 
+// Algemene voorwaarden
+Route::view('/algemene-voorwaarden', 'terms')->name('terms');
+
 
 
 // Route::get('/admin/dashboard', [AdminController::class, 'calendar'])->middleware(AdminMiddleware::class);
