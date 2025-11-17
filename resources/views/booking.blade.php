@@ -283,6 +283,14 @@
     border-color: #842029;
 }
 
+.terms-consent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    text-align: left;
+}
+
 
     </style>
 </head>
@@ -686,7 +694,69 @@ document.addEventListener('DOMContentLoaded', function() {
     @endif
 @if($step==4)
 <div class="container py-5">
-    <h1 class="mb-4 text-center">Maak een Reservering</h1>
+    <h1 class="mb-4 text-center">Jouw gegevens</h1>
+
+    <div class="card shadow p-4">
+        <form action="{{ route('booking') }}" method="POST">
+            @csrf
+            <input type="hidden" name="step" value="4">
+
+            <div class="mb-3">
+                <label for="name" class="form-label">Naam</label>
+                <input type="text"
+                       class="form-control"
+                       id="name"
+                       name="name"
+                       value="{{ $data['name'] ?? '' }}"
+                       placeholder="Jouw naam"
+                       required>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">E-mailadres</label>
+                <input type="email"
+                       class="form-control"
+                       id="email"
+                       name="email"
+                       value="{{ $data['email'] ?? '' }}"
+                       placeholder="jij@example.com"
+                       required>
+            </div>
+
+            <div class="mb-3">
+                <label for="phone" class="form-label">Telefoon nummer</label>
+                <input type="tel"
+                       class="form-control"
+                       id="phone"
+                       name="phone"
+                       value="{{ $data['phone'] ?? '' }}"
+                       placeholder="06 12345678"
+                       required>
+            </div>
+
+            <div class="mb-3">
+                <label for="opmerking" class="form-label">Opmerking</label>
+                <textarea class="form-control"
+                          id="opmerking"
+                          name="opmerking"
+                          rows="3"
+                          placeholder="Eventuele opmerkingen...">{{ $data['opmerking'] ?? '' }}</textarea>
+            </div>
+
+            @if(session('service') == 'Watertaxi')
+                <input type="hidden" name="watertaxi_route_id" value="{{ session('watertaxi_route_id') }}">
+            @endif
+
+            <button type="submit" class="booking-button">Ga naar overzicht</button>
+        </form>
+    </div>
+</div>
+@endif
+
+
+@if($step == 5)
+<div class="container py-5">
+    <h1 class="mb-4 text-center">Controleer je reservering</h1>
 
     <div class="card shadow p-4 mb-4">
         <h4 class="mb-3">Reserveringsoverzicht</h4>
@@ -763,65 +833,87 @@ document.addEventListener('DOMContentLoaded', function() {
         </table>
     </div>
 
+    <div class="card shadow p-4 mb-4">
+        <h4 class="mb-3">Jouw gegevens</h4>
+        <p><strong>Naam:</strong> {{ $data['name'] ?? '' }}</p>
+        <p><strong>E-mailadres:</strong> {{ $data['email'] ?? '' }}</p>
+        <p><strong>Telefoonnummer:</strong> {{ $data['phone'] ?? '' }}</p>
+        @if(!empty($data['opmerking']))
+            <p><strong>Opmerking:</strong> {{ $data['opmerking'] }}</p>
+        @endif
+    </div>
+
     <div class="card shadow p-4">
         <form action="{{ route('booking') }}" method="POST">
             @csrf
-            <input type="hidden" name="step" value="4">
-
-            <div class="mb-3">
-                <label for="name" class="form-label">Naam</label>
-                <input type="text" class="form-control" id="name" name="name" placeholder="Jouw naam" required>
+            <input type="hidden" name="step" value="5">
+            <div class="terms-consent mb-3">
+                <input class="form-check-input"
+                       type="checkbox"
+                       id="terms_accepted"
+                       name="terms_accepted"
+                       required>
+                <label class="form-check-label mb-0" for="terms_accepted">
+                    Ik ga akkoord met de
+                    <button type="button"
+                            id="open-terms"
+                            class="btn btn-link p-0 align-baseline">
+                        algemene voorwaarden
+                    </button>
+                </label>
             </div>
 
-            <div class="mb-3">
-                <label for="email" class="form-label">E-mailadres</label>
-                <input type="email" class="form-control" id="email" name="email" placeholder="jij@example.com" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="phone" class="form-label">Telefoon nummer</label>
-                <input type="tel" class="form-control" id="phone" name="phone" placeholder="06 12345678" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="opmerking" class="form-label">Opmerking</label>
-                <textarea class="form-control" id="opmerking" name="opmerking" rows="3" placeholder="Eventuele opmerkingen..."></textarea>
-            </div>
-
-            @if(session('service') == 'Watertaxi')
-                <input type="hidden" name="watertaxi_route_id" value="{{ session('watertaxi_route_id') }}">
-            @endif
-
-            <button type="submit" class="booking-button">Verstuur Booking</button>
+            <button type="submit" class="booking-button" id="confirm-btn" disabled>Bevestig reservering</button>
         </form>
     </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const openTermsBtn = document.getElementById('open-terms');
+    const termsCheckbox = document.getElementById('terms_accepted');
+    const confirmBtn = document.getElementById('confirm-btn');
+
+    if (!openTermsBtn || !termsCheckbox || !confirmBtn) return;
+
+    openTermsBtn.addEventListener('click', function () {
+        // open algemene voorwaarden in nieuw tabblad
+        window.open('{{ route('terms') }}', '_blank');
+    });
+
+    termsCheckbox.addEventListener('change', function () {
+        confirmBtn.disabled = !termsCheckbox.checked;
+    });
+
+    // init state (als checkbox al aangevinkt is bij terugnavigeren)
+    confirmBtn.disabled = !termsCheckbox.checked;
+});
+</script>
 @endif
 
 
 
-    @if($step == 5)
-        <div class="container py-5">
+@if($step == 6)
+    <div class="container py-5">
 
-    <div class="card shadow p-4">
-        <h2>Boeking success</h2>
-        <p><strong>Service:</strong> {{ $data['service'] }}</p>
-        @if(!empty($data['departure']) && !empty($data['destination']))
-            <p><strong>Vertrekpunt:</strong> {{ $data['departure'] }}</p>
-            <p><strong>Bestemming:</strong> {{ $data['destination'] }}</p>
-        @endif
-        <p><strong>Datum:</strong> {{ $data['date'] }}</p>
-        @if(!empty($data['arrangement']))
-            <p><strong>Arrangement:</strong> {{ $data['arrangement'] }}</p>
-        @endif
+        <div class="card shadow p-4">
+            <h2>Boeking success</h2>
+            <p><strong>Service:</strong> {{ $data['service'] }}</p>
+            @if(!empty($data['departure']) && !empty($data['destination']))
+                <p><strong>Vertrekpunt:</strong> {{ $data['departure'] }}</p>
+                <p><strong>Bestemming:</strong> {{ $data['destination'] }}</p>
+            @endif
+            <p><strong>Datum:</strong> {{ $data['date'] }}</p>
+            @if(!empty($data['arrangement']))
+                <p><strong>Arrangement:</strong> {{ $data['arrangement'] }}</p>
+            @endif
 
-        <p><strong>Naam:</strong> {{ $data['name'] }}</p>
-        <p><strong>Email:</strong> {{ $data['email'] }}</p>
-        <p><strong>Opmerking:</strong>{{ $data['opmerking']  }}</p>
-        <p class="success"></p>
+            <p><strong>Naam:</strong> {{ $data['name'] }}</p>
+            <p><strong>Email:</strong> {{ $data['email'] }}</p>
+            <p><strong>Opmerking:</strong>{{ $data['opmerking']  }}</p>
+            <p class="success"></p>
+        </div>
     </div>
-    </div>
-    @endif
+@endif
 
 </body>
 </html>
