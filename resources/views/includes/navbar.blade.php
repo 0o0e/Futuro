@@ -45,14 +45,13 @@
     }
 
     .logo {
-      width: 310px;
+      width: 250px;
       height: auto;
       object-fit: contain;
       margin-right: auto;
-      margin-right: 123px;
+      margin-right: -90px;
 
     }
-
     .nav-container {
       width: 100%;
       display: flex;
@@ -67,6 +66,8 @@
 <body>
   <nav>
       <div class="nav-links">
+
+
         <a href="#" class="active">HOME</a>
         <a href="#">RONDVAARTEN</a>
         <a href="#">ARRANGEMENTEN</a>
@@ -75,6 +76,9 @@
         <a href="#">CONTACT</a>
       </div>
 
+                  @if(!isset($hideLogo) || !$hideLogo)
+           <img src="logo_og.png" alt="Futuro Logo" class="logo">
+    @endif
     {{-- <img src="logo_og.png" alt="Futuro Logo" class="logo"> --}}
 
   </nav>

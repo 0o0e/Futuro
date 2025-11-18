@@ -418,7 +418,7 @@ border: none;
     letter-spacing: 0.5px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
     z-index: 10000;
-    border: 2px solid var(--primary);
+    border: 1px solid #b21d1d;
     transition: background-color 0.25s ease, transform 0.25s ease;
 }
 
@@ -464,7 +464,7 @@ border: none;
       <div class="video-overlay"></div>
     </div>
 
-@include('includes.navbar')
+@include('includes.navbar', ['hideLogo' => true])
 
     <div class="viewport-header">
 
