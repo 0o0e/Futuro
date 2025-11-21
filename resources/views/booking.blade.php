@@ -628,6 +628,150 @@ document.addEventListener('DOMContentLoaded', function() {
 
     @endif
 
+
+
+    @if($step=='2_vaardebon')
+
+    <div class="container py-5">
+
+        <h2 class="mb-4 text-center">Kies duur voor uw Vaardebon</h2>
+        <div class="card shadow p-4">
+            <form action="{{ route('booking') }}" method="POST">
+            @csrf
+
+            <input type="hidden" name="step" value="2_vaardebon">
+
+            <div class="mb-3">
+            <div class="arrangement-options">
+                <label class="option-card">
+                    <input type="radio" name="hours" value="1" required>
+                    <img src="/vb1.png" alt="1 uur">
+                    <span class="option-title">1 uur - €175</span>
+                </label>
+
+                <label class="option-card">
+                    <input type="radio" name="hours" value="2" required>
+                    <img src="/vb1.png" alt="2 uur">
+                    <span class="option-title">2 uur - €330</span>
+                </label>
+
+                <label class="option-card">
+                    <input type="radio" name="hours" value="3" required>
+                    <img src="/vb1.png" alt="3 uur">
+                    <span class="option-title">3 uur - €470</span>
+                </label>
+            </div>
+            </div>
+            <button type="submit" class="booking-button">Ga verder</button>
+            </form>
+        </div>
+    </div>
+
+    @endif
+
+
+    @if ($step == '3_vaardebon')
+
+    <div class="container py-5">
+        <h1 class="mb-4 text-center">Kies een arrangement</h1>
+
+        <div class="card shadow p-4">
+            <form action="{{ route('booking') }}" method="POST">
+                @csrf
+                <input type="hidden" name="step" value="3_vaardebon">
+
+                <div class="mb-3">
+                    <div class="arrangement-options">
+
+
+                <label class="option-card">
+                    <input type="radio" name="arrangement" value="none" required>
+                    <img src="/prosecco.png" alt="Prosecco">
+                    <span class="option-title">Geen Arrangement</span>
+                </label>
+
+                <label class="option-card">
+                    <input type="radio" id="prosecco" name="arrangement" value="prosecco" required>
+                    <img src="/prosecco.png" alt="Prosecco">
+                    <span class="option-title">Prosecco o Vino a Bordo</span>
+                </label>
+
+                <label class="option-card">
+                    <input type="radio" id="picnic" name="arrangement" value="picnic">
+                    <img src="/picnic.png" alt="picnic">
+                    <span class="option-title">Picknick of Lunch a bordo</span>
+                </label>
+
+                <label class="option-card">
+                    <input type="radio" id="olala" name="arrangement" value="olala">
+                    <img src="/olala.png" alt="olala">
+                    <span class="option-title">Olala Chocola e Barca</span>
+                </label>
+
+                <label class="option-card">
+                    <input type="radio" id="bistro" name="arrangement" value="bistro">
+                    <img src="/bistro.png" alt="bistro">
+                    <span class="option-title">Bistro twee 33 e Barca</span>
+                </label>
+
+                <label class="option-card">
+                    <input type="radio" id="barca" name="arrangement" value="barca">
+                    <img src="/barca.png" alt="barca">
+                    <span class="option-title">Barca e Vino</span>
+                </label>
+
+                <label class="option-card">
+                    <input type="radio" id="stadswandeling" name="arrangement" value="stadswandeling">
+                    <img src="/stadswandeling.png" alt="stadswandeling">
+                    <span class="option-title">Stadswandeling</span>
+                </label>
+
+                    </div>
+                </div>
+
+                <button type="submit" class="booking-button">Ga verder</button>
+            </form>
+        </div>
+    </div>
+
+    @endif
+
+
+    @if ($step == "4_vaardebon")
+    <div class="container py-5">
+        <h1 class="mb-4 text-center">verstuur</h1>
+        <div class="card shadow p-4 mb-4">
+            <form action="{{ route('booking') }}" method="POST">
+                @csrf
+                <input type="hidden" name="step" value="4_vaardebon">
+
+
+            <div class="mb-3">
+                <label for="name" class="form-label required">Naam</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Jouw naam" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label required">E-mailadres</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="jij@example.com" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="phone" class="form-label required">Telefoon nummer</label>
+                <input type="tel" class="form-control" id="phone" name="phone" placeholder="06 12345678" required>
+            </div>
+
+            <button type="submit" class="booking-button">Verstuur</button>
+
+
+            </form>
+
+
+        </div>
+    </div>
+
+    @endif
+
     @if($step==3)
     <div class="container py-5">
         <h1 class="mb-4 text-center">Kies uw arrangementen</h1>
@@ -640,6 +784,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
                 <div class="arrangement-options">
+
 
                 <label class="option-card">
                     <input type="radio" name="arrangement" value="none" required>
@@ -841,7 +986,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="card shadow p-4">
         <h2>Boeking success</h2>
         <p><strong>Service:</strong> {{ $data['service'] }}</p>
-        @if(!empty($data['departure']) && !empty($data['destination']))
+        {{-- @if(!empty($data['departure']) && !empty($data['destination']))
             <p><strong>Vertrekpunt:</strong> {{ $data['departure'] }}</p>
             <p><strong>Bestemming:</strong> {{ $data['destination'] }}</p>
         @endif
@@ -852,7 +997,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         <p><strong>Naam:</strong> {{ $data['name'] }}</p>
         <p><strong>Email:</strong> {{ $data['email'] }}</p>
-        <p><strong>Opmerking:</strong>{{ $data['opmerking']  }}</p>
+        <p><strong>Opmerking:</strong>{{ $data['opmerking']  }}</p> --}}
         <p class="success"></p>
     </div>
     </div>

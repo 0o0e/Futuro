@@ -9,6 +9,8 @@ use App\Models\WatertaxiRoute;
 use App\Models\Invoice;
 use App\Mail\BookingConfirmationMail;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class BookingController extends Controller
 {
@@ -29,10 +31,12 @@ class BookingController extends Controller
                     session(['watertaxi_route_id' => $request->watertaxi_route_id]);
                 }
 
-
-                $step = 2;
+                if ($request->service && strtolower($request->service) === 'vaardebon') {
+                    $step = "2_vaardebon";
+                } else {
+                    $step = 2;
+                }
             }
-
             elseif ($step == 2) {
                 $service = session('service');
 
@@ -72,6 +76,81 @@ class BookingController extends Controller
                 }
             }
 
+
+            elseif ($step == "2_vaardebon") {
+                $request->validate([
+                    'hours' => 'required|string',
+                ]);
+
+                $hours = $request->hours;
+                if (!in_array($hours, [1,2,3])){
+                    return back()->withErrors([$hours => 'ongeldige duur gekozen']);
+                }
+
+                session(['vb_hours' => $hours]);
+                $step = '3_vaardebon';
+            }
+            elseif ($step == '3_vaardebon') {
+                session(['vb_arrangement' => $request->arrangement ?? null]);
+
+                // $prices = $this->calculatePrice(session()->all());
+                // session([
+                //     'service_price' => $prices['service'],
+                //     'arrangement_price' => $prices['arrangement'],
+                //     'price' => $prices['total']
+                // ]);
+
+                $step = '4_vaardebon';
+
+            }
+            elseif($step == '4_vaardebon'){
+                $request->validate([
+                    'name' => 'required|string',
+                    'email' => 'required|string',
+                ]);
+
+                $hours = session('vb_hours', 1);
+                $arrangement = session('vb_arrangement', null);
+
+                $hourprices = [
+                    1 => 175.00,
+                    2 => 330.00,
+                    3 => 470.00,
+                ];
+
+                $arrangementPrices = [
+                    'prosecco' => 15,
+                    'picnic' => 20,
+                    'olala' => 18,
+                    'bistro' => 22,
+                    'barca' => 25,
+                    'stadswandeling' => 12,
+                ];
+
+                $base = $hourPrices[$hours] ?? $hourprices[1];
+                $arrPrice = ($arrangement && isset($arrangementPrices[$arrangement])) ? $arrangementPrices[$arrangement] : 0;
+                $totalAmount = round($base + $arrPrice, 2);
+
+                do {
+                    $code = Str::upper(Str::random(10));
+                    $exists = DB::table('discount_codes')->where('code', $code)->exists();
+                } while ($exists);
+
+                DB::table('discount_codes')->insert([
+                    'code' => $code,
+                    'amount' => $totalAmount,
+                    'is_used' => false,
+                    'hours' => $hours,
+                    'arrangement' => $arrangement,
+                    'purchaser_name' => $request->name,
+                    'purchaser_email' => $request->email,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+                $step = 5;
+
+            }
             elseif ($step == 3) {
                 session([
                     'has_table' => $request->arrangement === 'has_table' ? 1 : 0,
