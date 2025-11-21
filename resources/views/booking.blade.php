@@ -638,7 +638,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
             <div class="mb-3">
 
+
                 <div class="arrangement-options">
+
+                <label class="option-card">
+                    <input type="radio" name="arrangement" value="none" required>
+                    <img src="/prosecco.png" alt="Prosecco">
+                    <span class="option-title">Geen Arrangement</span>
+                </label>
+
                 <label class="option-card">
                     <input type="radio" id="prosecco" name="arrangement" value="prosecco" required>
                     <img src="/prosecco.png" alt="Prosecco">

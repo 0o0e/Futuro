@@ -152,7 +152,7 @@ class BookingController extends Controller
                     'due_date' => date('Y-m-d', strtotime($booking->date . ' +14 days')),
                 ]);
 
-                if ($data['service'] !== 'Watertaxi' && !$data['has_table']) {
+                if ($data['service'] !== 'Watertaxi' && !$data['has_table'] && session('arrangement') !== 'none') {
                     $arrangement = [
                         'booking_id' => $booking->id,
                         'prosecco' => 0,
