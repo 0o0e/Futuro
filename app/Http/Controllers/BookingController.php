@@ -8,6 +8,7 @@ use App\Models\Arrangement;
 use App\Models\WatertaxiRoute;
 use App\Models\Invoice;
 use App\Mail\BookingConfirmationMail;
+use App\Models\DiscountCode;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -136,7 +137,9 @@ class BookingController extends Controller
                     $exists = DB::table('discount_codes')->where('code', $code)->exists();
                 } while ($exists);
 
-                DB::table('discount_codes')->insert([
+
+
+                DiscountCode::create([
                     'code' => $code,
                     'amount' => $totalAmount,
                     'is_used' => false,
@@ -144,9 +147,8 @@ class BookingController extends Controller
                     'arrangement' => $arrangement,
                     'purchaser_name' => $request->name,
                     'purchaser_email' => $request->email,
-                    'created_at' => now(),
-                    'updated_at' => now(),
                 ]);
+
 
                 $step = 5;
 
