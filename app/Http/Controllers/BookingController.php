@@ -8,6 +8,7 @@ use App\Models\Arrangement;
 use App\Models\WatertaxiRoute;
 use App\Models\Invoice;
 use App\Mail\BookingConfirmationMail;
+use App\Mail\VaardebonMail;
 use App\Models\DiscountCode;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -139,7 +140,7 @@ class BookingController extends Controller
 
 
 
-                DiscountCode::create([
+                $discountcode = DiscountCode::create([
                     'code' => $code,
                     'amount' => $totalAmount,
                     'is_used' => false,
@@ -148,6 +149,8 @@ class BookingController extends Controller
                     'purchaser_name' => $request->name,
                     'purchaser_email' => $request->email,
                 ]);
+
+                Mail::to($discountcode->purchaser_email)->send(new VaardebonMail($discountcode));
 
 
                 $step = 5;
