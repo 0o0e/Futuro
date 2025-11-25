@@ -205,6 +205,32 @@ class BookingController extends Controller
                     'postcode',
                 ]);
 
+                // Na invullen klantgegevens eerst een bevestigingsstap tonen
+                $step = 5;
+            }
+
+            elseif ($step == 5) {
+                // controleer dat algemene voorwaarden zijn geaccepteerd
+                $request->validate([
+                    'terms_accepted' => 'accepted',
+                ]);
+
+                $data = session()->only([
+                    'service',
+                    'date',
+                    'time_start',
+                    'time_end',
+                    'arrangement',
+                    'name',
+                    'email',
+                    'opmerking',
+                    'watertaxi_route_id',
+                    'people',
+                    'has_table',
+                    'phone',
+                    'price',
+                ]);
+
 
                 // $price = $this->calculatePrice($data);
 
@@ -256,7 +282,8 @@ class BookingController extends Controller
 
                 Mail::to($booking->email)->send(new BookingConfirmationMail($booking));
 
-                $step = 5;
+                // Successtap na definitieve bevestiging
+                $step = 6;
             }
         }
 

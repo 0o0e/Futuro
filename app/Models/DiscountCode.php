@@ -2,15 +2,41 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Testing\Fluent\Concerns\Has;
+use Illuminate\Support\Str;
 
 class DiscountCode extends Model
 {
-    use HasFactory;
+    protected $fillable = [
+        'code',
+        'amount',
+        'is_used',
+        'used_at',
+        'used_by_user_id'
+      'hours','arrangement','purchaser_name','purchaser_email'
+    ];
 
-    protected $fillable = ['code','amount','is_used','used_at','used_by_user_id','hours','arrangement','purchaser_name','purchaser_email'];
+    protected $casts = [
+        'is_used' => 'boolean',
+        'used_at' => 'datetime',
+        'amount' => 'decimal:2'
+    ];
 
+    public static function generateUniqueCode(): string
+    {
+        do {
+            $code = Str::random(10);
+        } while (self::where('code', $code)->exists());
 
+        return $code;
+    }
+
+    public function markAsUsed($userId = null): void
+    {
+        $this->update([
+            'is_used' => true,
+            'used_at' => now(),
+            'used_by_user_id' => $userId
+        ]);
+    }
 }
