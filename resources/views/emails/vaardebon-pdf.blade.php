@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="nl">
+
 <head>
     <meta charset="UTF-8">
     <style>
@@ -52,33 +53,35 @@
         }
     </style>
 </head>
+
 <body>
 
-<div class="card">
-    <h1>Vaardebon</h1>
+    <div class="card">
+        <h1>Vaardebon</h1>
 
-    <div class="line"></div>
+        <div class="line"></div>
 
-    <p class="info">
-        <span class="label">Prijs:</span> €{{ number_format($discount_code->amount, 2, ',', '.') }}
-    </p>
+        <p class="info">
+            <span class="label">Prijs:</span> €{{ number_format($discount_code->amount, 2, ',', '.') }}
+        </p>
 
-    <p class="info">
-        <span class="label">Arrangement:</span>
-        {{ $discount_code->arrangement ?? 'Rondvaart' }}
-    </p>
+        <p class="info">
+            <span class="label">Arrangement:</span>
+            {{ $discount_code->arrangement ?? 'Rondvaart' }}
+        </p>
 
-    <p class="label" style="margin-top: 25px;">Code:</p>
-    <div class="code-box">
-        {{ $discount_code->code }}
+        <p class="label" style="margin-top: 25px;">Code:</p>
+        <div class="code-box">
+            {{ $discount_code->code }}
+        </div>
+
+        <div class="line"></div>
+
+        <p style="font-size: 14px; color: #555;">
+            Deze waardebon kan worden gebruikt bij Futuro Rondvaart.
+        </p>
     </div>
 
-    <div class="line"></div>
-
-    <p style="font-size: 14px; color: #555;">
-        Deze waardebon kan worden gebruikt bij Futuro Rondvaart.
-    </p>
-</div>
-
 </body>
+
 </html>
