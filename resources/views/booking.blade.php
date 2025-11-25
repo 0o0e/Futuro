@@ -217,7 +217,7 @@
 
 .time-btn {
     padding: 10px 0;
-    background: #e9ecef;
+    background: #b8ecc7;
     border-radius: 6px;
     font-weight: 600;
     border: 2px solid transparent;
@@ -227,12 +227,13 @@
 }
 
 .time-btn:hover {
-    background: #d4dadf;
+    background: #99cd9c;
 }
 
 .time-btn.selected {
     border-color: #4C807F;
-    background: #cfe8e7;
+    background: #99cd9c;
+    /* cfe8e7 */
 }
 
 #calendar {
@@ -268,7 +269,7 @@
     gap: 80px;
 }
 
-/* unavailable state */
+
 .time-btn.unavailable {
     background: #f8d7da;
     border-color: #f5c2c7;
@@ -277,7 +278,7 @@
     opacity: 0.95;
 }
 
-/* visually stronger selected state if button is also selected (shouldn't happen) */
+
 .time-btn.unavailable.selected {
     box-shadow: none;
     border-color: #842029;
@@ -289,6 +290,13 @@
     align-items: center;
     gap: 10px;
     text-align: left;
+}
+
+
+.form-label.required::after {
+    content: " *";
+    color: red;
+    font-weight: bold;
 }
 
 
@@ -628,6 +636,150 @@ document.addEventListener('DOMContentLoaded', function() {
 
     @endif
 
+
+
+    @if($step=='2_vaardebon')
+
+    <div class="container py-5">
+
+        <h2 class="mb-4 text-center">Kies duur voor uw Vaardebon</h2>
+        <div class="card shadow p-4">
+            <form action="{{ route('booking') }}" method="POST">
+            @csrf
+
+            <input type="hidden" name="step" value="2_vaardebon">
+
+            <div class="mb-3">
+            <div class="arrangement-options">
+                <label class="option-card">
+                    <input type="radio" name="hours" value="1" required>
+                    <img src="/vb1.png" alt="1 uur">
+                    <span class="option-title">1 uur - €175</span>
+                </label>
+
+                <label class="option-card">
+                    <input type="radio" name="hours" value="2" required>
+                    <img src="/vb1.png" alt="2 uur">
+                    <span class="option-title">2 uur - €330</span>
+                </label>
+
+                <label class="option-card">
+                    <input type="radio" name="hours" value="3" required>
+                    <img src="/vb1.png" alt="3 uur">
+                    <span class="option-title">3 uur - €470</span>
+                </label>
+            </div>
+            </div>
+            <button type="submit" class="booking-button">Ga verder</button>
+            </form>
+        </div>
+    </div>
+
+    @endif
+
+
+    @if ($step == '3_vaardebon')
+
+    <div class="container py-5">
+        <h1 class="mb-4 text-center">Kies een arrangement</h1>
+
+        <div class="card shadow p-4">
+            <form action="{{ route('booking') }}" method="POST">
+                @csrf
+                <input type="hidden" name="step" value="3_vaardebon">
+
+                <div class="mb-3">
+                    <div class="arrangement-options">
+
+
+                <label class="option-card">
+                    <input type="radio" name="arrangement" value="none" required>
+                    <img src="/prosecco.png" alt="Prosecco">
+                    <span class="option-title">Geen Arrangement</span>
+                </label>
+
+                <label class="option-card">
+                    <input type="radio" id="prosecco" name="arrangement" value="prosecco" required>
+                    <img src="/prosecco.png" alt="Prosecco">
+                    <span class="option-title">Prosecco o Vino a Bordo</span>
+                </label>
+
+                <label class="option-card">
+                    <input type="radio" id="picnic" name="arrangement" value="picnic">
+                    <img src="/picnic.png" alt="picnic">
+                    <span class="option-title">Picknick of Lunch a bordo</span>
+                </label>
+
+                <label class="option-card">
+                    <input type="radio" id="olala" name="arrangement" value="olala">
+                    <img src="/olala.png" alt="olala">
+                    <span class="option-title">Olala Chocola e Barca</span>
+                </label>
+
+                <label class="option-card">
+                    <input type="radio" id="bistro" name="arrangement" value="bistro">
+                    <img src="/bistro.png" alt="bistro">
+                    <span class="option-title">Bistro twee 33 e Barca</span>
+                </label>
+
+                <label class="option-card">
+                    <input type="radio" id="barca" name="arrangement" value="barca">
+                    <img src="/barca.png" alt="barca">
+                    <span class="option-title">Barca e Vino</span>
+                </label>
+
+                <label class="option-card">
+                    <input type="radio" id="stadswandeling" name="arrangement" value="stadswandeling">
+                    <img src="/stadswandeling.png" alt="stadswandeling">
+                    <span class="option-title">Stadswandeling</span>
+                </label>
+
+                    </div>
+                </div>
+
+                <button type="submit" class="booking-button">Ga verder</button>
+            </form>
+        </div>
+    </div>
+
+    @endif
+
+
+    @if ($step == "4_vaardebon")
+    <div class="container py-5">
+        <h1 class="mb-4 text-center">verstuur</h1>
+        <div class="card shadow p-4 mb-4">
+            <form action="{{ route('booking') }}" method="POST">
+                @csrf
+                <input type="hidden" name="step" value="4_vaardebon">
+
+
+            <div class="mb-3">
+                <label for="name" class="form-label required">Naam</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Jouw naam" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label required">E-mailadres</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="jij@example.com" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="phone" class="form-label required">Telefoon nummer</label>
+                <input type="tel" class="form-control" id="phone" name="phone" placeholder="06 12345678" required>
+            </div>
+
+            <button type="submit" class="booking-button">Verstuur</button>
+
+
+            </form>
+
+
+        </div>
+    </div>
+
+    @endif
+
     @if($step==3)
     <div class="container py-5">
         <h1 class="mb-4 text-center">Kies uw arrangementen</h1>
@@ -638,7 +790,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
             <div class="mb-3">
 
+
                 <div class="arrangement-options">
+
+
+                <label class="option-card">
+                    <input type="radio" name="arrangement" value="none" required>
+                    <img src="/prosecco.png" alt="Prosecco">
+                    <span class="option-title">Geen Arrangement</span>
+                </label>
+
                 <label class="option-card">
                     <input type="radio" id="prosecco" name="arrangement" value="prosecco" required>
                     <img src="/prosecco.png" alt="Prosecco">
@@ -846,6 +1007,46 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class="card shadow p-4">
         <form action="{{ route('booking') }}" method="POST">
             @csrf
+            <input type="hidden" name="step" value="4">
+
+            <div class="mb-3">
+                <label for="name" class="form-label required">Naam</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Jouw naam" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label required">E-mailadres</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="jij@example.com" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="phone" class="form-label required">Telefoon nummer</label>
+                <input type="tel" class="form-control" id="phone" name="phone" placeholder="06 12345678" required>
+            </div>
+
+
+            <div class="mb-3">
+                <label for="address" class="form-label">Adres</label>
+                <input type="text" name="address" id="address" class="form-control" placeholder="Straat 12">
+            </div>
+
+
+            <div class="mb-3">
+                <label for="city" class="form-label">Stad</label>
+                <input type="text" name="city" id="city" class="form-control" placeholder="Stad">
+
+            </div>
+
+
+            <div class="mb-3">
+                <label for="postcode" class="form-label">postcode</label>
+                <input type="text" name="postcode" id="postcode" class="form-control" placeholder="3311XX">
+            </div>
+
+            <div class="mb-3">
+                <label for="opmerking" class="form-label">Opmerking</label>
+                <textarea class="form-control" id="opmerking" name="opmerking" rows="3" placeholder="Eventuele opmerkingen..."></textarea>
+            </div>
             <input type="hidden" name="step" value="5">
             <div class="terms-consent mb-3">
                 <input class="form-check-input"
@@ -884,6 +1085,10 @@ document.addEventListener('DOMContentLoaded', function () {
         confirmBtn.disabled = !termsCheckbox.checked;
     });
 
+            <button type="submit" class="booking-button">Verstuur Boeking</button>
+        </form>
+    </div>
+</div>
     // init state (als checkbox al aangevinkt is bij terugnavigeren)
     confirmBtn.disabled = !termsCheckbox.checked;
 });
@@ -895,23 +1100,23 @@ document.addEventListener('DOMContentLoaded', function () {
 @if($step == 6)
     <div class="container py-5">
 
-        <div class="card shadow p-4">
-            <h2>Boeking success</h2>
-            <p><strong>Service:</strong> {{ $data['service'] }}</p>
-            @if(!empty($data['departure']) && !empty($data['destination']))
-                <p><strong>Vertrekpunt:</strong> {{ $data['departure'] }}</p>
-                <p><strong>Bestemming:</strong> {{ $data['destination'] }}</p>
-            @endif
-            <p><strong>Datum:</strong> {{ $data['date'] }}</p>
-            @if(!empty($data['arrangement']))
-                <p><strong>Arrangement:</strong> {{ $data['arrangement'] }}</p>
-            @endif
+    <div class="card shadow p-4">
+        <h2>Boeking success</h2>
+        <p><strong>Service:</strong> {{ $data['service'] }}</p>
+        {{-- @if(!empty($data['departure']) && !empty($data['destination']))
+            <p><strong>Vertrekpunt:</strong> {{ $data['departure'] }}</p>
+            <p><strong>Bestemming:</strong> {{ $data['destination'] }}</p>
+        @endif
+        <p><strong>Datum:</strong> {{ $data['date'] }}</p>
+        @if(!empty($data['arrangement']))
+            <p><strong>Arrangement:</strong> {{ $data['arrangement'] }}</p>
+        @endif
 
-            <p><strong>Naam:</strong> {{ $data['name'] }}</p>
-            <p><strong>Email:</strong> {{ $data['email'] }}</p>
-            <p><strong>Opmerking:</strong>{{ $data['opmerking']  }}</p>
-            <p class="success"></p>
-        </div>
+        <p><strong>Naam:</strong> {{ $data['name'] }}</p>
+        <p><strong>Email:</strong> {{ $data['email'] }}</p>
+        <p><strong>Opmerking:</strong>{{ $data['opmerking']  }}</p> --}}
+        <p class="success"></p>
+    </div>
     </div>
 @endif
 
