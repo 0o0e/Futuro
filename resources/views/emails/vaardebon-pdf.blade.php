@@ -14,7 +14,7 @@
             background: white;
             padding: 40px;
             border-radius: 12px;
-            border: 2px solid #0b5394;
+            border: 2px solid #4C807F;
             max-width: 600px;
             margin: auto;
             text-align: center;
@@ -22,14 +22,14 @@
 
         h1 {
             margin-bottom: 10px;
-            color: #0b5394;
+            color: #4C807F;
             font-size: 28px;
         }
 
         .line {
             margin: 20px auto;
             width: 60%;
-            border-top: 1px solid #0b5394;
+            border-top: 1px solid #4C807F;
         }
 
         .info {
@@ -39,13 +39,13 @@
 
         .label {
             font-weight: bold;
-            color: #0b5394;
+            color: #4C807F;
         }
 
         .code-box {
             margin: 25px auto;
             padding: 12px;
-            border: 2px dashed #0b5394;
+            border: 2px dashed #4C807F;
             font-size: 24px;
             letter-spacing: 2px;
             font-weight: bold;

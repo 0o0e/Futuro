@@ -24,7 +24,7 @@ class BookingController extends Controller
         if ($request->isMethod('post')) {
 
             if ($step == 1) {
-                session(['service' => $request->service , 'people' => $request->people]);
+                session(['service' => $request->service, 'people' => $request->people]);
 
                 if ($request->service == 'Watertaxi') {
                     $request->validate([
@@ -38,8 +38,7 @@ class BookingController extends Controller
                 } else {
                     $step = 2;
                 }
-            }
-            elseif ($step == 2) {
+            } elseif ($step == 2) {
                 $service = session('service');
 
                 if ($service == 'Watertaxi') {
@@ -76,23 +75,19 @@ class BookingController extends Controller
 
                     $step = 3;
                 }
-            }
-
-
-            elseif ($step == "2_vaardebon") {
+            } elseif ($step == "2_vaardebon") {
                 $request->validate([
                     'hours' => 'required|string',
                 ]);
 
                 $hours = $request->hours;
-                if (!in_array($hours, [1,2,3])){
+                if (!in_array($hours, [1, 2, 3])) {
                     return back()->withErrors([$hours => 'ongeldige duur gekozen']);
                 }
 
                 session(['vb_hours' => $hours]);
                 $step = '3_vaardebon';
-            }
-            elseif ($step == '3_vaardebon') {
+            } elseif ($step == '3_vaardebon') {
                 session(['vb_arrangement' => $request->arrangement ?? null]);
 
                 // $prices = $this->calculatePrice(session()->all());
@@ -103,9 +98,7 @@ class BookingController extends Controller
                 // ]);
 
                 $step = '4_vaardebon';
-
-            }
-            elseif($step == '4_vaardebon'){
+            } elseif ($step == '4_vaardebon') {
                 $request->validate([
                     'name' => 'required|string',
                     'email' => 'required|string',
@@ -154,9 +147,7 @@ class BookingController extends Controller
 
 
                 $step = 5;
-
-            }
-            elseif ($step == 3) {
+            } elseif ($step == 3) {
                 session([
                     'has_table' => $request->arrangement === 'has_table' ? 1 : 0,
                     'arrangement' => $request->arrangement === 'has_table' ? null : $request->arrangement,
@@ -171,9 +162,7 @@ class BookingController extends Controller
 
 
                 $step = 4;
-            }
-
-            elseif ($step == 4) {
+            } elseif ($step == 4) {
                 session()->put([
                     'name' => $request->name,
                     'email' => $request->email,
@@ -203,32 +192,6 @@ class BookingController extends Controller
                     'address',
                     'city',
                     'postcode',
-                ]);
-
-                // Na invullen klantgegevens eerst een bevestigingsstap tonen
-                $step = 5;
-            }
-
-            elseif ($step == 5) {
-                // controleer dat algemene voorwaarden zijn geaccepteerd
-                $request->validate([
-                    'terms_accepted' => 'accepted',
-                ]);
-
-                $data = session()->only([
-                    'service',
-                    'date',
-                    'time_start',
-                    'time_end',
-                    'arrangement',
-                    'name',
-                    'email',
-                    'opmerking',
-                    'watertaxi_route_id',
-                    'people',
-                    'has_table',
-                    'phone',
-                    'price',
                 ]);
 
 
@@ -282,15 +245,14 @@ class BookingController extends Controller
 
                 Mail::to($booking->email)->send(new BookingConfirmationMail($booking));
 
-                // Successtap na definitieve bevestiging
-                $step = 6;
+                $step = 5;
             }
         }
 
         $data = session()->all();
 
 
-        $allBookings = Booking::select('date','time_start','time_end')->get();
+        $allBookings = Booking::select('date', 'time_start', 'time_end')->get();
 
         // build associative array: 'YYYY-MM-DD' => [ {start:'HH:MM', end:'HH:MM'}, ... ]
         $bookingsByDate = [];
@@ -311,7 +273,8 @@ class BookingController extends Controller
         ]);
     }
 
-    protected function calculatePrice($data){
+    protected function calculatePrice($data)
+    {
         $serviceTotal = 0;
         $arrangementTotal = 0;
 
@@ -352,6 +315,4 @@ class BookingController extends Controller
             'total' => $serviceTotal + $arrangementTotal
         ];
     }
-
-
 }

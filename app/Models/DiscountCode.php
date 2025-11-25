@@ -12,8 +12,11 @@ class DiscountCode extends Model
         'amount',
         'is_used',
         'used_at',
-        'used_by_user_id'
-      'hours','arrangement','purchaser_name','purchaser_email'
+        'used_by_user_id',
+        'hours',
+        'arrangement',
+        'purchaser_name',
+        'purchaser_email'
     ];
 
     protected $casts = [
