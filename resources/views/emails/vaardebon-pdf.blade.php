@@ -51,6 +51,12 @@
             font-weight: bold;
             display: inline-block;
         }
+
+        img {
+            width: 250px;
+            height: auto;
+            margin-top: 5px;
+        }
     </style>
 </head>
 
@@ -58,6 +64,13 @@
 
     <div class="card">
         <h1>Vaardebon</h1>
+        @php
+            $logoPath = public_path('logo_og.png');
+            $logoData = base64_encode(file_get_contents($logoPath));
+        @endphp
+        <img src="data:image/png;base64,{{ $logoData }}" alt="Logo">
+
+
 
         <div class="line"></div>
 

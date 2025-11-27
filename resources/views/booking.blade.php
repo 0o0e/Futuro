@@ -321,6 +321,8 @@
 
                         <label class="option-card">
                             <input type="radio" name="service" value="vaardebon" required>
+                            <img src="/images/vaardebon/vaardebon.png" alt="Watertaxi">
+
                             <span class="option-title">Vaardebon kopen</span>
                         </label>
 
@@ -644,19 +646,19 @@
                         <div class="arrangement-options">
                             <label class="option-card">
                                 <input type="radio" name="hours" value="1" required>
-                                <img src="/vb1.png" alt="1 uur">
+                                <img src="/images/vaardebon/1uur.png" alt="1 uur">
                                 <span class="option-title">1 uur - €175</span>
                             </label>
 
                             <label class="option-card">
                                 <input type="radio" name="hours" value="2" required>
-                                <img src="/vb1.png" alt="2 uur">
+                                <img src="/images/vaardebon/2uur.png" alt="2 uur">
                                 <span class="option-title">2 uur - €330</span>
                             </label>
 
                             <label class="option-card">
                                 <input type="radio" name="hours" value="3" required>
-                                <img src="/vb1.png" alt="3 uur">
+                                <img src="/images/vaardebon/3uur.png" alt="3 uur">
                                 <span class="option-title">3 uur - €470</span>
                             </label>
                         </div>
@@ -846,85 +848,6 @@
     @if ($step == 4)
         <div class="container py-5">
             <h1 class="mb-4 text-center">Maak een Reservering</h1>
-
-            <div class="card shadow p-4 mb-4">
-                <h4 class="mb-3">Reserveringsoverzicht</h4>
-
-                <table class="table table-borderless">
-                    <tbody>
-                        <tr>
-                            <td><strong>Service</strong></td>
-                            <td>{{ $data['service'] ?? '' }}</td>
-                            <td></td>
-                        </tr>
-
-                        @if ($data['service'] == 'Rondvaart')
-                            <tr>
-                                <td><strong>Datum</strong></td>
-                                <td>{{ \Carbon\Carbon::parse($data['date'])->format('d/m/Y') }}</td>
-                                <td>{{ $data['people'] ?? '' }}p</td>
-                            </tr>
-
-                            <tr>
-                                <td>Begin Tijd</td>
-                                <td>{{ $data['time_start'] ?? '' }}</td>
-                                <td>{{ $data['service_price'] ?? 0 }}€</td>
-                            </tr>
-
-                            @if (!empty($data['time_end']))
-                                <tr>
-                                    <td>Eind Tijd</td>
-                                    <td>{{ $data['time_end'] }}</td>
-                                    <td></td>
-                                </tr>
-                            @endif
-
-                            @if (!empty($data['arrangement']))
-                                <tr>
-                                    <td>Arrangement</td>
-                                    <td>{{ $data['arrangement'] }}</td>
-                                    <td>{{ $data['arrangement_price'] ?? 0 }}€</td>
-                                </tr>
-                            @endif
-                        @elseif($data['service'] == 'Watertaxi')
-                            <tr>
-                                <td>Datum</td>
-                                <td>{{ \Carbon\Carbon::parse($data['date'])->format('d/m/Y') }}</td>
-                                <td>{{ $data['people'] ?? '' }}p</td>
-                            </tr>
-                            <tr>
-                                <td>Vertrekpunt</td>
-                                <td>{{ $data['departure'] ?? '' }}</td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>Bestemming</td>
-                                <td>{{ $data['destination'] ?? '' }}</td>
-                                <td>{{ $data['price'] ?? 0 }}€</td>
-                            </tr>
-                            <tr>
-                                <td>Begin Tijd</td>
-                                <td>{{ $data['time_start'] ?? '' }}</td>
-                                <td></td>
-                            </tr>
-                        @endif
-
-                        <tr>
-                            <td colspan="2">
-                                <hr>
-                            </td>
-                            <td>
-                                <hr>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2" class="text-end"><strong>Totaal</strong></td>
-                            <td><strong>{{ $data['price'] ?? 0 }}€</strong></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
             <div class="card shadow p-4">
                 <form action="{{ route('booking') }}" method="POST">
                     @csrf
@@ -933,54 +856,39 @@
                     <div class="mb-3">
                         <label for="name" class="form-label required">Naam</label>
                         <input type="text" class="form-control" id="name" name="name"
-                            placeholder="Jouw naam" required>
+                            value="{{ session('name') }}" required>
                     </div>
-
                     <div class="mb-3">
                         <label for="email" class="form-label required">E-mailadres</label>
                         <input type="email" class="form-control" id="email" name="email"
-                            placeholder="jij@example.com" required>
+                            value="{{ session('email') }}" required>
                     </div>
-
                     <div class="mb-3">
                         <label for="phone" class="form-label required">Telefoon nummer</label>
                         <input type="tel" class="form-control" id="phone" name="phone"
-                            placeholder="06 12345678" required>
+                            value="{{ session('phone') }}" required>
                     </div>
-
-
                     <div class="mb-3">
                         <label for="address" class="form-label">Adres</label>
                         <input type="text" name="address" id="address" class="form-control"
-                            placeholder="Straat 12">
+                            value="{{ session('address') }}">
                     </div>
-
-
                     <div class="mb-3">
                         <label for="city" class="form-label">Stad</label>
                         <input type="text" name="city" id="city" class="form-control"
-                            placeholder="Stad">
-
+                            value="{{ session('city') }}">
                     </div>
-
-
                     <div class="mb-3">
                         <label for="postcode" class="form-label">postcode</label>
                         <input type="text" name="postcode" id="postcode" class="form-control"
-                            placeholder="3311XX">
+                            value="{{ session('postcode') }}">
                     </div>
-
                     <div class="mb-3">
                         <label for="opmerking" class="form-label">Opmerking</label>
-                        <textarea class="form-control" id="opmerking" name="opmerking" rows="3"
-                            placeholder="Eventuele opmerkingen..."></textarea>
+                        <textarea class="form-control" id="opmerking" name="opmerking" rows="3">{{ session('opmerking') }}</textarea>
                     </div>
 
-                    @if (session('service') == 'Watertaxi')
-                        <input type="hidden" name="watertaxi_route_id" value="{{ session('watertaxi_route_id') }}">
-                    @endif
-
-                    <button type="submit" class="booking-button">Verstuur Boeking</button>
+                    <button type="submit" class="booking-button">Bekijk Reserveringsoverzicht</button>
                 </form>
             </div>
         </div>
@@ -988,27 +896,152 @@
 
 
 
+
     @if ($step == 5)
         <div class="container py-5">
 
-            <div class="card shadow p-4">
-                <h2>Boeking success</h2>
-                <p><strong>Service:</strong> {{ $data['service'] }}</p>
-                {{-- @if (!empty($data['departure']) && !empty($data['destination']))
-            <p><strong>Vertrekpunt:</strong> {{ $data['departure'] }}</p>
-            <p><strong>Bestemming:</strong> {{ $data['destination'] }}</p>
-        @endif
-        <p><strong>Datum:</strong> {{ $data['date'] }}</p>
-        @if (!empty($data['arrangement']))
-            <p><strong>Arrangement:</strong> {{ $data['arrangement'] }}</p>
-        @endif
+            <h1 class="mb-4 text-center">Bevestig Reservering</h1>
 
-        <p><strong>Naam:</strong> {{ $data['name'] }}</p>
-        <p><strong>Email:</strong> {{ $data['email'] }}</p>
-        <p><strong>Opmerking:</strong>{{ $data['opmerking']  }}</p> --}}
-                <p class="success"></p>
+            <div class="container py-5">
+                <div class="card shadow p-4 mb-4">
+                    <h4 class="mb-3">Reserveringsoverzicht</h4>
+
+                    <table class="table table-borderless">
+                        <tbody>
+                            <tr>
+                                <td><strong>Service</strong></td>
+                                <td>{{ $data['service'] ?? '' }}</td>
+                                <td></td>
+                            </tr>
+
+                            @if ($data['service'] == 'Rondvaart')
+                                <tr>
+                                    <td><strong>Datum</strong></td>
+                                    <td>{{ \Carbon\Carbon::parse($data['date'])->format('d/m/Y') }}</td>
+                                    <td>{{ $data['people'] ?? '' }}p</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Begin Tijd</td>
+                                    <td>{{ $data['time_start'] ?? '' }}</td>
+                                    <td>{{ $data['service_price'] ?? 0 }}€</td>
+                                </tr>
+
+                                @if (!empty($data['time_end']))
+                                    <tr>
+                                        <td>Eind Tijd</td>
+                                        <td>{{ $data['time_end'] }}</td>
+                                        <td></td>
+                                    </tr>
+                                @endif
+
+                                @if (!empty($data['arrangement']))
+                                    <tr>
+                                        <td>Arrangement</td>
+                                        <td>{{ $data['arrangement'] }}</td>
+                                        <td>{{ $data['arrangement_price'] ?? 0 }}€</td>
+                                    </tr>
+                                @endif
+                            @elseif($data['service'] == 'Watertaxi')
+                                <tr>
+                                    <td>Datum</td>
+                                    <td>{{ \Carbon\Carbon::parse($data['date'])->format('d/m/Y') }}</td>
+                                    <td>{{ $data['people'] ?? '' }}p</td>
+                                </tr>
+                                <tr>
+                                    <td>Vertrekpunt</td>
+                                    <td>{{ $data['departure'] ?? '' }}</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>Bestemming</td>
+                                    <td>{{ $data['destination'] ?? '' }}</td>
+                                    <td>{{ $data['price'] ?? 0 }}€</td>
+                                </tr>
+                                <tr>
+                                    <td>Begin Tijd</td>
+                                    <td>{{ $data['time_start'] ?? '' }}</td>
+                                    <td></td>
+                                </tr>
+                            @endif
+
+                            <tr>
+                                <td colspan="2">
+                                    <hr>
+                                </td>
+                                <td>
+                                    <hr>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="text-end"><strong>Totaal</strong></td>
+                                <td><strong>{{ $data['price'] ?? 0 }}€</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card shadow p-4 mb-4">
+                    <h4 class="mb-3">overzicht</h4>
+                    <table class="table table-borderless">
+                        <tbody>
+                            <tr>
+                                <td>Service</td>
+                                <td>{{ $data['service'] ?? '' }}</td>
+                            </tr>
+                            <tr>
+                                <td>Datum</td>
+                                <td>{{ \Carbon\Carbon::parse($data['date'])->format('d/m/Y') }}</td>
+                            </tr>
+                            <tr>
+                                <td>Tijd</td>
+                                <td>{{ $data['time_start'] }} @if (!empty($data['time_end']))
+                                        - {{ $data['time_end'] }}
+                                    @endif
+                                </td>
+                            </tr>
+                            @if (!empty($data['arrangement']))
+                                <tr>
+                                    <td>Arrangement</td>
+                                    <td>{{ $data['arrangement'] }}</td>
+                                </tr>
+                            @endif
+                            <tr>
+                                <td>Naam</td>
+                                <td>{{ $data['name'] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Email</td>
+                                <td>{{ $data['email'] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Telefoon</td>
+                                <td>{{ $data['phone'] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Adres</td>
+                                <td>{{ $data['address'] }}, {{ $data['postcode'] }}, {{ $data['city'] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Opmerking</td>
+                                <td>{{ $data['opmerking'] }}</td>
+                            </tr>
+                            {{-- <tr>
+                                <td><strong>Totaal</strong></td>
+                                <td><strong>{{ $data['price'] ?? 0 }}€</strong></td>
+                            </tr> --}}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card shadow p-4">
+                    <form action="{{ route('booking') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="step" value="5">
+                        <button type="submit" class="booking-button">Definitief Boeken</button>
+                    </form>
+                </div>
             </div>
-        </div>
+
     @endif
 
 </body>

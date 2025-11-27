@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="nl">
+
 <head>
     <meta charset="UTF-8">
     <title>Factuur #{{ $invoice->invoice_number }}</title>
@@ -84,6 +85,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <div class="header">
@@ -110,108 +112,102 @@
                 <th style="width: 150px;">Bedrag (€)</th>
             </tr>
         </thead>
-<tbody>
-    @php
-        $items = [];
-        $serviceLabel = '';
-        $basePrice = $booking->price;
+        <tbody>
+            @php
+                $items = [];
+                $serviceLabel = '';
+                $basePrice = $booking->price;
 
-        // Handle the service label
-        if ($booking->service === 'Rondvaart') {
-            $start = strtotime($booking->time_start);
-            $end = strtotime($booking->time_end);
-            $hours = max(1, floor(($end - $start) / 3600));
-            $serviceLabel = "Rondvaart {$hours} uur";
-        } elseif ($booking->service === 'Watertaxi' && $booking->watertaxiRoute) {
-            $serviceLabel = "Watertaxi - " . $booking->watertaxiRoute->name;
-        } else {
-            $serviceLabel = $booking->service;
-        }
-
-        // Arrangement definitions
-        $arrangementLabels = [
-            'prosecco' => 'Prosecco arrangement',
-            'picnic' => 'Picknick arrangement',
-            'olala' => 'Olala arrangement',
-            'bistro' => 'Bistro arrangement',
-            'barca' => 'Barca arrangement',
-            'stadswandeling' => 'Stadswandeling',
-        ];
-
-        $arrangementPrices = [
-            'prosecco' => 15,
-            'picnic' => 20,
-            'olala' => 18,
-            'bistro' => 22,
-            'barca' => 25,
-            'stadswandeling' => 12,
-        ];
-
-
-        // prijs zonder arrangement, dus alleen service prijs
-        if($booking->arrangement){
-            foreach ($arrangementPrices as $key => $price) {
-                if ($booking->arrangement->$key == 1) {
-                    $basePrice -= $price;
+                // Handle the service label
+                if ($booking->service === 'Rondvaart') {
+                    $start = strtotime($booking->time_start);
+                    $end = strtotime($booking->time_end);
+                    $hours = max(1, floor(($end - $start) / 3600));
+                    $serviceLabel = "Rondvaart {$hours} uur";
+                } elseif ($booking->service === 'Watertaxi' && $booking->watertaxiRoute) {
+                    $serviceLabel = 'Watertaxi - ' . $booking->watertaxiRoute->name;
+                } else {
+                    $serviceLabel = $booking->service;
                 }
-            }
-        }
 
-        // prijzen berekenen exclusief en inclusief btw
-        $serviceExcl = round($basePrice / 1.09, 2);
-        $serviceBtw = round($basePrice - $serviceExcl, 2);
+                // Arrangement definitions
+                $arrangementLabels = [
+                    'prosecco' => 'Prosecco arrangement',
+                    'picnic' => 'Picknick arrangement',
+                    'olala' => 'Olala arrangement',
+                    'bistro' => 'Bistro arrangement',
+                    'barca' => 'Barca arrangement',
+                    'stadswandeling' => 'Stadswandeling',
+                ];
 
-        $arrExcl = 0;
-        $arrBtw = 0;
+                $arrangementPrices = [
+                    'prosecco' => 15,
+                    'picnic' => 20,
+                    'olala' => 18,
+                    'bistro' => 22,
+                    'barca' => 25,
+                    'stadswandeling' => 12,
+                ];
 
-
-
-        $items[] = [
-            'description' => $serviceLabel . " (incl. 9% BTW)",
-            'price' => $basePrice,
-        ];
-
-
-        if ($booking->arrangement) {
-            foreach ($arrangementLabels as $key => $label) {
-                if ($booking->arrangement->$key == 1) {
-
-                    $priceIncl = $arrangementPrices[$key];
-                    $priceExcl = round($priceIncl / 1.09, 2);
-                    $priceBtw = round($priceIncl - $priceExcl, 2);
-
-                    $arrExcl += $priceExcl;
-                    $arrBtw += $priceBtw;
-
-                    $items[] = [
-                        'description' => $label . " (incl. 9% BTW)",
-                        'price' => $arrangementPrices[$key],
-                    ];
+                // prijs zonder arrangement, dus alleen service prijs
+                if ($booking->arrangement) {
+                    foreach ($arrangementPrices as $key => $price) {
+                        if ($booking->arrangement->$key == 1) {
+                            $basePrice -= $price;
+                        }
+                    }
                 }
-            }
-        }
 
-        $totalExcl = $serviceExcl + $arrExcl;
-        $totalBtw = $serviceBtw + $arrBtw;
+                // prijzen berekenen exclusief en inclusief btw
+                $serviceExcl = round($basePrice / 1.09, 2);
+                $serviceBtw = round($basePrice - $serviceExcl, 2);
 
+                $arrExcl = 0;
+                $arrBtw = 0;
 
-    @endphp
+                $items[] = [
+                    'description' => $serviceLabel . ' (incl. 9% BTW)',
+                    'price' => $basePrice,
+                ];
 
-    @foreach ($items as $item)
-        <tr>
-            <td>{{ $item['description'] }}</td>
-            <td>{{ number_format($item['price'], 2, ',', '.') }}</td>
-        </tr>
-    @endforeach
-</tbody>
+                if ($booking->arrangement) {
+                    foreach ($arrangementLabels as $key => $label) {
+                        if ($booking->arrangement->$key == 1) {
+                            $priceIncl = $arrangementPrices[$key];
+                            $priceExcl = round($priceIncl / 1.09, 2);
+                            $priceBtw = round($priceIncl - $priceExcl, 2);
+
+                            $arrExcl += $priceExcl;
+                            $arrBtw += $priceBtw;
+
+                            $items[] = [
+                                'description' => $label . ' (incl. 9% BTW)',
+                                'price' => $arrangementPrices[$key],
+                            ];
+                        }
+                    }
+                }
+
+                $totalExcl = $serviceExcl + $arrExcl;
+                $totalBtw = $serviceBtw + $arrBtw;
+
+            @endphp
+
+            @foreach ($items as $item)
+                <tr>
+                    <td>{{ $item['description'] }}</td>
+                    <td>{{ number_format($item['price'], 2, ',', '.') }}</td>
+                </tr>
+            @endforeach
+        </tbody>
 
     </table>
 
     <div class="total">
-        <p><strong>Subtotaal excl. BTW: €{{ number_format($totalExcl, 2 ,',', '.') }}</strong></p>
+        <p><strong>Subtotaal excl. BTW: €{{ number_format($totalExcl, 2, ',', '.') }}</strong></p>
         <p><strong>BTW (9%): €{{ number_format($totalBtw, 2) }}</strong></p>
 
-    <p><strong>Totaal incl. BTW: €{{ number_format($booking->price, 2, ',', '.') }}</strong></p>
+        <p><strong>Totaal incl. BTW: €{{ number_format($booking->price, 2, ',', '.') }}</strong></p>
         <p><strong>Vervaldatum:</strong> {{ \Carbon\Carbon::parse($invoice->due_date)->format('d/m/Y') }}</p>
     </div>
 
@@ -220,4 +216,5 @@
         <p>Bedankt voor uw reservering bij Futuro!</p>
     </div>
 </body>
+
 </html>

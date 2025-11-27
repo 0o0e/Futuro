@@ -175,6 +175,9 @@ class BookingController extends Controller
                 ]);
 
 
+                $step = 5;
+            } elseif ($step == 5) {
+
                 $data = session()->only([
                     'service',
                     'date',
@@ -245,7 +248,7 @@ class BookingController extends Controller
 
                 Mail::to($booking->email)->send(new BookingConfirmationMail($booking));
 
-                $step = 5;
+                $step = 6;
             }
         }
 
