@@ -762,6 +762,24 @@
                             placeholder="06 12345678" required>
                     </div>
 
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Naam ontvanger:</label>
+                        <input type="text" class="form-control" id="for_who_name" name="for_who_name"
+                            placeholder="Naam" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email ontvanger:</label>
+                        <input type="email" class="form-control" id="for_who_email" name="for_who_email"
+                            placeholder="Email@example.com" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Bericht voor ontvanger:</label>
+                        <textarea class="form-control" id="notes" name="notes"></textarea>
+                    </div>
+
+
                     <button type="submit" class="booking-button">Verstuur</button>
 
 

@@ -133,6 +133,7 @@ class BookingController extends Controller
 
 
 
+
                 $discountcode = DiscountCode::create([
                     'code' => $code,
                     'amount' => $totalAmount,
@@ -141,13 +142,19 @@ class BookingController extends Controller
                     'arrangement' => $arrangement,
                     'purchaser_name' => $request->name,
                     'purchaser_email' => $request->email,
+                    'notes' => $request->notes,
+                    'for_who_name' => $request->for_who_name,
+                    'for_who_email' => $request->for_who_email,
                 ]);
 
                 Mail::to($discountcode->purchaser_email)->send(new VaardebonMail($discountcode));
 
 
-                $step = 5;
-            } elseif ($step == 3) {
+                // changing step = 5 to step = 5_vaardebon
+
+                $step = '5_vaardebon';
+            } // elseif ($step == '5_vaardebon'){ }
+            elseif ($step == 3) {
                 session([
                     'has_table' => $request->arrangement === 'has_table' ? 1 : 0,
                     'arrangement' => $request->arrangement === 'has_table' ? null : $request->arrangement,
@@ -173,6 +180,7 @@ class BookingController extends Controller
                     'postcode' => $request->postcode,
                     'phone' => $request->phone,
                 ]);
+
 
 
                 $step = 5;

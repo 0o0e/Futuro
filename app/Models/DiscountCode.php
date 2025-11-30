@@ -16,7 +16,10 @@ class DiscountCode extends Model
         'hours',
         'arrangement',
         'purchaser_name',
-        'purchaser_email'
+        'purchaser_email',
+        'notes',
+        'for_who_name',
+        'for_who_email',
     ];
 
     protected $casts = [
