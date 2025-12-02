@@ -20,6 +20,7 @@ class DiscountCode extends Model
         'notes',
         'for_who_name',
         'for_who_email',
+        'expiration_date',
     ];
 
     protected $casts = [

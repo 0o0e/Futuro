@@ -10,6 +10,7 @@ use App\Models\Invoice;
 use App\Mail\BookingConfirmationMail;
 use App\Mail\VaardebonMail;
 use App\Models\DiscountCode;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -145,6 +146,7 @@ class BookingController extends Controller
                     'notes' => $request->notes,
                     'for_who_name' => $request->for_who_name,
                     'for_who_email' => $request->for_who_email,
+                    'expiration_date' => Carbon::now()->addYears(3)->toDateString(),
                 ]);
 
                 Mail::to($discountcode->purchaser_email)->send(new VaardebonMail($discountcode));
