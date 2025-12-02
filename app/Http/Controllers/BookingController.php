@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Mollie\Laravel\Facades\Mollie;
 
 class BookingController extends Controller
 {
@@ -105,58 +106,20 @@ class BookingController extends Controller
                     'email' => 'required|string',
                 ]);
 
-                $hours = session('vb_hours', 1);
-                $arrangement = session('vb_arrangement', null);
-
-                $hourprices = [
-                    1 => 175.00,
-                    2 => 330.00,
-                    3 => 470.00,
-                ];
-
-                $arrangementPrices = [
-                    'prosecco' => 15,
-                    'picnic' => 20,
-                    'olala' => 18,
-                    'bistro' => 22,
-                    'barca' => 25,
-                    'stadswandeling' => 12,
-                ];
-
-                $base = $hourPrices[$hours] ?? $hourprices[1];
-                $arrPrice = ($arrangement && isset($arrangementPrices[$arrangement])) ? $arrangementPrices[$arrangement] : 0;
-                $totalAmount = round($base + $arrPrice, 2);
-
-                do {
-                    $code = Str::upper(Str::random(10));
-                    $exists = DB::table('discount_codes')->where('code', $code)->exists();
-                } while ($exists);
-
-
-
-
-                $discountcode = DiscountCode::create([
-                    'code' => $code,
-                    'amount' => $totalAmount,
-                    'is_used' => false,
-                    'hours' => $hours,
-                    'arrangement' => $arrangement,
-                    'purchaser_name' => $request->name,
-                    'purchaser_email' => $request->email,
-                    'notes' => $request->notes,
-                    'for_who_name' => $request->for_who_name,
-                    'for_who_email' => $request->for_who_email,
-                    'expiration_date' => Carbon::now()->addYears(3)->toDateString(),
+                session([
+                    'vb_data' => [
+                        'name' => $request->name,
+                        'email' => $request->email,
+                        'for_who_name' => $request->for_who_name,
+                        'for_who_email' => $request->for_who_email,
+                        'notes' => $request->notes,
+                        'hours' => session('vb_hours'),
+                        'arrangement' => session('vb_arrangement'),
+                    ]
                 ]);
 
-                Mail::to($discountcode->purchaser_email)->send(new VaardebonMail($discountcode));
-
-
-                // changing step = 5 to step = 5_vaardebon
-
-                $step = '5_vaardebon';
-            } // elseif ($step == '5_vaardebon'){ }
-            elseif ($step == 3) {
+                return redirect()->route('vb.pay');
+            } elseif ($step == 3) {
                 session([
                     'has_table' => $request->arrangement === 'has_table' ? 1 : 0,
                     'arrangement' => $request->arrangement === 'has_table' ? null : $request->arrangement,
@@ -327,5 +290,91 @@ class BookingController extends Controller
             'arrangement' => $arrangementTotal,
             'total' => $serviceTotal + $arrangementTotal
         ];
+    }
+
+    public function vaardebonPayment()
+    {
+        $data = session('vb_data');
+        $hours = $data['hours'];
+        $arr = $data['arrangement'];
+
+        $hourPrices = [
+            1 => 175,
+            2 => 330,
+            3 => 470,
+        ];
+
+        $arrangementPrices = [
+            'prosecco' => 15,
+            'picnic' => 20,
+            'olala' => 18,
+            'bistro' => 22,
+            'barca' => 25,
+            'stadswandeling' => 12,
+        ];
+
+        $base = $hourPrices[$hours] ?? 175;
+        $arrPrice = $arr ? ($arrangementPrices[$arr] ?? 0) : 0;
+
+        $total = number_format($base + $arrPrice, 2, '.', '');
+
+        $payment = Mollie::api()->payments->create([
+            'amount' => [
+                'currency' => 'EUR',
+                'value' => $total,
+            ],
+            'description' => 'Vaardebon betaling',
+            'redirectUrl' => route('vb.success'),
+            'webhookUrl' => route('vb.webhook'),
+            'metadata' => $data,
+        ]);
+
+        session(['vb_payment_id' => $payment->id]);
+
+        return redirect($payment->getCheckoutUrl());
+    }
+
+    public function vaardebonWebhook(Request $request)
+    {
+        $payment = Mollie::api()->payments->get($request->id);
+
+        if (! $payment->isPaid()) {
+            return response()->json(['status' => 'ignored']);
+        }
+
+        $data = (array) $payment->metadata;
+
+        // generate code
+        do {
+            $code = strtoupper(Str::random(10));
+        } while (DiscountCode::where('code', $code)->exists());
+
+        $discount = DiscountCode::create([
+            'code' => $code,
+            'amount' => $payment->amount->value,
+            'is_used' => false,
+            'hours' => $data['hours'],
+            'arrangement' => $data['arrangement'],
+            'purchaser_name' => $data['name'],
+            'purchaser_email' => $data['email'],
+            'notes' => $data['notes'],
+            'for_who_name' => $data['for_who_name'],
+            'for_who_email' => $data['for_who_email'],
+            'expiration_date' => Carbon::now()->addYears(3)->toDateString(),
+        ]);
+
+        Mail::to($discount->purchaser_email)->send(new VaardebonMail($discount));
+
+        return response()->json(['status' => 'ok']);
+    }
+    public function vaardebonSuccess()
+    {
+        $payment = Mollie::api()->payments->get(session('vb_payment_id'));
+
+        if ($payment->isPaid()) {
+            return redirect()->route('booking')->with('step', 'after_payment_vaardebon');
+        }
+
+        return redirect()->route('booking')->with('error', 'Betaling mislukt.');
     }
 }
