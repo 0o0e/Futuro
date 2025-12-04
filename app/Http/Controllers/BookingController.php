@@ -325,7 +325,7 @@ class BookingController extends Controller
             ],
             'description' => 'Vaardebon betaling',
             'redirectUrl' => route('vb.success'),
-            'webhookUrl' => route('vb.webhook'),
+            'webhookUrl' => env('MOLLIE_WEBHOOK_URL', route('vb.webhook')),
             'metadata' => $data,
         ]);
 

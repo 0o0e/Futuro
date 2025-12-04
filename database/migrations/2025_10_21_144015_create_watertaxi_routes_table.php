@@ -17,9 +17,7 @@ return new class extends Migration
 
             $table->string('destination');
             $table->integer('duration');
-            $table->decimal('price',8,2);
-
-
+            $table->decimal('price', 8, 2);
         });
     }
 
