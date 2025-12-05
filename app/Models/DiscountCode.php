@@ -21,6 +21,7 @@ class DiscountCode extends Model
         'for_who_name',
         'for_who_email',
         'expiration_date',
+        'payment_status'
     ];
 
     protected $casts = [
