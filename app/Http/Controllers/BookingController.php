@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Mollie\Laravel\Facades\Mollie;
+use Illuminate\Support\Facades\Log;
 
 class BookingController extends Controller
 {
@@ -318,6 +319,7 @@ class BookingController extends Controller
 
         $total = number_format($base + $arrPrice, 2, '.', '');
 
+
         $payment = Mollie::api()->payments->create([
             'amount' => [
                 'currency' => 'EUR',
@@ -336,7 +338,12 @@ class BookingController extends Controller
 
     public function vaardebonWebhook(Request $request)
     {
+        Log::info('Webhook received:', $request->all());
+
+        // return response()->json(['status' => 'ok']);
+
         $payment = Mollie::api()->payments->get($request->id);
+
 
         if (! $payment->isPaid()) {
             return response()->json(['status' => 'ignored']);
@@ -344,7 +351,6 @@ class BookingController extends Controller
 
         $data = (array) $payment->metadata;
 
-        // generate code
         do {
             $code = strtoupper(Str::random(10));
         } while (DiscountCode::where('code', $code)->exists());
@@ -361,9 +367,12 @@ class BookingController extends Controller
             'for_who_name' => $data['for_who_name'],
             'for_who_email' => $data['for_who_email'],
             'expiration_date' => Carbon::now()->addYears(3)->toDateString(),
+            'payment_status' => $payment->status,
+
         ]);
 
         Mail::to($discount->purchaser_email)->send(new VaardebonMail($discount));
+        Log::info('Email Sent:', $request->all());
 
         return response()->json(['status' => 'ok']);
     }
