@@ -53,8 +53,8 @@
 
         .video-bg video {
             object-fit: cover;
-            width: 100%;
-            height: 100%;
+            width: 110%;
+            height: 120%;
             will-change: transform;
             backface-visibility: hidden;
 
@@ -473,6 +473,139 @@
             line-height: 1.2;
             max-width: 1200px;
             margin-bottom: 20px;
+        }
+
+        /* phone and small tablets */
+        @media (max-width: 900px) {
+            .wave svg {
+                height: 80px !important;
+            }
+
+            .wave-top svg {
+                height: 80px !important;
+            }
+
+            .viewport-header {
+                top: 45%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                text-align: center;
+                width: 90%;
+            }
+
+            .hero-header {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .hero-logo {
+                width: 180px;
+                margin: 0;
+                top: 0;
+            }
+
+            .hero-text {
+                font-size: 32px;
+                margin: 0;
+                line-height: 1.2;
+                text-align: center;
+            }
+
+            .hero-subtext {
+                margin: 20px auto 0 auto;
+                font-size: 15px;
+                text-align: center;
+                margin-left: 0;
+                margin-right: 0;
+            }
+
+            .floating-button {
+                top: 20px;
+                right: 20px;
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+
+            .scroll-container {
+                padding: 30px 20px;
+                gap: 1rem;
+            }
+
+            .card {
+                width: 250px;
+                max-height: 500px;
+            }
+
+            .card img {
+                height: 160px;
+            }
+
+            .intro {
+                flex-direction: column;
+                text-align: center;
+                padding: 3rem 5vw;
+                gap: 2rem;
+            }
+
+            .intro-image {
+                width: 90%;
+            }
+
+            .intro-text {
+                max-width: 100%;
+                text-align: center;
+            }
+
+            .intro-text h2 {
+                font-size: 1.5rem;
+            }
+
+            .text-box {
+                width: 90%;
+                height: auto;
+                margin: 40px auto;
+                padding: 20px;
+            }
+
+            .text-box h2 {
+                font-size: 2rem;
+                margin-left: 0;
+                text-align: center;
+            }
+
+            .bottom-image {
+                margin-top: 20px;
+                height: auto;
+                width: 100%;
+            }
+
+
+            .wave svg {
+                height: 120px;
+            }
+        }
+
+
+        /* even smaller phones */
+        @media (max-width: 500px) {
+
+            .hero-text {
+                font-size: 26px;
+            }
+
+            .hero-subtext {
+                font-size: 14px;
+            }
+
+            .floating-button {
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+
+            .card {
+                width: 220px;
+            }
         }
     </style>
 </head>

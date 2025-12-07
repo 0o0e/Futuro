@@ -17,16 +17,22 @@
             width: 100%;
             padding: 20px 40px;
             display: flex;
-            align-items: left;
+            align-items: center;
             position: relative;
             z-index: 10;
         }
 
+        /* Links styling - centered on desktop */
         .nav-links {
             display: flex;
             gap: 30px;
             justify-content: center;
             align-items: center;
+
+            position: absolute;
+            /* center independently of logo */
+            left: 50%;
+            transform: translateX(-50%);
         }
 
         nav a {
@@ -83,8 +89,11 @@
                 padding: 25px 35px;
                 border-radius: 0 0 12px 12px;
                 align-items: flex-start;
+                /* left-aligned links in dropdown */
                 animation: fadeIn 0.3s ease;
                 z-index: 1000;
+                transform: none;
+                /* reset transform for mobile */
             }
 
             .nav-links.show {
