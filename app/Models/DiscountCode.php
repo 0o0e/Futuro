@@ -4,21 +4,27 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class DiscountCode extends Model
 {
     protected $fillable = [
         'code',
+        'type',
         'amount',
         'is_used',
         'used_at',
-        'used_by_user_id'
+        'used_by_user_id',
+        'valid_from',
+        'valid_until'
     ];
 
     protected $casts = [
         'is_used' => 'boolean',
         'used_at' => 'datetime',
-        'amount' => 'decimal:2'
+        'amount' => 'decimal:2',
+        'valid_from' => 'date',
+        'valid_until' => 'date'
     ];
 
     public static function generateUniqueCode(): string
@@ -37,5 +43,33 @@ class DiscountCode extends Model
             'used_at' => now(),
             'used_by_user_id' => $userId
         ]);
+    }
+
+    public function isValid(): bool
+    {
+        if ($this->is_used) {
+            return false;
+        }
+
+        $today = Carbon::today();
+
+        if ($this->valid_from && $today->lt($this->valid_from)) {
+            return false;
+        }
+
+        if ($this->valid_until && $today->gt($this->valid_until)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function getDiscountAmount($orderTotal): float
+    {
+        if ($this->type === 'percentage') {
+            return ($orderTotal * $this->amount) / 100;
+        }
+
+        return $this->amount;
     }
 }
