@@ -16,7 +16,10 @@ class DiscountCode extends Model
         'used_at',
         'used_by_user_id',
         'valid_from',
-        'valid_until'
+        'valid_until',
+        'is_multi_use',
+        'usage_count',
+        'max_uses'
     ];
 
     protected $casts = [
@@ -24,7 +27,8 @@ class DiscountCode extends Model
         'used_at' => 'datetime',
         'amount' => 'decimal:2',
         'valid_from' => 'date',
-        'valid_until' => 'date'
+        'valid_until' => 'date',
+        'is_multi_use' => 'boolean'
     ];
 
     public static function generateUniqueCode(): string
@@ -38,16 +42,24 @@ class DiscountCode extends Model
 
     public function markAsUsed($userId = null): void
     {
-        $this->update([
-            'is_used' => true,
-            'used_at' => now(),
-            'used_by_user_id' => $userId
-        ]);
+        if ($this->is_multi_use) {
+            $this->increment('usage_count');
+        } else {
+            $this->update([
+                'is_used' => true,
+                'used_at' => now(),
+                'used_by_user_id' => $userId
+            ]);
+        }
     }
 
     public function isValid(): bool
     {
-        if ($this->is_used) {
+        if (!$this->is_multi_use && $this->is_used) {
+            return false;
+        }
+
+        if ($this->is_multi_use && $this->max_uses && $this->usage_count >= $this->max_uses) {
             return false;
         }
 

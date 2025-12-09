@@ -14,20 +14,24 @@ class DiscountCodeController extends Controller
             'type' => 'required|in:fixed,percentage',
             'amount' => 'required|numeric|min:0.01|max:9999.99',
             'valid_from' => 'nullable|date',
-            'valid_until' => 'nullable|date|after_or_equal:valid_from'
+            'valid_until' => 'nullable|date|after_or_equal:valid_from',
+            'max_uses' => 'nullable|integer|min:1'
         ]);
 
-        // Als percentage, max 100
         if ($validated['type'] === 'percentage' && $validated['amount'] > 100) {
             return back()->withErrors(['amount' => 'Percentage kan niet hoger zijn dan 100']);
         }
+
+        $isMultiUse = !empty($validated['valid_from']) || !empty($validated['valid_until']);
 
         $code = DiscountCode::create([
             'code' => DiscountCode::generateUniqueCode(),
             'type' => $validated['type'],
             'amount' => $validated['amount'],
             'valid_from' => $validated['valid_from'] ?? null,
-            'valid_until' => $validated['valid_until'] ?? null
+            'valid_until' => $validated['valid_until'] ?? null,
+            'is_multi_use' => $isMultiUse,
+            'max_uses' => $isMultiUse ? ($validated['max_uses'] ?? null) : null
         ]);
 
         $typeText = $validated['type'] === 'percentage' ? "{$code->amount}%" : "€{$code->amount}";
@@ -41,7 +45,9 @@ class DiscountCodeController extends Controller
             $dateText = " (geldig t/m {$code->valid_until->format('d-m-Y')})";
         }
 
-        return back()->with('success', "Kortingscode gegenereerd: {$code->code} voor {$typeText}{$dateText}");
+        $useText = $isMultiUse ? ' - Meerdere keren te gebruiken' : ' - Eenmalig te gebruiken';
+
+        return back()->with('success', "Kortingscode gegenereerd: {$code->code} voor {$typeText}{$dateText}{$useText}");
     }
 
     public function index()

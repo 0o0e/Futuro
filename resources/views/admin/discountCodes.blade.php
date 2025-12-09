@@ -5,12 +5,14 @@
 @section('content')
     <h1>Kortingscodes</h1>
     <div class="container">
+        {{-- Success message --}}
         @if(session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
             </div>
         @endif
 
+        {{-- Kortingscode Generator --}}
         <div class="card mb-4">
             <div class="card-header">
                 <h3>Kortingscode Genereren</h3>
@@ -77,7 +79,7 @@
                                 id="valid_from" 
                                 name="valid_from"
                                 value="{{ old('valid_from') }}">
-                            <small class="form-text text-muted">Laat leeg voor onmiddellijk geldig</small>
+                            <small class="form-text text-muted">Codes met datums zijn meerdere keren te gebruiken</small>
                             @error('valid_from')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -96,6 +98,23 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+                    </div>
+
+                    {{-- Max aantal keer te gebruiken (optioneel) --}}
+                    <div class="mb-3" id="max_uses_container" style="display: none;">
+                        <label for="max_uses" class="form-label">Maximaal aantal keer te gebruiken (optioneel)</label>
+                        <input 
+                            type="number" 
+                            class="form-control @error('max_uses') is-invalid @enderror" 
+                            id="max_uses" 
+                            name="max_uses"
+                            min="1"
+                            placeholder="Onbeperkt"
+                            value="{{ old('max_uses') }}">
+                        <small class="form-text text-muted">Laat leeg voor onbeperkt aantal keren</small>
+                        @error('max_uses')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <button type="submit" class="btn btn-primary">
@@ -119,10 +138,10 @@
                             <th>Code</th>
                             <th>Type</th>
                             <th>Waarde</th>
+                            <th>Gebruik</th>
                             <th>Geldig van</th>
                             <th>Geldig tot</th>
                             <th>Status</th>
-                            <th>Gebruikt op</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -143,11 +162,30 @@
                                         €{{ number_format($code->amount, 2, ',', '.') }}
                                     @endif
                                 </td>
+                                <td>
+                                    @if($code->is_multi_use)
+                                        <span class="badge bg-primary">Multi-use</span>
+                                        <br>
+                                        <small>
+                                            {{ $code->usage_count }}x gebruikt
+                                            @if($code->max_uses)
+                                                / max {{ $code->max_uses }}x
+                                            @endif
+                                        </small>
+                                    @else
+                                        <span class="badge bg-warning">Eenmalig</span>
+                                        @if($code->is_used)
+                                            <br><small>{{ $code->used_at->format('d-m-Y H:i') }}</small>
+                                        @endif
+                                    @endif
+                                </td>
                                 <td>{{ $code->valid_from ? $code->valid_from->format('d-m-Y') : '-' }}</td>
                                 <td>{{ $code->valid_until ? $code->valid_until->format('d-m-Y') : '-' }}</td>
                                 <td>
-                                    @if($code->is_used)
+                                    @if(!$code->is_multi_use && $code->is_used)
                                         <span class="badge bg-danger">Gebruikt</span>
+                                    @elseif($code->is_multi_use && $code->max_uses && $code->usage_count >= $code->max_uses)
+                                        <span class="badge bg-danger">Limiet bereikt</span>
                                     @elseif($code->valid_from && now()->lt($code->valid_from))
                                         <span class="badge bg-info">Nog niet actief</span>
                                     @elseif($code->valid_until && now()->gt($code->valid_until))
@@ -155,9 +193,6 @@
                                     @else
                                         <span class="badge bg-success">Actief</span>
                                     @endif
-                                </td>
-                                <td>
-                                    {{ $code->used_at ? $code->used_at->format('d-m-Y H:i') : '-' }}
                                 </td>
                             </tr>
                         @empty
@@ -173,6 +208,7 @@
         </div>
     </div>
 
+    {{-- JavaScript voor dynamische label wijziging --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const typeFixed = document.getElementById('type_fixed');
@@ -180,6 +216,9 @@
             const amountLabel = document.getElementById('amount_label');
             const amountHint = document.getElementById('amount_hint');
             const amountInput = document.getElementById('amount');
+            const validFrom = document.getElementById('valid_from');
+            const validUntil = document.getElementById('valid_until');
+            const maxUsesContainer = document.getElementById('max_uses_container');
 
             function updateLabels() {
                 if (typePercentage.checked) {
@@ -195,10 +234,22 @@
                 }
             }
 
+            function toggleMaxUses() {
+                // Toon max_uses veld alleen als er een datum is ingevuld
+                if (validFrom.value || validUntil.value) {
+                    maxUsesContainer.style.display = 'block';
+                } else {
+                    maxUsesContainer.style.display = 'none';
+                }
+            }
+
             typeFixed.addEventListener('change', updateLabels);
             typePercentage.addEventListener('change', updateLabels);
+            validFrom.addEventListener('change', toggleMaxUses);
+            validUntil.addEventListener('change', toggleMaxUses);
             
-            updateLabels(); // Initial call
+            updateLabels();
+            toggleMaxUses();
         });
     </script>
 @endsection
