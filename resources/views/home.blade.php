@@ -554,7 +554,14 @@
 
             .intro-text {
                 max-width: 100%;
+
                 text-align: center;
+            }
+
+            .intro-text p {
+                line-height: 1.7;
+                font-size: 0.8rem;
+
             }
 
             .intro-text h2 {

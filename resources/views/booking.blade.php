@@ -293,6 +293,80 @@
             color: red;
             font-weight: bold;
         }
+
+        /* MOBILE FIXES */
+        @media (max-width: 768px) {
+
+            .booking-layout {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 20px !important;
+                width: 100%;
+            }
+
+            #calendar {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 auto !important;
+                padding: 12px !important;
+                box-sizing: border-box !important;
+                position: relative !important;
+                z-index: 3 !important;
+                /* ensure it sits above time-section */
+                touch-action: manipulation;
+                /* help with mobile taps */
+            }
+
+
+            #time-section {
+                margin-left: 0 !important;
+                flex-direction: column !important;
+                gap: 15px !important;
+                z-index: 1 width: 100% !important;
+            }
+
+            .single-time {
+                width: 100%;
+            }
+
+            .time-buttons {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 8px !important;
+                width: 100% !important;
+            }
+
+            .time-btn {
+                padding: 12px 0 !important;
+                font-size: 15px !important;
+            }
+
+            /* Images smaller */
+            /* .option-card img {
+                height: 220px !important;
+            } */
+
+
+            .arrangement-options {
+                display: grid;
+                grid-template-columns: repeat(2, 5fr);
+                gap: 8px;
+                margin-bottom: 20px;
+                align-items: stretch;
+            }
+
+            .option-card {
+                max-height: 200px;
+                /* won't exceed this */
+                overflow-y: auto;
+                /* scroll if content is too long */
+            }
+
+            .arrangement-options .option-card .option-title {
+                font-size: 0.8rem;
+            }
+
+
+        }
     </style>
 </head>
 
@@ -500,6 +574,13 @@
                         }
                     },
 
+                    dateClick: function(info) {
+                        document.getElementById('date').value = info.dateStr;
+                        markUnavailable(info.dateStr);
+                        calendar.select(info.date); // visual highlight
+                    },
+
+                    // Desktop drag-select
                     select: function(info) {
                         const selectedDate = info.startStr;
                         document.getElementById('date').value = info.startStr;
