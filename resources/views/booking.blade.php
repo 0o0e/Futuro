@@ -210,14 +210,14 @@
 
 .time-buttons {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 6px;
     margin-bottom: 10px;
 }
 
 .time-btn {
     padding: 10px 0;
-    background: #e9ecef;
+    background: #b8ecc7;
     border-radius: 6px;
     font-weight: 600;
     border: 2px solid transparent;
@@ -227,12 +227,13 @@
 }
 
 .time-btn:hover {
-    background: #d4dadf;
+    background: #99cd9c;
 }
 
 .time-btn.selected {
     border-color: #4C807F;
-    background: #cfe8e7;
+    background: #99cd9c;
+    /* cfe8e7 */
 }
 
 #calendar {
@@ -252,6 +253,7 @@
 }
 
 #time-section {
+    margin-left: 60px;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -267,6 +269,35 @@
     gap: 80px;
 }
 
+
+.time-btn.unavailable {
+    background: #f8d7da;
+    border-color: #f5c2c7;
+    color: #842029;
+    cursor: not-allowed;
+    opacity: 0.95;
+}
+
+
+.time-btn.unavailable.selected {
+    box-shadow: none;
+    border-color: #842029;
+}
+
+.terms-consent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    text-align: left;
+}
+
+
+.form-label.required::after {
+    content: " *";
+    color: red;
+    font-weight: bold;
+}
 
 
     </style>
@@ -300,6 +331,12 @@
                 </label>
 
             </div>
+
+            <div id="people-section" class="mt-3" style="display:none;">
+                <label for="people" class="form-label">Aantal personen</label>
+                <input type="number" id="people" name="people" class="form-control" placeholder="Aantal personen" min="1" max="12">
+            </div>
+
 
             <div id="watertaxi-section" class="mt-4" style="display:none;">
                 <h4 class="mb-3">Kies je bestemming (vertrek: Dordrecht)</h4>
@@ -343,6 +380,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const durSpan = document.getElementById('summary-duration');
     const priceSpan = document.getElementById('summary-price');
 
+    const peopleSection = document.getElementById('people-section');
+    const peopleInput = document.getElementById('people');
+
+
     const serviceRadios = document.querySelectorAll('input[name="service"]');
 
     function toggleWatertaxi() {
@@ -354,7 +395,20 @@ document.addEventListener('DOMContentLoaded', function () {
             watertaxiSection.style.display = 'none';
             routeSelect.required = false;
         }
+        togglePeopleInput();
     }
+
+    function togglePeopleInput() {
+        const selected = document.querySelector('input[name="service"]:checked');
+        if (selected && (selected.value === 'Watertaxi' || selected.value === 'Rondvaart')) {
+            peopleSection.style.display = 'block';
+            peopleInput.required = true;
+        } else {
+            peopleSection.style.display = 'none';
+            peopleInput.required = false;
+        }
+    }
+
 
     function updateSummary() {
         const selectedOption = routeSelect.options[routeSelect.selectedIndex];
@@ -418,90 +472,311 @@ document.addEventListener('DOMContentLoaded', function () {
             </form>
         </div>
     </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                unselectAuto: false,
+    const bookingsByDate = @json($bookingsByDate);
 
-                initialView: 'dayGridMonth',
-                selectable: true,
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        unselectAuto: false,
+        initialView: 'dayGridMonth',
+        selectable: true,
 
-                selectAllow: function(selectInfo) {
-                    let today = new Date();
-                    today.setHours(0,0,0,0);
+        selectAllow: function(selectInfo) {
+            let today = new Date();
+            today.setHours(0,0,0,0);
+            let minDate = new Date(today);
+            minDate.setDate(minDate.getDate() + 7);
+            return selectInfo.start >= minDate;
+        },
 
-                    let minDate = new Date(today);
-                    minDate.setDate(minDate.getDate() + 7);
+        dayCellDidMount: function(info) {
+            let today = new Date();
+            today.setHours(0,0,0,0);
+            let blockDate = new Date(today);
+            blockDate.setDate(blockDate.getDate() + 7);
 
-                    return selectInfo.start >= minDate;
-                },
+            let cellDate = info.date;
+            cellDate.setHours(0,0,0,0);
 
-                dayCellDidMount: function(info) {
-                    let today = new Date();
-                    today.setHours(0,0,0,0);
+            if (cellDate >= today && cellDate <= blockDate) {
+                info.el.style.backgroundColor = '#ffcccc';
+                info.el.style.opacity = '0.7';
+                info.el.style.cursor = 'not-allowed';
+            }
+        },
 
-                    let blockDate = new Date(today);
-                    blockDate.setDate(blockDate.getDate() + 7);
+        select: function(info) {
+            const selectedDate = info.startStr;
+            document.getElementById('date').value = info.startStr;
+            markUnavailable(selectedDate);
+        }
+    });
+    calendar.render();
 
-                    let cellDate = info.date;
-                    cellDate.setHours(0,0,0,0);
+    function generateTimes() {
+        let times = [];
+        for (let hour = 8; hour < 23; hour++) {
+            times.push(`${String(hour).padStart(2,'0')}:00`);
+        }
+        return times;
+    }
 
-                    if (cellDate >= today && cellDate <= blockDate) {
-                        info.el.style.backgroundColor = '#ffcccc';
-                        info.el.style.opacity = '0.7';
-                        info.el.style.cursor = 'not-allowed';
-                    }
-                },
+    function toMinutes(t) {
+        const [h, m] = t.split(':').map(Number);
+        return h * 60 + m;
+    }
 
-                select: function(info) {
-                    document.getElementById('date').value = info.startStr;
+    function markUnavailable(dateStr) {
+        const bookings = bookingsByDate[dateStr] || [];
+        const startBtns = document.querySelectorAll('#start-times .time-btn');
+        const endBtns = document.querySelectorAll('#end-times .time-btn');
+
+        clearButtons(startBtns);
+        clearButtons(endBtns);
+
+        bookings.forEach(booking => {
+            const start = toMinutes(booking.start);
+            const end = toMinutes(booking.end || '23:00');
+
+            startBtns.forEach(btn => {
+                const t = toMinutes(btn.dataset.time);
+                if (t >= start && t < end) {
+                    makeUnavailable(btn);
                 }
             });
-            calendar.render();
-
-            function generateTimes(){
-                let times = [];
-                for (let hour = 10; hour < 22; hour++) {
-                    for (let min = 0; min < 60; min+=30) {
-                        times.push(`${String(hour).padStart(2,'0')}:${String(min).padStart(2,'0')}`);
-                    }
+            endBtns.forEach(btn => {
+                const t = toMinutes(btn.dataset.time);
+                if (t > start && t <= end) {
+                    makeUnavailable(btn);
                 }
-                return times;
-            }
-
-            function makeButtons(containerId, times, hiddenFieldId){
-                const container = document.getElementById(containerId);
-                const hiddenField = document.getElementById(hiddenFieldId);
-
-                container.innerHTML = "";
-
-                times.forEach(time => {
-                    const btn = document.createElement('div');
-                    btn.classList.add('time-btn');
-                    btn.innerText = time;
-
-                    btn.addEventListener('click', () => {
-                        container.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
-                        btn.classList.add('selected');
-                        hiddenField.value = time;
-                    })
-
-                    container.appendChild(btn);
-
-                });
-            }
-
-            const times = generateTimes();
-            makeButtons('start-times', times, 'time_start');
-
-            @if (session('service') !== 'Watertaxi')
-            makeButtons('end-times', times, 'time_end');
-            @endif
-
+            });
         });
-    </script>
+    }
+
+    function clearButtons(btns) {
+        btns.forEach(btn => {
+            btn.classList.remove('unavailable', 'selected');
+            btn.disabled = false;
+        });
+    }
+
+    function makeUnavailable(btn) {
+        btn.classList.add('unavailable');
+        btn.disabled = true;
+    }
+
+    // Create time buttons
+    function makeButtons(containerId, times, hiddenFieldId) {
+        const container = document.getElementById(containerId);
+        const hiddenField = document.getElementById(hiddenFieldId);
+        container.innerHTML = "";
+
+        times.forEach(time => {
+            const btn = document.createElement('div');
+            btn.classList.add('time-btn');
+            btn.innerText = time;
+            btn.dataset.time = time;
+
+            btn.addEventListener('click', () => {
+                if (btn.classList.contains('unavailable')) return;
+                container.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                hiddenField.value = time;
+
+                if (containerId === 'start-times') {
+                    updateEndTimes(time);
+                }
+            });
+            container.appendChild(btn);
+        });
+    }
+
+    function updateEndTimes(startTime) {
+        const selectedDate = document.getElementById('date').value;
+        const bookings = bookingsByDate[selectedDate] || [];
+        const endBtns = document.querySelectorAll('#end-times .time-btn');
+        const startMin = toMinutes(startTime);
+
+        endBtns.forEach(btn => {
+            const endMin = toMinutes(btn.dataset.time);
+            let isBlocked = false;
+
+            if (endMin <= startMin) {
+                isBlocked = true;
+            }
+
+            bookings.forEach(booking => {
+                const bookingStart = toMinutes(booking.start);
+                const bookingEnd = toMinutes(booking.end || '23:00');
+
+                if (startMin < bookingEnd && endMin > bookingStart) {
+                    isBlocked = true;
+                }
+            });
+
+            if (isBlocked) {
+                makeUnavailable(btn);
+            } else {
+                btn.classList.remove('unavailable');
+                btn.disabled = false;
+            }
+        });
+    }
+
+    const times = generateTimes();
+    makeButtons('start-times', times, 'time_start');
+
+    @if (session('service') !== 'Watertaxi')
+    makeButtons('end-times', times, 'time_end');
+    @endif
+});
+</script>
+
+    @endif
+
+
+
+    @if($step=='2_vaardebon')
+
+    <div class="container py-5">
+
+        <h2 class="mb-4 text-center">Kies duur voor uw Vaardebon</h2>
+        <div class="card shadow p-4">
+            <form action="{{ route('booking') }}" method="POST">
+            @csrf
+
+            <input type="hidden" name="step" value="2_vaardebon">
+
+            <div class="mb-3">
+            <div class="arrangement-options">
+                <label class="option-card">
+                    <input type="radio" name="hours" value="1" required>
+                    <img src="/vb1.png" alt="1 uur">
+                    <span class="option-title">1 uur - €175</span>
+                </label>
+
+                <label class="option-card">
+                    <input type="radio" name="hours" value="2" required>
+                    <img src="/vb1.png" alt="2 uur">
+                    <span class="option-title">2 uur - €330</span>
+                </label>
+
+                <label class="option-card">
+                    <input type="radio" name="hours" value="3" required>
+                    <img src="/vb1.png" alt="3 uur">
+                    <span class="option-title">3 uur - €470</span>
+                </label>
+            </div>
+            </div>
+            <button type="submit" class="booking-button">Ga verder</button>
+            </form>
+        </div>
+    </div>
+
+    @endif
+
+
+    @if ($step == '3_vaardebon')
+
+    <div class="container py-5">
+        <h1 class="mb-4 text-center">Kies een arrangement</h1>
+
+        <div class="card shadow p-4">
+            <form action="{{ route('booking') }}" method="POST">
+                @csrf
+                <input type="hidden" name="step" value="3_vaardebon">
+
+                <div class="mb-3">
+                    <div class="arrangement-options">
+
+
+                <label class="option-card">
+                    <input type="radio" name="arrangement" value="none" required>
+                    <img src="/prosecco.png" alt="Prosecco">
+                    <span class="option-title">Geen Arrangement</span>
+                </label>
+
+                <label class="option-card">
+                    <input type="radio" id="prosecco" name="arrangement" value="prosecco" required>
+                    <img src="/prosecco.png" alt="Prosecco">
+                    <span class="option-title">Prosecco o Vino a Bordo</span>
+                </label>
+
+                <label class="option-card">
+                    <input type="radio" id="picnic" name="arrangement" value="picnic">
+                    <img src="/picnic.png" alt="picnic">
+                    <span class="option-title">Picknick of Lunch a bordo</span>
+                </label>
+
+                <label class="option-card">
+                    <input type="radio" id="olala" name="arrangement" value="olala">
+                    <img src="/olala.png" alt="olala">
+                    <span class="option-title">Olala Chocola e Barca</span>
+                </label>
+
+                <label class="option-card">
+                    <input type="radio" id="bistro" name="arrangement" value="bistro">
+                    <img src="/bistro.png" alt="bistro">
+                    <span class="option-title">Bistro twee 33 e Barca</span>
+                </label>
+
+                <label class="option-card">
+                    <input type="radio" id="barca" name="arrangement" value="barca">
+                    <img src="/barca.png" alt="barca">
+                    <span class="option-title">Barca e Vino</span>
+                </label>
+
+                <label class="option-card">
+                    <input type="radio" id="stadswandeling" name="arrangement" value="stadswandeling">
+                    <img src="/stadswandeling.png" alt="stadswandeling">
+                    <span class="option-title">Stadswandeling</span>
+                </label>
+
+                    </div>
+                </div>
+
+                <button type="submit" class="booking-button">Ga verder</button>
+            </form>
+        </div>
+    </div>
+
+    @endif
+
+
+    @if ($step == "4_vaardebon")
+    <div class="container py-5">
+        <h1 class="mb-4 text-center">verstuur</h1>
+        <div class="card shadow p-4 mb-4">
+            <form action="{{ route('booking') }}" method="POST">
+                @csrf
+                <input type="hidden" name="step" value="4_vaardebon">
+
+
+            <div class="mb-3">
+                <label for="name" class="form-label required">Naam</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Jouw naam" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label required">E-mailadres</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="jij@example.com" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="phone" class="form-label required">Telefoon nummer</label>
+                <input type="tel" class="form-control" id="phone" name="phone" placeholder="06 12345678" required>
+            </div>
+
+            <button type="submit" class="booking-button">Verstuur</button>
+
+
+            </form>
+
+
+        </div>
+    </div>
 
     @endif
 
@@ -515,7 +790,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
             <div class="mb-3">
 
+
                 <div class="arrangement-options">
+
+
+                <label class="option-card">
+                    <input type="radio" name="arrangement" value="none" required>
+                    <img src="/prosecco.png" alt="Prosecco">
+                    <span class="option-title">Geen Arrangement</span>
+                </label>
+
                 <label class="option-card">
                     <input type="radio" id="prosecco" name="arrangement" value="prosecco" required>
                     <img src="/prosecco.png" alt="Prosecco">
@@ -569,56 +853,257 @@ document.addEventListener('DOMContentLoaded', function () {
         </div>
     </div>
     @endif
+@if($step==4)
+<div class="container py-5">
+    <h1 class="mb-4 text-center">Jouw gegevens</h1>
+
+    <div class="card shadow p-4">
+        <form action="{{ route('booking') }}" method="POST">
+            @csrf
+            <input type="hidden" name="step" value="4">
+
+            <div class="mb-3">
+                <label for="name" class="form-label">Naam</label>
+                <input type="text"
+                       class="form-control"
+                       id="name"
+                       name="name"
+                       value="{{ $data['name'] ?? '' }}"
+                       placeholder="Jouw naam"
+                       required>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">E-mailadres</label>
+                <input type="email"
+                       class="form-control"
+                       id="email"
+                       name="email"
+                       value="{{ $data['email'] ?? '' }}"
+                       placeholder="jij@example.com"
+                       required>
+            </div>
+
+            <div class="mb-3">
+                <label for="phone" class="form-label">Telefoon nummer</label>
+                <input type="tel"
+                       class="form-control"
+                       id="phone"
+                       name="phone"
+                       value="{{ $data['phone'] ?? '' }}"
+                       placeholder="06 12345678"
+                       required>
+            </div>
+
+            <div class="mb-3">
+                <label for="opmerking" class="form-label">Opmerking</label>
+                <textarea class="form-control"
+                          id="opmerking"
+                          name="opmerking"
+                          rows="3"
+                          placeholder="Eventuele opmerkingen...">{{ $data['opmerking'] ?? '' }}</textarea>
+            </div>
+
+            @if(session('service') == 'Watertaxi')
+                <input type="hidden" name="watertaxi_route_id" value="{{ session('watertaxi_route_id') }}">
+            @endif
+
+            <button type="submit" class="booking-button">Ga naar overzicht</button>
+        </form>
+    </div>
+</div>
+@endif
 
 
-    @if($step==4)
-    <div class="container py-5">
-        <h1 class="mb-4 text-center">Maak een Reservering</h1>
-        <div class="card shadow p-4">
-            <form action="{{ route('booking') }}" method="POST">
-                @csrf
-                <input type="hidden" name="step" value="4">
+@if($step == 5)
+<div class="container py-5">
+    <h1 class="mb-4 text-center">Controleer je reservering</h1>
 
+    <div class="card shadow p-4 mb-4">
+        <h4 class="mb-3">Reserveringsoverzicht</h4>
 
-                <div class="mb-3">
-                    <label for="name" class="form-label">Naam</label>
-                    <input type="text" class="form-control" id="name" name="name" placeholder="Jouw naam" required>
-                </div>
+        <table class="table table-borderless">
+            <tbody>
+                <tr>
+                    <td><strong>Service</strong></td>
+                    <td>{{ $data['service'] ?? '' }}</td>
+                    <td></td>
+                </tr>
 
-                <div class="mb-3">
-                    <label for="email" class="form-label">E-mailadres</label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="jij@example.com" required>
-                </div>
+                @if($data['service'] == 'Rondvaart')
+                <tr>
+                    <td><strong>Datum</strong></td>
+                    <td>{{ \Carbon\Carbon::parse($data['date'])->format('d/m/Y') }}</td>
+                    <td>{{ $data['people'] ?? '' }}p</td>
+                </tr>
 
-                <div class="mb-3">
-                    <label for="opmerking" class="form-label">Opmerking</label>
-                    <textarea class="form-control" id="opmerking" name="opmerking" rows="3" placeholder="Eventuele opmerkingen..."></textarea>
-                </div>
+                <tr>
+                    <td>Begin Tijd</td>
+                    <td>{{ $data['time_start'] ?? '' }}</td>
+                    <td>{{ $data['service_price'] ?? 0 }}€</td>
+                </tr>
 
-
-                <div>
-                    <label for="people">Aantal personen</label>
-                    <input type="number" class="form-control" id="people" name="people" placeholder="Aantal personen..." >
-                </div>
-
-                @if(session('service') == 'Watertaxi')
-                    <input type="hidden" name="watertaxi_route_id" value="{{ session('watertaxi_route_id') }}">
+                @if(!empty($data['time_end']))
+                <tr>
+                    <td>Eind Tijd</td>
+                    <td>{{ $data['time_end'] }}</td>
+                    <td></td>
+                </tr>
                 @endif
 
-                <button type="submit" class="booking-button">Verstuur Booking</button>
-            </form>
-        </div>
+                @if(!empty($data['arrangement']))
+                <tr>
+                    <td>Arrangement</td>
+                    <td>{{ $data['arrangement'] }}</td>
+                    <td>{{ $data['arrangement_price'] ?? 0 }}€</td>
+                </tr>
+                @endif
+
+                @elseif($data['service'] == 'Watertaxi')
+                <tr>
+                    <td>Datum</td>
+                    <td>{{ \Carbon\Carbon::parse($data['date'])->format('d/m/Y') }}</td>
+                    <td>{{ $data['people'] ?? '' }}p</td>
+                </tr>
+                <tr>
+                    <td>Vertrekpunt</td>
+                    <td>{{ $data['departure'] ?? '' }}</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Bestemming</td>
+                    <td>{{ $data['destination'] ?? '' }}</td>
+                    <td>{{ $data['price'] ?? 0 }}€</td>
+                </tr>
+                <tr>
+                    <td>Begin Tijd</td>
+                    <td>{{ $data['time_start'] ?? '' }}</td>
+                    <td></td>
+                </tr>
+                @endif
+
+                <tr>
+                    <td colspan="2"><hr></td>
+                    <td><hr></td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="text-end"><strong>Totaal</strong></td>
+                    <td><strong>{{ $data['price'] ?? 0 }}€</strong></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
-    @endif
+
+    <div class="card shadow p-4 mb-4">
+        <h4 class="mb-3">Jouw gegevens</h4>
+        <p><strong>Naam:</strong> {{ $data['name'] ?? '' }}</p>
+        <p><strong>E-mailadres:</strong> {{ $data['email'] ?? '' }}</p>
+        <p><strong>Telefoonnummer:</strong> {{ $data['phone'] ?? '' }}</p>
+        @if(!empty($data['opmerking']))
+            <p><strong>Opmerking:</strong> {{ $data['opmerking'] }}</p>
+        @endif
+    </div>
+
+    <div class="card shadow p-4">
+        <form action="{{ route('booking') }}" method="POST">
+            @csrf
+            <input type="hidden" name="step" value="4">
+
+            <div class="mb-3">
+                <label for="name" class="form-label required">Naam</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Jouw naam" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label required">E-mailadres</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="jij@example.com" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="phone" class="form-label required">Telefoon nummer</label>
+                <input type="tel" class="form-control" id="phone" name="phone" placeholder="06 12345678" required>
+            </div>
 
 
-    @if($step == 5)
-        <div class="container py-5">
+            <div class="mb-3">
+                <label for="address" class="form-label">Adres</label>
+                <input type="text" name="address" id="address" class="form-control" placeholder="Straat 12">
+            </div>
+
+
+            <div class="mb-3">
+                <label for="city" class="form-label">Stad</label>
+                <input type="text" name="city" id="city" class="form-control" placeholder="Stad">
+
+            </div>
+
+
+            <div class="mb-3">
+                <label for="postcode" class="form-label">postcode</label>
+                <input type="text" name="postcode" id="postcode" class="form-control" placeholder="3311XX">
+            </div>
+
+            <div class="mb-3">
+                <label for="opmerking" class="form-label">Opmerking</label>
+                <textarea class="form-control" id="opmerking" name="opmerking" rows="3" placeholder="Eventuele opmerkingen..."></textarea>
+            </div>
+            <input type="hidden" name="step" value="5">
+            <div class="terms-consent mb-3">
+                <input class="form-check-input"
+                       type="checkbox"
+                       id="terms_accepted"
+                       name="terms_accepted"
+                       required>
+                <label class="form-check-label mb-0" for="terms_accepted">
+                    Ik ga akkoord met de
+                    <button type="button"
+                            id="open-terms"
+                            class="btn btn-link p-0 align-baseline">
+                        algemene voorwaarden
+                    </button>
+                </label>
+            </div>
+
+            <button type="submit" class="booking-button" id="confirm-btn" disabled>Bevestig reservering</button>
+        </form>
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const openTermsBtn = document.getElementById('open-terms');
+    const termsCheckbox = document.getElementById('terms_accepted');
+    const confirmBtn = document.getElementById('confirm-btn');
+
+    if (!openTermsBtn || !termsCheckbox || !confirmBtn) return;
+
+    openTermsBtn.addEventListener('click', function () {
+        // open algemene voorwaarden in nieuw tabblad
+        window.open('{{ route('terms') }}', '_blank');
+    });
+
+    termsCheckbox.addEventListener('change', function () {
+        confirmBtn.disabled = !termsCheckbox.checked;
+    });
+
+            <button type="submit" class="booking-button">Verstuur Boeking</button>
+        </form>
+    </div>
+</div>
+    // init state (als checkbox al aangevinkt is bij terugnavigeren)
+    confirmBtn.disabled = !termsCheckbox.checked;
+});
+</script>
+@endif
+
+
+
+@if($step == 6)
+    <div class="container py-5">
 
     <div class="card shadow p-4">
         <h2>Boeking success</h2>
         <p><strong>Service:</strong> {{ $data['service'] }}</p>
-        @if(!empty($data['departure']) && !empty($data['destination']))
+        {{-- @if(!empty($data['departure']) && !empty($data['destination']))
             <p><strong>Vertrekpunt:</strong> {{ $data['departure'] }}</p>
             <p><strong>Bestemming:</strong> {{ $data['destination'] }}</p>
         @endif
@@ -629,11 +1114,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         <p><strong>Naam:</strong> {{ $data['name'] }}</p>
         <p><strong>Email:</strong> {{ $data['email'] }}</p>
-        <p><strong>Opmerking:</strong>{{ $data['opmerking']  }}</p>
+        <p><strong>Opmerking:</strong>{{ $data['opmerking']  }}</p> --}}
         <p class="success"></p>
     </div>
     </div>
-    @endif
+@endif
 
 </body>
 </html>

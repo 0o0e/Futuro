@@ -10,7 +10,7 @@ class Booking extends Model
     //
     use HasFactory;
 
-    protected $fillable = ['service','date','time_start','time_end','people','name','email','comment','has_table', 'watertaxi_route_id'];
+    protected $fillable = ['service','date','time_start','time_end','people','name','email','comment','has_table', 'watertaxi_route_id','phone', 'price', 'address', 'city', 'postcode'];
 
     public function arrangement()
     {
@@ -19,6 +19,10 @@ class Booking extends Model
 
     public function watertaxiRoute(){
         return $this->belongsTo(WatertaxiRoute::class);
+    }
+
+    public function invoice(){
+        return $this->hasOne(Invoice::class);
     }
 
 

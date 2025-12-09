@@ -20,6 +20,8 @@ class DiscountCode extends Model
         'is_multi_use',
         'usage_count',
         'max_uses'
+        'used_by_user_id'
+      'hours','arrangement','purchaser_name','purchaser_email'
     ];
 
     protected $casts = [
