@@ -29,6 +29,7 @@
             justify-content: center;
             align-items: center;
 
+            margin-top: 60px;
             position: absolute;
             /* center independently of logo */
             left: 50%;

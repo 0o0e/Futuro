@@ -9,16 +9,19 @@ use App\Models\User;
 use Carbon\Carbon;
 use App\Models\Arrangement;
 use App\Models\Invoice;
+
 class AdminController extends Controller
 {
-    public function showLoginPage(){
+    public function showLoginPage()
+    {
         if (Auth::check()) {
             return redirect()->route('admin.dashboard');
         }
         return view('admin.login');
     }
 
-    public function login(Request $request){
+    public function login(Request $request)
+    {
         $credentials = $request->only('email', 'password');
 
         Auth::logout();
@@ -27,14 +30,13 @@ class AdminController extends Controller
 
         if (Auth::attempt($credentials)) {
             return redirect()->route('admin.dashboard');
-
         }
 
         return back()->withErrors(['email' => 'Ongeldige gegevens']);
-
     }
 
-    public function logout(Request $request){
+    public function logout(Request $request)
+    {
         Auth::logout();
 
         $request->session()->invalidate();
@@ -45,7 +47,7 @@ class AdminController extends Controller
 
     public function calendar()
     {
-        $bookings = Booking::all()->map(function($b) {
+        $bookings = Booking::all()->map(function ($b) {
             return [
                 'title' => $b->service . ' (' . $b->people . ' personen)',
                 'start' => $b->date . 'T' . $b->time_start,
@@ -55,54 +57,61 @@ class AdminController extends Controller
         return view('admin.calendar', compact('bookings'));
     }
 
-    public function dashboard(){
+    public function dashboard()
+    {
         return view('admin.adminDashboard');
     }
 
-    public function createUser(){
+    public function createUser()
+    {
         return view('admin.createUser');
     }
 
-    public function storeUser(Request $request){
+    public function storeUser(Request $request)
+    {
         $validated = $request->validate(
             [
-                'name'=> 'required|string|max:255',
-                'email'=> 'required|email|unique:users',
-                'password'=> 'required|min:6|confirmed'
-            ]);
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users',
+                'password' => 'required|min:6|confirmed'
+            ]
+        );
 
-            User::create([
+        User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => bcrypt($validated['password']),
         ]);
 
 
-        return redirect()->route('admin.user.create')->with('success','it worked');
+        return redirect()->route('admin.user.create')->with('success', 'it worked');
     }
 
 
-    public function reservations(){
-        $bookings = Booking::orderBy('date','asc')->get();
+    public function reservations()
+    {
+        $bookings = Booking::orderBy('date', 'asc')->get();
         $today = Carbon::today();
 
         return view('admin.reservations', compact('bookings', 'today'));
     }
 
-    public function createReservation(){
+    public function createReservation()
+    {
         return view('admin.createReservation');
     }
 
-    public function storeReservation(Request $request){
+    public function storeReservation(Request $request)
+    {
         $validated = $request->validate([
-            'service'=> 'required|string|max:255',
-            'date'=> 'required|date',
-            'time_start'=> 'required',
-            'time_end'=> 'required',
-            'people'=> 'required|integer|min:1',
-            'name'=> 'required|string|max:255',
-            'email'=> 'required|email',
-            'comment'=> 'nullable|string|max:1000',
+            'service' => 'required|string|max:255',
+            'date' => 'required|date',
+            'time_start' => 'required',
+            'time_end' => 'required',
+            'people' => 'required|integer|min:1',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'comment' => 'nullable|string|max:1000',
             'prosecco' => 'nullable|integer|min:0',
             'picnic' => 'nullable|integer|min:0',
             'olala' => 'nullable|integer|min:0',
@@ -131,64 +140,63 @@ class AdminController extends Controller
 
 
 
-        return redirect()->route('admin.reservations')->with('success','Boeking succesvol aangemaakt');
+        return redirect()->route('admin.reservations')->with('success', 'Boeking succesvol aangemaakt');
     }
-public function editReservation($id)
-{
-    $booking = Booking::with(['arrangement', 'invoice'])->findOrFail($id);
-    return view('admin.editReservation', compact('booking'));
-}
+    public function editReservation($id)
+    {
+        $booking = Booking::with(['arrangement', 'invoice'])->findOrFail($id);
+        return view('admin.editReservation', compact('booking'));
+    }
 
-public function updateReservation(Request $request, $id)
-{
+    public function updateReservation(Request $request, $id)
+    {
 
-    $validated = $request->validate([
-        'service'=> 'required|string|max:255',
-        'date'=> 'required|date',
-        'time_start'=> 'required',
-        'time_end' => $request->service === 'Watertaxi' ? 'nullable' : 'required',
-        'people'=> 'required|integer|min:1',
-        'name'=> 'required|string|max:255',
-        'email'=> 'required|email',
-        'comment'=> 'nullable|string|max:1000',
-        'invoice_status' => 'nullable|string|max:255',
-        'prosecco' => 'nullable|integer|min:0',
-        'picnic' => 'nullable|integer|min:0',
-        'olala' => 'nullable|integer|min:0',
-        'bistro' => 'nullable|integer|min:0',
-        'barca' => 'nullable|integer|min:0',
-    ]);
-
-    $booking = Booking::findOrFail($id);
-
-    $booking->update([
-        'service' => $validated['service'],
-        'date' => $validated['date'],
-        'time_start' => $validated['time_start'],
-        'time_end' => $validated['time_end'],
-        'people' => $validated['people'],
-        'name' => $validated['name'],
-        'email' => $validated['email'],
-        'comment' => $validated['comment'] ?? null,
-    ]);
-
-    if ($booking->arrangement) {
-        $booking->arrangement->update([
-            'prosecco' => $validated['prosecco'] ?? 0,
-            'picnic' => $validated['picnic'] ?? 0,
-            'olala' => $validated['olala'] ?? 0,
-            'bistro' => $validated['bistro'] ?? 0,
-            'barca' => $validated['barca'] ?? 0,
+        $validated = $request->validate([
+            'service' => 'required|string|max:255',
+            'date' => 'required|date',
+            'time_start' => 'required',
+            'time_end' => $request->service === 'Watertaxi' ? 'nullable' : 'required',
+            'people' => 'required|integer|min:1',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'comment' => 'nullable|string|max:1000',
+            'invoice_status' => 'nullable|string|max:255',
+            'prosecco' => 'nullable|integer|min:0',
+            'picnic' => 'nullable|integer|min:0',
+            'olala' => 'nullable|integer|min:0',
+            'bistro' => 'nullable|integer|min:0',
+            'barca' => 'nullable|integer|min:0',
         ]);
-    }
 
-    if ($booking->invoice) {
-        $booking->invoice->update([
-            'status' => $validated['invoice_status'] ?? $booking->invoice->status,
+        $booking = Booking::findOrFail($id);
+
+        $booking->update([
+            'service' => $validated['service'],
+            'date' => $validated['date'],
+            'time_start' => $validated['time_start'],
+            'time_end' => $validated['time_end'],
+            'people' => $validated['people'],
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'comment' => $validated['comment'] ?? null,
         ]);
+
+        if ($booking->arrangement) {
+            $booking->arrangement->update([
+                'prosecco' => $validated['prosecco'] ?? 0,
+                'picnic' => $validated['picnic'] ?? 0,
+                'olala' => $validated['olala'] ?? 0,
+                'bistro' => $validated['bistro'] ?? 0,
+                'barca' => $validated['barca'] ?? 0,
+            ]);
+        }
+
+        if ($booking->invoice) {
+            $booking->invoice->update([
+                'status' => $validated['invoice_status'] ?? $booking->invoice->status,
+            ]);
+        }
+
+        return redirect()->route('admin.reservations')->with('success', 'Boeking succesvol bijgewerkt.');
     }
-
-    return redirect()->route('admin.reservations')->with('success', 'Boeking succesvol bijgewerkt.');
-}
-
 }

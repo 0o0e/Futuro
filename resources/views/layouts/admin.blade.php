@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <title>@yield('title','Admin Dashboard')</title>
+    <title>@yield('title', 'Admin Dashboard')</title>
 
 
-        <style>
+    <style>
         body {
             margin: 0;
             font-family: Arial, sans-serif;
@@ -81,6 +82,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="sidebar">
         <a href="{{ route('admin.dashboard') }}">Dashboard</a>
@@ -94,8 +96,7 @@
 
         <a href="{{ route('admin.reservations') }}">Reserveringen</a>
 
-        <a href="{{ route('admin.discount-codes.index') }}">Kortingscodes</a>
-        
+
         <a href="{{ route('admin.logout') }}" onclick="return confirm('uitloggen?');">Uitloggen</a>
     </div>
 
@@ -104,4 +105,5 @@
     </div>
 
 </body>
+
 </html>
