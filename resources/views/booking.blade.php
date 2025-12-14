@@ -1143,6 +1143,32 @@
 
     @endif
 
+
+    @if ($step == 6)
+        <div class="container py-5">
+
+            <div class="card shadow p-4">
+                <h2>Boeking success</h2>
+                <p><strong>Service:</strong> {{ $data['service'] }}</p>
+                @if (!empty($data['departure']) && !empty($data['destination']))
+                    <p><strong>Vertrekpunt:</strong> {{ $data['departure'] }}</p>
+                    <p><strong>Bestemming:</strong> {{ $data['destination'] }}</p>
+                @endif
+                <p><strong>Datum:</strong> {{ $data['date'] }}</p>
+                @if (!empty($data['arrangement']))
+                    <p><strong>Arrangement:</strong> {{ $data['arrangement'] }}</p>
+                @endif
+
+                <p><strong>Naam:</strong> {{ $data['name'] }}</p>
+                <p><strong>Email:</strong> {{ $data['email'] }}</p>
+                <p><strong>Opmerking:</strong>{{ $data['opmerking'] }}</p>
+                <p class="success"></p>
+            </div>
+        </div>
+    @endif
+
+
+
 </body>
 
 </html>

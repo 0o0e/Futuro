@@ -174,6 +174,7 @@ class BookingController extends Controller
 
                 // $price = $this->calculatePrice($data);
 
+                $data['date'] = Carbon::parse($data['date'])->toDateString();
 
 
                 $booking = Booking::create([
