@@ -96,6 +96,8 @@
 
         <a href="{{ route('admin.reservations') }}">Reserveringen</a>
 
+        <a href="{{ route('admin.discount-codes.index') }}">Kortingscodes</a>
+
 
         <a href="{{ route('admin.logout') }}" onclick="return confirm('uitloggen?');">Uitloggen</a>
     </div>

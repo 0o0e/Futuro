@@ -9,6 +9,8 @@ use Mollie\Laravel\Facades\Mollie;
 
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\Admin\DiscountCodeController;
+
 
 Route::get('/client', [ClientController::class, 'index'])->name('client.page');
 Route::post('/client', [ClientController::class, 'showBooking'])->name('client.show');
@@ -61,6 +63,8 @@ Route::middleware(AdminMiddleware::class)->prefix('admin')->group(function () {
 
     Route::get('/boeking/aanmaken', [Admincontroller::class, 'createReservation'])->name('admin.reservation.create');
     Route::post('/boeking/aanmaken', [Admincontroller::class, 'storeReservation'])->name('admin.reservation.store');
+    Route::post('/discount-codes', [DiscountCodeController::class, 'store'])->name('admin.discount-codes.store');
+    Route::get('/discount-codes', [DiscountCodeController::class, 'index'])->name('admin.discount-codes.index');
 });
 
 Route::middleware(OwnerMiddleware::class)->prefix('admin')->group(function () {
