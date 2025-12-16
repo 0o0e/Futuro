@@ -24,6 +24,7 @@ Route::match(['get', 'post'], '/booking', [BookingController::class, 'index'])->
 
 Route::view('/home', 'home')->name('home');
 Route::view('/rondvaart', 'rondvaarten')->name('rondvaarten');
+Route::view('/arrangements', 'arrangements')->name('arrangements');
 
 
 Route::get('/mollie-test', function () {
