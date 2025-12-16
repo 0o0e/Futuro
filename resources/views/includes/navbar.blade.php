@@ -38,7 +38,9 @@
 
         nav a {
             text-decoration: none;
-            color: white;
+            /* color: white; */
+            color: var(--nav-link-color, white);
+
             font-size: 17px;
             font-weight: 500;
             transition: all 0.3s ease;
@@ -47,6 +49,7 @@
 
         nav a:hover {
             border-bottom: 2px solid white;
+
             padding-bottom: 4px;
         }
 
@@ -125,7 +128,9 @@
 </head>
 
 <body>
-    <nav>
+    <nav style="--nav-link-color: {{ $navColor ?? 'white' }}">
+
+
         @if (!isset($hideLogo) || !$hideLogo)
             <img src="logo_og.png" alt="Futuro Logo" class="logo">
         @endif
