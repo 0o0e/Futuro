@@ -8,6 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/main.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <style>
         body {
@@ -365,6 +366,31 @@
                 font-size: 0.8rem;
             }
 
+            .fc-daygrid-day .blocked-text {
+                font-size: 0.65rem;
+                color: #842029;
+                text-align: center;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 100%;
+                line-height: 1;
+                margin-top: 2px;
+                pointer-events: auto;
+            }
+
+            .blocked-text {
+                pointer-events: none;
+                /* 👈 This allows hover on the parent */
+                font-size: 0.8rem;
+                color: #842029;
+                text-align: center;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+
 
         }
     </style>
@@ -564,13 +590,25 @@
                         let blockDate = new Date(today);
                         blockDate.setDate(blockDate.getDate() + 7);
 
-                        let cellDate = info.date;
+                        let cellDate = new Date(info.date);
                         cellDate.setHours(0, 0, 0, 0);
 
                         if (cellDate >= today && cellDate <= blockDate) {
                             info.el.style.backgroundColor = '#ffcccc';
                             info.el.style.opacity = '0.7';
                             info.el.style.cursor = 'not-allowed';
+
+                            const text = document.createElement('div');
+                            text.className = 'blocked-text';
+                            text.innerText = 'Info…';
+                            text.style.pointerEvents = 'none';
+                            info.el.querySelector('.fc-daygrid-day-frame')?.appendChild(text);
+
+                            info.el.setAttribute('data-bs-toggle', 'tooltip');
+                            info.el.setAttribute('data-bs-placement', 'top');
+                            info.el.setAttribute('title', 'Neem contact op voor meer informatie');
+
+                            new bootstrap.Tooltip(info.el);
                         }
                     },
 
