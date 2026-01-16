@@ -68,6 +68,7 @@
         .images-text .text-block {
             flex: 1;
             text-align: left;
+            margin-bottom: 40px;
         }
 
         table {
@@ -107,13 +108,180 @@
             line-height: 1.6;
             margin-bottom: 40px;
             text-align: center;
+
+        }
+
+        /* =========================
+   MOBILE – DESIGNED FIX
+   ========================= */
+        @media (max-width: 900px) {
+
+            .section {
+                padding: 40px 18px;
+            }
+
+            h2 {
+                font-size: 1.6rem;
+                margin-bottom: 20px;
+            }
+
+            /* Stack layout */
+            .images-text {
+                flex-direction: column;
+                gap: 28px;
+                margin: 20px 0 30px;
+            }
+
+            /* Images: controlled size */
+            .images-text img {
+                width: 100%;
+                max-width: 340px;
+                border-radius: 12px;
+            }
+
+            /* Center images */
+            .images-text img:first-child,
+            .images-text img:last-child {
+                margin: 0 auto;
+            }
+
+            /* Text block */
+            .images-text .text-block {
+                text-align: center;
+                max-width: 520px;
+                margin: 0 auto;
+            }
+
+            .section-content p {
+                margin: 12px 0;
+                padding: 0;
+                font-size: 15px;
+                line-height: 1.6;
+            }
+
+            /* Tables: clean mobile look */
+            table {
+                width: 100%;
+                max-width: 500px;
+                margin: 20px auto;
+                font-size: 14px;
+                border-radius: 10px;
+                overflow: hidden;
+            }
+
+            table th,
+            table td {
+                padding: 10px;
+            }
+
+            /* Buttons */
+            .reserve-btn {
+                margin-top: 24px;
+                padding: 12px 26px;
+                font-size: 15px;
+            }
+        }
+
+        /* Small phones */
+        @media (max-width: 480px) {
+
+            .images-text img {
+                max-width: 300px;
+            }
+
+            h2 {
+                font-size: 1.4rem;
+            }
+
+            .section-content p {
+                font-size: 14px;
+            }
+        }
+
+        /* =========================
+   MOBILE – RONDVAART LAYOUT
+   ========================= */
+        @media (max-width: 900px) {
+
+            /* 1️⃣ Backgrounds SWAPPEN (alleen mobiel) */
+            #rondvaarten {
+                background-color: var(--white) !important;
+            }
+
+            #watertaxi {
+                background-color: var(--card-bg);
+            }
+
+            /* 2️⃣ Images layout: maar 1 afbeelding */
+            .images-text {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            /* Verberg de TWEEDE afbeelding */
+            .images-text img:last-child {
+                display: none;
+            }
+
+            /* Eerste afbeelding mooi groot, maar niet overdreven */
+            .images-text img:first-child {
+                width: 100%;
+                max-width: none;
+                height: auto;
+                max-height: 45vh;
+                /* 🔑 ongeveer halve pagina */
+                object-fit: cover;
+                border-radius: 12px;
+            }
+
+            /* 3️⃣ Tekst compacter & kleiner */
+            .images-text .text-block {
+                margin-top: 10px;
+                padding: 0 8px;
+                text-align: center;
+            }
+
+            .images-text .text-block p {
+                font-size: 14px;
+                /* 🔽 kleiner dan nu */
+                line-height: 1.5;
+                margin: 10px 0;
+            }
+        }
+
+        @media (max-width: 900px) {
+
+            /* Tekstblok smaller & rustiger */
+            .images-text .text-block {
+                max-width: 460px;
+                margin: 0 auto;
+                padding: 0 12px;
+            }
+
+            /* Alinea styling */
+            .images-text .text-block p {
+                font-size: 14px;
+                line-height: 1.45;
+                margin: 8px 0;
+                color: #2E3D39;
+            }
+
+            /* 🔑 Toon alleen de eerste 3 alinea's */
+            .images-text .text-block p:nth-of-type(n+4) {
+                display: none;
+            }
+
+            /* Meer ruimte tussen image en tekst */
+            .images-text img:first-child {
+                margin-bottom: 12px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    @include('includes.navbar', ['navColor' => 'black'])
+    @include('includes.navbar', ['navColor' => 'white'])
 
     <section class="section" id="rondvaarten" style="background-color: var(--card-bg)">
         <div class="section-content">
@@ -171,7 +339,7 @@
     <section class="section" id="watertaxi">
         <div class="section-content">
             <h2>WATERTAXI</h2>
-            <div class="images-text">
+            <div class="images-text" style="margin-bottom:70px;">
                 <img src="/images/rondvaarten/watertaxi1.png" alt="Watertaxi 1">
                 <div class="text-block">
                     <p>Stap aan boord van uw persoonlijke watertaxi! Vanuit het hart van Dordrecht brengt de Futuro u
@@ -262,6 +430,7 @@
         </div>
     </section>
 
+    @include('includes.footer')
 </body>
 
 </html>

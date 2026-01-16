@@ -49,6 +49,7 @@ class AdminController extends Controller
     {
         $bookings = Booking::all()->map(function ($b) {
             return [
+                'id' => $b->id,
                 'title' => $b->service . ' (' . $b->people . ' personen)',
                 'start' => $b->date . 'T' . $b->time_start,
                 'end'   => $b->date . 'T' . $b->time_end,

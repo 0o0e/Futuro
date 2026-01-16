@@ -13,14 +13,27 @@
             font-family: Arial, sans-serif;
         }
 
+        /*
         nav {
             width: 100%;
-            padding: 20px 40px;
+            padding: 20px 20px;
             display: flex;
             align-items: center;
             position: relative;
             z-index: 10;
+        } */
+
+        nav {
+            width: 100%;
+            padding: 20px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            /* 🔑 BELANGRIJK */
+            position: relative;
+            z-index: 10;
         }
+
 
         /* Links styling - centered on desktop */
         .nav-links {
@@ -28,11 +41,10 @@
             gap: 30px;
             justify-content: center;
             align-items: center;
-
-            margin-top: 60px;
             position: absolute;
             /* center independently of logo */
             left: 50%;
+            margin-top: 60px;
             transform: translateX(-50%);
         }
 
@@ -40,6 +52,7 @@
             text-decoration: none;
             /* color: white; */
             color: var(--nav-link-color, white);
+            color: var(--nav-link-color, black);
 
             font-size: 17px;
             font-weight: 500;
@@ -65,22 +78,30 @@
             flex-direction: column;
             gap: 5px;
             cursor: pointer;
-            margin-left: -40px;
         }
 
         .hamburger span {
             width: 28px;
             height: 3px;
-            background: white;
+            background: #4C807F;
             display: block;
+            background: black;
+            /* default for all pages */
             transition: 0.3s ease;
+        }
+
+        nav a {
+            color: var(--nav-link-color, white);
+            transition: all 0.3s ease;
         }
 
         @media (max-width: 900px) {
 
+
             .hamburger {
                 display: flex;
             }
+
 
             .nav-links {
                 display: none;
@@ -98,6 +119,7 @@
                 z-index: 1000;
                 transform: none;
                 /* reset transform for mobile */
+                margin-top: 0px;
             }
 
             .nav-links.show {
@@ -111,24 +133,78 @@
             .logo {
                 width: 170px;
             }
-        }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
+            @media (max-width: 900px) {
+
+                .hamburger {
+                    display: flex;
+                    order: 1;
+                    /* 🔑 hamburger links */
+                    margin-left: 10px;
+                }
+
+                .logo {
+                    width: 140px;
+                    order: 2;
+                    margin-left: auto;
+                }
+
+                nav {
+                    padding: 16px 10px;
+                    /* 🔑 minder ruimte links & rechts */
+                }
+
+
+
+                nav {
+                    padding: 16px 10px;
+                    /* 🔑 minder ruimte links & rechts */
+                }
+
+
+                nav {
+                    --nav-link-color: black;
+                    /* <-- override variable on mobile */
+                }
+
+                .nav-links {
+                    background: rgba(255, 255, 255, 0.95);
+                    /* optional, to make dropdown readable */
+                }
+
+                .nav-links {
+                    position: absolute;
+                    left: 0;
+                    transform: none;
+                    /* 🔑 reset desktop centering */
+                }
+
+                .nav-links a {
+                    color: black !important;
+                    /* always black on mobile */
+                }
+
+                .hamburger span {
+                    background: black !important;
+                }
             }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
             }
-        }
     </style>
 </head>
 
 <body>
-    <nav style="--nav-link-color: {{ $navColor ?? 'white' }}">
+    <nav style="--nav-link-color: {{ $isHome ?? false ? 'white' : 'black' }}">
 
 
         @if (!isset($hideLogo) || !$hideLogo)
@@ -142,10 +218,10 @@
         </div>
 
         <div class="nav-links">
-            <a href="#" class="active">HOME</a>
-            <a href="#">RONDVAARTEN</a>
-            <a href="#">ARRANGEMENTEN</a>
-            <a href="#">OVER FUTURO</a>
+            <a href="/" class="active">HOME</a>
+            <a href="/rondvaart">RONDVAARTEN</a>
+            <a href="/arrangements">ARRANGEMENTEN</a>
+            <a href="/over-ons">OVER FUTURO</a>
             <a href="#">RESERVEREN</a>
             <a href="#">CONTACT</a>
         </div>

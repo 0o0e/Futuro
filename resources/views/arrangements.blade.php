@@ -237,10 +237,258 @@
         border-radius: 6px;
         object-fit: cover;
     }
+
+    /* ===========================
+   MOBILE FIXES
+   =========================== */
+
+    /* tablets + phones */
+    @media (max-width: 900px) {
+
+        /* =====================
+       TITELS
+    ===================== */
+        h2 {
+            margin: 16px;
+            font-size: 1.35rem;
+        }
+
+        /* =====================
+       CAROUSEL / CARDS
+    ===================== */
+        .scroll-container {
+            padding: 20px 16px;
+            gap: 12px;
+        }
+
+        .card {
+            width: 240px;
+            aspect-ratio: 3 / 4;
+            border-radius: 16px;
+        }
+
+        /* overlay altijd zichtbaar */
+        .card-overlay {
+            opacity: 1;
+            background: linear-gradient(to top,
+                    rgba(53, 92, 82, 0.9),
+                    rgba(53, 92, 82, 0.4));
+        }
+
+        .card-content {
+            padding: 14px;
+        }
+
+        .card-content h2,
+        .card-content h3 {
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+        }
+
+        .card-content p {
+            font-size: 0.8rem;
+            line-height: 1.35;
+            margin: 0;
+        }
+
+        /* MAX 3 regels tekst per kaart */
+
+
+        /* =====================
+       INFO SECTIONS
+    ===================== */
+        .info-section {
+            padding: 30px 16px;
+            gap: 30px;
+        }
+
+        .info-block,
+        .info-block.reverse {
+            flex-direction: column;
+            gap: 0;
+            background: var(--bg-light);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        /* 🔥 VERWIJDER AFBEELDINGEN OP MOBIEL */
+        .info-image {
+            display: none;
+        }
+
+        .info-text {
+            text-align: center;
+        }
+
+        .info-text h3 {
+            font-size: 0.85rem;
+            letter-spacing: 0.12em;
+            margin-bottom: 10px;
+        }
+
+        .info-text p {
+            font-size: 0.85rem;
+            line-height: 1.45;
+            margin-bottom: 8px;
+        }
+
+        .info-button {
+            margin-top: 14px;
+            padding: 12px 20px;
+            font-size: 0.8rem;
+            border-radius: 8px;
+        }
+
+        /* TITELS */
+        h2 {
+            margin: 16px;
+            font-size: 1.35rem;
+        }
+
+        /* CAROUSEL / CARDS */
+        .scroll-container {
+            padding: 20px 16px;
+            gap: 12px;
+        }
+
+        .card {
+            width: 240px;
+            aspect-ratio: 3 / 4;
+            border-radius: 16px;
+        }
+
+
+        /* overlay hidden by default */
+        .card-overlay {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            cursor: pointer;
+        }
+
+        /* show when JS adds 'show' */
+        .card-overlay.show {
+            opacity: 1;
+        }
+
+        .card-content {
+            padding: 14px;
+        }
+
+        .card-content h2,
+        .card-content h3 {
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+        }
+
+
+        /* overlay hidden by default */
+        .card-overlay {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            cursor: pointer;
+        }
+
+        /* show when JS adds 'show' */
+        .card-overlay.show {
+            opacity: 1;
+        }
+
+        .card-content p {
+            font-size: 0.85rem;
+            line-height: 1.5;
+            margin: 0;
+            /* REMOVE line-clamp so all text is visible */
+            display: block;
+            overflow: visible;
+        }
+
+        /* INFO SECTIONS */
+        .info-section {
+            padding: 30px 16px;
+            gap: 30px;
+        }
+
+        .info-block,
+        .info-block.reverse {
+            flex-direction: column;
+            gap: 20px;
+            background: var(--bg-light);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .info-image {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .info-image img {
+            width: 100%;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        .info-text {
+            text-align: center;
+        }
+
+        .info-text h3 {
+            font-size: 0.9rem;
+            letter-spacing: 0.12em;
+            margin-bottom: 8px;
+        }
+
+        .info-text p {
+            font-size: 0.85rem;
+            line-height: 1.45;
+            margin-bottom: 8px;
+        }
+
+        .info-button {
+            margin: 14px auto 0 auto;
+            padding: 12px 20px;
+            font-size: 0.85rem;
+            border-radius: 8px;
+        }
+
+        .card-content p {
+            display: -webkit-box;
+            -webkit-line-clamp: 10;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    }
+
+    /* small phones */
+    @media (max-width: 500px) {
+
+        .card {
+            width: 220px;
+        }
+
+        .card-content p {
+            font-size: 0.8rem;
+        }
+    }
+
+
+    /* SMALL PHONES */
+    @media (max-width: 500px) {
+        .card {
+            width: 220px;
+        }
+
+        .card-content p {
+            font-size: 0.8rem;
+        }
+    }
 </style>
 
 <body>
-    @include('includes.navbar', ['navColor' => 'black']);
+    @include('includes.navbar', ['hideLogo' => false, 'navColor' => 'black'])
+
     <section class="scroll-section">
 
         <h2>Arrangementen</h2>
@@ -391,13 +639,32 @@
 
 
 
-    @include('includes.footer');
+    @include('includes.footer')
     <script>
         window.addEventListener('load', () => {
             const container = document.querySelector('.scroll-container');
             if (container) {
                 container.scrollLeft = (container.scrollWidth - container.clientWidth) / 2;
             }
+        });
+    </script>
+    <script>
+        const cards = document.querySelectorAll('.card');
+
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                const overlay = card.querySelector('.card-overlay');
+
+                // Close all other overlays first
+                cards.forEach(c => {
+                    if (c !== card) {
+                        c.querySelector('.card-overlay').classList.remove('show');
+                    }
+                });
+
+                // Toggle this overlay
+                overlay.classList.toggle('show');
+            });
         });
     </script>
 

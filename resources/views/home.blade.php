@@ -628,7 +628,7 @@
             <div class="video-overlay"></div>
         </div>
 
-        @include('includes.navbar', ['hideLogo' => true])
+        @include('includes.navbar', ['hideLogo' => true, 'isHome' => true])
 
         <div class="viewport-header">
 
@@ -786,7 +786,7 @@
 
     <script>
         window.addEventListener('load', () => {
-            const container = document.querySelector('.scroll-container');
+            const container = document.querySelector('.scroll-container')
             if (container) {
                 container.scrollLeft = (container.scrollWidth - container.clientWidth) / 2;
             }

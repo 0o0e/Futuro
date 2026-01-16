@@ -94,11 +94,195 @@
             height: auto;
             object-fit: cover;
         }
+
+        @media (max-width: 900px) {
+            .navbar {
+                padding: 20px 30px;
+            }
+
+            .page {
+                padding: 40px 20px;
+                gap: 60px;
+            }
+
+            .section {
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .section.reverse {
+                flex-direction: column;
+            }
+
+            .text h2 {
+                font-size: 1.2rem;
+                text-align: center;
+            }
+
+            .text p {
+                font-size: 0.9rem;
+                text-align: center;
+            }
+
+            .image img {
+                max-width: 100%;
+                border-radius: 12px;
+            }
+        }
+
+        /* Extra small phones */
+        @media (max-width: 480px) {
+            .text h2 {
+                font-size: 1.1rem;
+            }
+
+            .text p {
+                font-size: 0.85rem;
+            }
+
+            .navbar {
+                padding: 15px 15px;
+            }
+        }
+
+        /* NAVBAR - already included, will stay the same */
+        .navbar {
+            width: 100%;
+            padding: 25px 100px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+        }
+
+        /* PAGE */
+        .page {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 100px;
+            display: flex;
+            flex-direction: column;
+            gap: 120px;
+        }
+
+        .section {
+            display: flex;
+            align-items: flex-start;
+            gap: 80px;
+        }
+
+        .section.reverse {
+            flex-direction: row-reverse;
+        }
+
+        .text {
+            flex: 1;
+        }
+
+        .text h2 {
+            font-size: 0.9rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+        }
+
+        .text p {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            margin-bottom: 1.2rem;
+        }
+
+        .image {
+            flex: 1;
+        }
+
+        .image img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        /* ===========================
+   MOBILE STYLES
+=========================== */
+        @media (max-width: 900px) {
+            .navbar {
+                padding: 20px 30px;
+            }
+
+            .page {
+                padding: 40px 20px;
+                gap: 60px;
+            }
+
+            .section {
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .section.reverse {
+                flex-direction: column;
+            }
+
+            .text {
+                text-align: center;
+            }
+
+            .text h2 {
+                font-size: 1.2rem;
+                margin-bottom: 1rem;
+            }
+
+            .text p {
+                font-size: 0.9rem;
+                line-height: 1.5;
+                margin-bottom: 0.8rem;
+
+                /* Optional: truncate longer text with ellipsis if needed */
+                display: -webkit-box;
+                -webkit-line-clamp: 4;
+                /* show max 4 lines */
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+
+            .image img {
+                max-width: 100%;
+                border-radius: 12px;
+                object-fit: cover;
+            }
+        }
+
+        /* Extra small phones */
+        @media (max-width: 480px) {
+            .navbar {
+                padding: 15px 15px;
+            }
+
+            .text h2 {
+                font-size: 1.1rem;
+            }
+
+            .text p {
+                font-size: 0.85rem;
+                line-height: 1.4;
+            }
+
+            .page {
+                padding: 30px 16px;
+                gap: 50px;
+            }
+
+            .image img {
+                border-radius: 10px;
+            }
+        }
     </style>
 </head>
 
 <body>
-    @include('includes.navbar', ['navColor' => 'black']);
+    @include('includes.navbar', ['navColor' => 'black'])
 
 
     <main class="page">
