@@ -23,6 +23,10 @@ Route::get('/', function () {
 Route::match(['get', 'post'], '/booking', [BookingController::class, 'index'])->name('booking');
 
 Route::view('/home', 'home')->name('home');
+Route::view('/rondvaart', 'rondvaarten')->name('rondvaarten');
+Route::view('/arrangements', 'arrangements')->name('arrangements');
+Route::view('/over-ons', 'over-ons')->name('over.ons');
+
 
 Route::get('/mollie-test', function () {
     $payment = Mollie::api()->payments->create([

@@ -49,6 +49,7 @@ class AdminController extends Controller
     {
         $bookings = Booking::all()->map(function ($b) {
             return [
+                'id' => $b->id,
                 'title' => $b->service . ' (' . $b->people . ' personen)',
                 'start' => $b->date . 'T' . $b->time_start,
                 'end'   => $b->date . 'T' . $b->time_end,
@@ -161,6 +162,7 @@ class AdminController extends Controller
             'email' => 'required|email',
             'comment' => 'nullable|string|max:1000',
             'invoice_status' => 'nullable|string|max:255',
+            'payment_method' => 'nullable|string|max:255',
             'prosecco' => 'nullable|integer|min:0',
             'picnic' => 'nullable|integer|min:0',
             'olala' => 'nullable|integer|min:0',
@@ -194,8 +196,10 @@ class AdminController extends Controller
         if ($booking->invoice) {
             $booking->invoice->update([
                 'status' => $validated['invoice_status'] ?? $booking->invoice->status,
+                'payment_method' => $validated['payment_method'] ?? $booking->invoice->payment_method,
             ]);
         }
+
 
         return redirect()->route('admin.reservations')->with('success', 'Boeking succesvol bijgewerkt.');
     }
