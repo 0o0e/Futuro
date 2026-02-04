@@ -21,6 +21,11 @@ Route::get('/', function () {
 Route::match(['get', 'post'], '/booking', [BookingController::class, 'index'])->name('booking');
 
 Route::view('/home', 'home')->name('home');
+Route::view('/rondvaarten', 'rondvaarten')->name('rondvaarten');
+Route::view('/arrangementen', 'arrangementen')->name('arrangementen');
+Route::view('/overfuturo', 'overfuturo')->name('overfuturo');
+Route::view('/reserveren', 'reserveren')->name('reserveren');
+Route::view('/contact', 'contact')->name('contact');
 
 // Algemene voorwaarden
 Route::view('/algemene-voorwaarden', 'terms')->name('terms');
