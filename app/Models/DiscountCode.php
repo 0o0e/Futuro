@@ -19,8 +19,8 @@ class DiscountCode extends Model
         'valid_until',
         'is_multi_use',
         'usage_count',
-        'max_uses'
-        'used_by_user_id'
+        'max_uses',
+        'used_by_user_id',
       'hours','arrangement','purchaser_name','purchaser_email'
     ];
 

@@ -92,7 +92,7 @@
 
         <a href="{{ route('admin.reservation.create') }}">Nieuwe reservering</a>
 
-        <a href="{{ route('admin.reservations') }}">Reserveringen</a>
+        <a href="{{ route('admin.bookings.index') }}">Reserveringen</a>
 
         <a href="{{ route('admin.discount-codes.index') }}">Kortingscodes</a>
         

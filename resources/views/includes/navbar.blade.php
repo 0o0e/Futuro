@@ -68,13 +68,15 @@
       <div class="nav-links">
 
 
-        <a href="#" class="active">HOME</a>
-        <a href="#">RONDVAARTEN</a>
-        <a href="#">ARRANGEMENTEN</a>
-        <a href="#">OVER FUTURO</a>
-        <a href="#">RESERVEREN</a>
-        <a href="#">CONTACT</a>
-      </div>
+    <nav>
+      <img src="logo.png" alt="Futuro Logo" class="logo">
+      <a href="{{ route('home') }}" class="active">HOME</a>
+      <a href="{{ route('rondvaarten') }}">RONDVAARTEN</a>
+      <a href="{{ route('arrangementen') }}">ARRANGEMENTEN</a>
+      <a href="{{ route('overfuturo') }}">OVER FUTURO</a>
+      <a href="{{ route('reserveren') }}">RESERVEREN</a>
+      <a href="{{ route('contact') }}">CONTACT</a>
+    </nav>
 
                   @if(!isset($hideLogo) || !$hideLogo)
            <img src="logo_og.png" alt="Futuro Logo" class="logo">

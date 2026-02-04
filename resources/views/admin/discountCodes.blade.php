@@ -5,7 +5,6 @@
 @section('content')
     <h1>Kortingscodes</h1>
     <div class="container">
-        {{-- Success message --}}
         @if(session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
@@ -20,8 +19,24 @@
             <div class="card-body">
                 <form action="{{ route('admin.discount-codes.store') }}" method="POST">
                     @csrf
-                    
-                    {{-- Type selectie --}}
+
+                    <div class="mb-3">
+                        <label for="custom_code" class="form-label">Kortingscode naam (optioneel)</label>
+                        <input 
+                            type="text" 
+                            class="form-control @error('custom_code') is-invalid @enderror" 
+                            id="custom_code" 
+                            name="custom_code" 
+                            maxlength="50"
+                            placeholder="bijv. ZOMER2026"
+                            value="{{ old('custom_code') }}"
+                            style="text-transform: uppercase;">
+                        <small class="form-text text-muted">Laat leeg voor een automatisch gegenereerde code</small>
+                        @error('custom_code')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
                     <div class="mb-3">
                         <label class="form-label">Type korting</label>
                         <div>
@@ -45,7 +60,6 @@
                         @enderror
                     </div>
 
-                    {{-- Bedrag/Percentage --}}
                     <div class="mb-3">
                         <label for="amount" class="form-label">
                             <span id="amount_label">Kortingsbedrag (€)</span>
@@ -69,7 +83,6 @@
                         @enderror
                     </div>
 
-                    {{-- Geldigheidsperiode --}}
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="valid_from" class="form-label">Geldig vanaf (optioneel)</label>
@@ -208,7 +221,6 @@
         </div>
     </div>
 
-    {{-- JavaScript voor dynamische label wijziging --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const typeFixed = document.getElementById('type_fixed');
@@ -235,7 +247,6 @@
             }
 
             function toggleMaxUses() {
-                // Toon max_uses veld alleen als er een datum is ingevuld
                 if (validFrom.value || validUntil.value) {
                     maxUsesContainer.style.display = 'block';
                 } else {

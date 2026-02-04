@@ -131,7 +131,7 @@ class AdminController extends Controller
 
 
 
-        return redirect()->route('admin.reservations')->with('success','Boeking succesvol aangemaakt');
+        return redirect()->route('admin.bookings.index')->with('success','Boeking succesvol aangemaakt');
     }
 public function editReservation($id)
 {
