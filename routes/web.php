@@ -26,14 +26,7 @@ Route::view('/arrangementen', 'arrangementen')->name('arrangementen');
 Route::view('/overfuturo', 'overfuturo')->name('overfuturo');
 Route::view('/reserveren', 'reserveren')->name('reserveren');
 Route::view('/contact', 'contact')->name('contact');
-
-// Algemene voorwaarden
 Route::view('/algemene-voorwaarden', 'terms')->name('terms');
-Route::view('/rondvaarten', 'rondvaarten')->name('rondvaarten');
-Route::view('/arrangementen', 'arrangementen')->name('arrangementen');
-Route::view('/overfuturo', 'overfuturo')->name('overfuturo');
-Route::view('/reserveren', 'reserveren')->name('reserveren');
-Route::view('/contact', 'contact')->name('contact');
 
 
 Route::get('/admin/login', [AdminController::class, 'showLoginPage'])->name('admin.login');
